@@ -21,9 +21,14 @@ export default function LoginPage({ navigation }: MainPageProps) {
     const doLogIn = async (credentials: { username: string, password: string }) => {
         try {
             await API.logIn(credentials).then((result) => {
-                store.dispatch(loadUser(result))
+                API.getUserInfo().then((result) => {
+                    store.dispatch(loadUser(result))
+                    // setFirstLetters(result?.name[0] + '' + result?.surname[0])
+                }).catch(function (error) {
+                    alert(error.message)
+                    throw error;
+                });
             });
-
         } catch (err) {
             alert({ msg: err, type: 'danger' });
         }
@@ -46,7 +51,7 @@ export default function LoginPage({ navigation }: MainPageProps) {
     return (
         <ScrollView style={styles.scroll} automaticallyAdjustKeyboardInsets={true}
             contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
-            >
+        >
             <View style={styles.container}>
                 <Image style={styles.image} source={require("../../../../assets/airplane.png")} />
                 <Text style={{ fontSize: 20, marginBottom: 5 }}>Login</Text>

@@ -12,32 +12,25 @@ import { useStore } from '../../../store/storeHooks';
 import { initializeLogin } from '../Login/Login.slice';
 import { PaymentStackNavigator } from './PaymentStackNav';
 
+interface UserUpdateInterface {
+    name: string,
+    surname: string,
+    phone_number: string
+}
 
 
 export default function UserProfilePage() {
     const { user } = useStore(({ app }) => app)
-    const [loading, setLoading] = useState(true)
-    const [firstLetters, setFirstLetters] = useState('')
+    const [loading, setLoading] = useState(false)
     const [activeModify, setActiveModify] = useState(false)
     const [paymentDetailsShow, setPaymentDetailsShow] = useState(false)
-    useEffect(() => {
-        const checkAuth = async () => {
-            if (user) {
-                await API.getUserInfo().then((result) => {
-                    store.dispatch(loadUser(result))
-                    setFirstLetters(result?.name[0] + '' + result?.surname[0])
-                    setLoading(false)
-                }).catch(function (error) {
-                    alert(error.message)
-                    // ADD THIS THROW error
-                    throw error;
-                });
-            }
-            setLoading(false)
-        };
-        checkAuth();
-    }, []);
-
+    const [userInfo, setUserinfo] = useState<UserUpdateInterface>(
+        {
+            name: user ? user.name : ' ',
+            surname: user ? user.surname : '',
+            phone_number: user ? user.phone_number : ''
+        }
+    )
     const handleLogout = () => {
         API.logOut().then(() => {
             store.dispatch(logout())
@@ -59,7 +52,7 @@ export default function UserProfilePage() {
                 <View style={styles.userInfoView}>
                     <Avatar.Text
                         style={{ marginTop: 25, marginRight: 'auto', position: 'relative', maxWidth: '35%' }}
-                        size={130} label={firstLetters} />
+                        size={130} label={user?.name[0] + '' + user?.surname[0]} />
                     <View style={styles.nameEmailBox}>
                         <Text style={styles.nameSurnameText}>{`${user?.name} ${user?.surname}`}</Text>
                         <Text style={styles.emailText}>{`${user?.username}`}</Text>
@@ -68,10 +61,32 @@ export default function UserProfilePage() {
             }
             <View style={{ height: 60, width: '100%', backgroundColor: '#ededed', display: 'flex', flexDirection: 'row' }}>
                 <Text style={{ fontSize: 18, marginTop: 'auto', marginBottom: 'auto', marginLeft: '5%' }}>Account</Text>
-                <Button style={{ marginTop: 'auto', marginBottom: 'auto', width: 50, marginLeft: 'auto' }} icon="pen"
-                    onPress={handleModify}
-                >
-                </Button>
+
+                {!activeModify ?
+                    <Button style={{ marginTop: 'auto', marginBottom: 'auto', width: 50, marginLeft: 'auto' }}
+                        labelStyle={{ fontSize: 30 }}
+                        icon="pen"
+                        onPress={handleModify}
+                    >
+                    </Button>
+                    :
+                    <View style={{ display: 'flex', flexDirection: 'row', width: 100, marginLeft: 'auto' }}>
+                        <Button style={{ marginTop: 'auto', marginBottom: 'auto', width: 30, marginLeft: 'auto', marginRight: 20 }}
+                            labelStyle={{ fontSize: 26 }}
+                            icon="close"
+                            onPress={handleModify}
+                            textColor={'red'}
+                        >
+                        </Button>
+                        <Button style={{ marginTop: 'auto', marginBottom: 'auto', width: 30, marginLeft: 'auto', marginRight: 20 }}
+                            labelStyle={{ fontSize: 26 }}
+                            icon="check"
+                            onPress={handleModify}
+                            textColor={'green'}
+                        >
+                        </Button>
+                    </View>
+                }
             </View>
             <View style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
                 <TextInput
@@ -79,8 +94,8 @@ export default function UserProfilePage() {
 
                     label="Name"
                     returnKeyType="next"
-                    value={user?.name}
-                    // onChangeText={(text) => setEmail({ value: text, error: '' })}
+                    value={userInfo.name}
+                    onChangeText={(text) => setUserinfo({ ...userInfo, name: text })}
                     // error={!!email.error}
                     // errorText={email.error}
                     autoCapitalize="none"
@@ -93,8 +108,8 @@ export default function UserProfilePage() {
 
                     label="Surname"
                     returnKeyType="next"
-                    value={user?.surname}
-                    // onChangeText={(text) => setEmail({ value: text, error: '' })}
+                    value={userInfo.surname}
+                    onChangeText={(text) => setUserinfo({ ...userInfo, surname: text })}
                     // error={!!email.error}
                     // errorText={email.error}
                     autoCapitalize="none"
@@ -106,8 +121,8 @@ export default function UserProfilePage() {
                     style={styles.TextInput}
                     label="Telephone"
                     returnKeyType="next"
-                    value={user?.phone_number}
-                    // onChangeText={(text) => setEmail({ value: text, error: '' })}
+                    value={userInfo.phone_number}
+                    onChangeText={(text) => setUserinfo({ ...userInfo, phone_number: text })}
                     // error={!!email.error}
                     // errorText={email.error}
                     autoCapitalize="none"
@@ -207,7 +222,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         padding: 15,
-        marginTop:45
+        marginTop: 45
     },
     title: {
         fontSize: 20,

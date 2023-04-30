@@ -131,6 +131,22 @@ app.get("/api/sessions/current", (req, res) => {
   } else res.status(401).json({ error: "Unauthenticated user!" });
 });
 
+app.put("/api/users/update/:id", async (req, res) => {
+  const id = Number(req.params.id);
+  const body = req.body;
+  console.log(body);
+  try {
+    await usersDao.updatePersonalInfo(body, id);
+    res.json(
+      `User personal data with: ${id}  was changed modified succesfully`
+    );
+  } catch (error) {
+    res
+      .status(500)
+      .json(`Error while updating info of user with id: ${id}   ` + error);
+  }
+});
+
 // activate the server
 app.listen(PORT, () => {
   console.log(`Server listening at http://localhost:${PORT}`);

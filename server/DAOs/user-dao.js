@@ -70,3 +70,19 @@ exports.getUser = (email, password) => {
     });
   });
 };
+
+exports.updatePersonalInfo = function (body, id) {
+  return new Promise((resolve, reject) => {
+    // const sql = 'UPDATE tasks SET completed = CASE status WHEN completed=0 THEN 1 WHEN completed=1 THEN 0 END WHERE id = ?';
+    const sql =
+      "UPDATE users SET name=?, surname=?, phone_number=?  WHERE id=?";
+    db.query(sql, [body.name, body.surname, body.phone_number, id], (err) => {
+      if (err) {
+        console.log(err);
+        reject(err);
+        return;
+      }
+      resolve(this.lastID);
+    });
+  });
+};

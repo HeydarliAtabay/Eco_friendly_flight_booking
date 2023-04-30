@@ -65,10 +65,45 @@ const getAllUsers = async () => {
   }
 };
 
+function updateUserPersonalData(body, userid) {
+  return new Promise((resolve, reject) => {
+    fetch(url + "/api/users/update/" + userid, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: body.name,
+        surname: body.surname,
+        phone_number: body.phone_number,
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          resolve(null);
+        } else {
+          // analyze the cause of error
+          response
+            .json()
+            .then((obj) => {
+              reject(obj);
+            }) // error message in the response body
+            .catch(() => {
+              reject({ error: "Cannot parse server response." });
+            }); // something else
+        }
+      })
+      .catch(() => {
+        reject({ error: "Cannot communicate with the server." });
+      }); // connection errors
+  });
+}
+
 const API = {
   logIn,
   logOut,
   getUserInfo,
   getAllUsers,
+  updateUserPersonalData,
 };
 export default API;
