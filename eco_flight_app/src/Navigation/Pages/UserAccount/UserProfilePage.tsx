@@ -27,7 +27,7 @@ export default function UserProfilePage() {
     const [paymentDetailsShow, setPaymentDetailsShow] = useState(false)
     const [userInfo, setUserinfo] = useState<UserUpdateInterface>(
         {
-            name: user ? user.name : ' ',
+            name: user ? user.name : '',
             surname: user ? user.surname : '',
             phone_number: user ? user.phone_number : ''
         }
@@ -42,6 +42,31 @@ export default function UserProfilePage() {
 
     const handleModify = () => {
         setActiveModify(!activeModify)
+    }
+
+    function updateUserInfo() {
+        if (user) {
+            setLoading(true)
+            API.updateUserPersonalData(userInfo, user?.id)
+                .then(() => {
+                    API.getUserInfo().then((result) => {
+                        store.dispatch(loadUser(result))
+                    }).catch(err => (err))
+                }).catch(err => (err))
+            setLoading(false)
+        }
+        setActiveModify(false)
+
+    }
+
+    async function handleDiscardChanges() {
+        if (user) {
+            setUserinfo({ ...userInfo, name: user?.name })
+            setUserinfo({ ...userInfo, surname: user?.surname })
+            setUserinfo({ ...userInfo, phone_number: user?.phone_number })
+        }
+        setActiveModify(false)
+
     }
     return (
         <View style={styles.container}>
@@ -75,14 +100,14 @@ export default function UserProfilePage() {
                         <Button style={{ marginTop: 'auto', marginBottom: 'auto', width: 30, marginLeft: 'auto', marginRight: 20 }}
                             labelStyle={{ fontSize: 26 }}
                             icon="close"
-                            onPress={handleModify}
+                            onPress={handleDiscardChanges}
                             textColor={'red'}
                         >
                         </Button>
                         <Button style={{ marginTop: 'auto', marginBottom: 'auto', width: 30, marginLeft: 'auto', marginRight: 20 }}
                             labelStyle={{ fontSize: 26 }}
                             icon="check"
-                            onPress={handleModify}
+                            onPress={updateUserInfo}
                             textColor={'green'}
                         >
                         </Button>
@@ -92,29 +117,21 @@ export default function UserProfilePage() {
             <View style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
                 <TextInput
                     style={styles.TextInput}
-
                     label="Name"
                     returnKeyType="next"
                     value={userInfo.name}
                     onChangeText={(text) => setUserinfo({ ...userInfo, name: text })}
-                    // error={!!email.error}
-                    // errorText={email.error}
                     autoCapitalize="none"
-                    // autoCompleteType="email"
                     textContentType="name"
                     disabled={activeModify ? false : true}
                 />
                 <TextInput
                     style={styles.TextInput}
-
                     label="Surname"
                     returnKeyType="next"
                     value={userInfo.surname}
                     onChangeText={(text) => setUserinfo({ ...userInfo, surname: text })}
-                    // error={!!email.error}
-                    // errorText={email.error}
                     autoCapitalize="none"
-                    // autoCompleteType="email"
                     textContentType="name"
                     disabled={activeModify ? false : true}
                 />
@@ -124,10 +141,7 @@ export default function UserProfilePage() {
                     returnKeyType="next"
                     value={userInfo.phone_number}
                     onChangeText={(text) => setUserinfo({ ...userInfo, phone_number: text })}
-                    // error={!!email.error}
-                    // errorText={email.error}
                     autoCapitalize="none"
-                    // autoCompleteType="email"
                     textContentType="telephoneNumber"
                     keyboardType="phone-pad"
                     disabled={activeModify ? false : true}
@@ -135,6 +149,7 @@ export default function UserProfilePage() {
 
                 <Button icon={'bank'} mode="contained"
                     buttonColor='#ededed'
+                    labelStyle={{ fontSize: 18, margin:'auto', marginTop:13 }}
                     textColor='black'
                     style={{ display: 'flex', marginTop: 'auto', borderRadius: 0, height: 50 }}
                     onPress={() => setPaymentDetailsShow(true)}>

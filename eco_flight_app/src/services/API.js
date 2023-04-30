@@ -99,11 +99,49 @@ function updateUserPersonalData(body, userid) {
   });
 }
 
+function userSignUp(user) {
+  return new Promise((resolve, reject) => {
+    fetch(url + "/api/signUp", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      //body: JSON.stringify({code: exam.coursecode, score: exam.score, date: exam.date}),
+      body: JSON.stringify({
+        name: user.name,
+        surname: user.surname,
+        phone_number: user.phone_number,
+        email: user.email,
+        hashed_password: user.hashed_password,
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          resolve(null);
+        } else {
+          // analyze the cause of error
+          response
+            .json()
+            .then((message) => {
+              reject(message);
+            }) // error message in the response body
+            .catch(() => {
+              reject({ error: "Cannot parse server response." });
+            }); // something else
+        }
+      })
+      .catch(() => {
+        reject({ error: "Cannot communicate with the server." });
+      }); // connection errors
+  });
+}
+
 const API = {
   logIn,
   logOut,
   getUserInfo,
   getAllUsers,
   updateUserPersonalData,
+  userSignUp,
 };
 export default API;

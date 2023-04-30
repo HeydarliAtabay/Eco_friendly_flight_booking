@@ -19,3 +19,12 @@ PUT http://localhost:3001/api/users/update/1
 Content-Type: application/json
 
 { "name":"Atabay","surname":"Surname","phone_number":"+393714920623"}
+
+
+
+### signup
+
+POST http://localhost:3001/api/signUp
+Content-Type: application/json
+
+{ "name":"Emin", "surname":"Suleymanov","phone_number":"+994505050505", "email":"emin@gmail.com", "hashed_password":"emin111"}

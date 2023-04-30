@@ -112,6 +112,18 @@ app.post("/api/login", function (req, res, next) {
   })(req, res, next);
 });
 
+app.post("/api/signUp", (req, res) => {
+  const user = req.body;
+  if (!user) {
+    res.status(400).end();
+  } else {
+    usersDao
+      .signUp(user)
+      .then((id) => res.status(201).json({ id: id }))
+      .catch((err) => res.status(500).json(err.message));
+  }
+});
+
 // DELETE /sessions/current
 // logout
 app.delete("/api/logout", function (req, res, next) {
