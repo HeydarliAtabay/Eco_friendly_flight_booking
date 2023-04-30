@@ -32,6 +32,8 @@ exports.getUserById = (id) => {
           id: row[0].id,
           username: row[0].email,
           name: row[0].name,
+          surname: row[0].surname,
+          phone_number: row[0].phone_number,
         };
         resolve(user);
       }
@@ -53,10 +55,14 @@ exports.getUser = (email, password) => {
         const user = {
           id: row[0].id,
           name: row[0].name,
+          surname: row[0].surname,
           username: row[0].email,
+          phone_number: row[0].phone_number,
         };
+
         // check the hashes with an async call, given that the operation may be CPU-intensive (and we don't want to block the server)
-        bcrypt.compare(password, row[0].hash).then((result) => {
+        bcrypt.compare(password, row[0].hashed_password).then((result) => {
+          console.log(result);
           if (result) resolve(user);
           else resolve(false);
         });

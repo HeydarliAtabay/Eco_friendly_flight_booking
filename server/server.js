@@ -30,6 +30,7 @@ app.get("/", (req, res) => {
 
 passport.use(
   new LocalStrategy(function (username, password, done) {
+    console.log("username " + username + " password " + password);
     usersDao
       .getUser(username, password)
       .then((user) => {
@@ -37,7 +38,6 @@ passport.use(
           return done(null, false, {
             message: "Incorrect username and/or password.",
           });
-
         return done(null, user);
       })
       .catch((err) => {
@@ -88,7 +88,8 @@ app.use(passport.session());
 /*** Users APIs ***/
 
 app.get("/api/users", (req, res) => {
-  usersDao.listAllUsers()
+  usersDao
+    .listAllUsers()
     .then((users) => {
       res.json(users);
     })
@@ -98,19 +99,14 @@ app.get("/api/users", (req, res) => {
 });
 
 // login
-app.post("/api/sessions", function (req, res, next) {
+app.post("/api/login", function (req, res, next) {
   passport.authenticate("local", (err, user, info) => {
     if (err) return next(err);
     if (!user) {
-      // display wrong login messages
       return res.status(401).json(info);
     }
-    // success, perform the login
     req.login(user, (err) => {
       if (err) return next(err);
-
-      // req.user contains the authenticated user, we send all the user info back
-      // this is coming from userDao.getUser()
       return res.json(req.user);
     });
   })(req, res, next);
@@ -118,9 +114,13 @@ app.post("/api/sessions", function (req, res, next) {
 
 // DELETE /sessions/current
 // logout
-app.delete("/api/sessions/current", (req, res) => {
-  req.logout();
-  res.end();
+app.delete("/api/logout", function (req, res, next) {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.end();
+  });
 });
 
 // GET /sessions/current

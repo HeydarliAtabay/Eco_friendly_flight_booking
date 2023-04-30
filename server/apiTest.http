@@ -1,2 +1,16 @@
 ### Getting all effects
-GET http://localhost:3001/api/users
+GET http://192.168.1.8:3001/api/users
+
+
+
+### Login
+POST http://localhost:3001/api/login
+Content-Type: application/json
+
+{ "username":"testuser@gmail.com", "password":"ecotest111"}
+
+
+
+### logout
+
+DELETE http://localhost:3001/api/logout

@@ -1,19 +1,13 @@
-const url = "http://192.168.1.256:3000";
+import { REACT_APP_LOCAL_IPv4_ADRESS } from "../shared_info";
+const url = `http://${REACT_APP_LOCAL_IPv4_ADRESS}:3001`;
+// const url = "http://192.168.1.8:3001";
 /*APIs FOR Effects */
 
 // User APIs
 // Login
 
-/*
-  fetch('https://example.com/data').then((response) => response.json()).then((json) => {
-    return data.names;
-}).catch((error) => {
-    console.error(error);
-});
-  */
-
 async function logIn(credentials) {
-  let response = await fetch(url + "/api/sessions", {
+  let response = await fetch(url + "/api/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -41,7 +35,7 @@ async function logIn(credentials) {
 
 // logout
 async function logOut() {
-  await fetch("/api/sessions/current", { method: "DELETE" }).catch((error) => {
+  await fetch(url + "/api/logout", { method: "DELETE" }).catch((error) => {
     // Handle any errors that occur
     console.error(error);
   });
@@ -54,16 +48,27 @@ async function getUserInfo() {
     console.error(error);
   });
   const userInfo = await response.json();
-  if (response.ok) {
+  if (response && response.ok) {
     return userInfo;
   } else {
     throw userInfo; // an object with the error coming from the server
   }
 }
 
+const getAllUsers = async () => {
+  try {
+    const response = await fetch(url + "/api/users");
+    const json = await response.json();
+    return json.movies;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const API = {
   logIn,
   logOut,
   getUserInfo,
+  getAllUsers,
 };
 export default API;

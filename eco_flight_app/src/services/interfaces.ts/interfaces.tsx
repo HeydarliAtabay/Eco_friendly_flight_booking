@@ -1,6 +1,7 @@
-export type User={
-    id:number
-    email:string
-    name:string 
-    surname:string
+export type User = {
+    id: number
+    username: string
+    name: string
+    surname: string
+    phone_number:string
 }

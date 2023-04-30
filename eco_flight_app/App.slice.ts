@@ -21,7 +21,6 @@ const slice = createSlice({
     },
     logout: (state) => {
       state.user = undefined;
-      localStorage.removeItem('access_token');
     },
     endLoad: (state) => {
       state.loading = false;
@@ -29,6 +28,6 @@ const slice = createSlice({
   },
 });
 
-export const { loadUser, logout, endLoad} = slice.actions;
+export const { loadUser, logout, endLoad, initializeApp} = slice.actions;
 
 export default slice.reducer;

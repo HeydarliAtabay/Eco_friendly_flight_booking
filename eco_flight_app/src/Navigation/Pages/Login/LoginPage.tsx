@@ -1,48 +1,40 @@
-import { NativeStackNavigationProp } from "@react-navigation/native-stack/lib/typescript/src/types";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
-import { Image, StyleSheet, Text, View, TextInput, TouchableOpacity, Button } from "react-native";
+import { Image, StyleSheet, Text, View, TouchableOpacity, ScrollView, KeyboardAvoidingView } from "react-native";
 import { store } from "../../../store/store";
 import { useStore } from "../../../store/storeHooks";
 import { LoginState, updateField } from "./Login.slice";
 import API from '../../../services/API'
+import { loadUser } from "../../../../App.slice";
+import { Button, TextInput } from "react-native-paper";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-// interface MainPageProps {
-//     navigation: NativeStackNavigationProp<any, any>;
-// }
+interface MainPageProps {
+    navigation: NativeStackNavigationProp<any, any>;
+}
 
-export default function LoginPage() {
+export default function LoginPage({ navigation }: MainPageProps) {
     const { user } = useStore(({ login }) => login)
     function onUpdateField(name: string, value: string) {
         store.dispatch(updateField({ name: name as keyof LoginState['user'], value }));
     }
-    const doLogIn = async (credentials: { email: string, password: string }) => {
+    const doLogIn = async (credentials: { username: string, password: string }) => {
         try {
-            const user = await API.logIn(credentials);
-
-            alert(`Welcome, ${user}!`);
+            await API.logIn(credentials).then((result) => {
+                store.dispatch(loadUser(result))
+            });
 
         } catch (err) {
             alert({ msg: err, type: 'danger' });
         }
     }
-    // logout
-    // const doLogOut = async () => {
-    //     await API.logOut();
-    //     // clean up everything
-    // }
-
     const handleSubmit = () => {
         let valid = true;
         if (user.email === "" || user.password === "" || user.password.length < 6)
             valid = false;
-
         if (valid) {
-            doLogIn(user).then(() => {
-                alert('logged in succesfuly')
-            }).catch(function (error) {
-                console.log('There has been a problem with your fetch operation: ' + error.message);
-                // ADD THIS THROW error
+            doLogIn({ username: user.email, password: user.password }).catch(function (error) {
+                alert(`There has been a problem with your fetch operation: ${error.message}`);
                 throw error;
             })
 
@@ -52,64 +44,83 @@ export default function LoginPage() {
     };
 
     return (
-        <View style={styles.container}>
-            <StatusBar style="auto" />
-            <Image style={styles.image} source={require("../../../../assets/airplane.png")} />
-            <Text style={{ fontSize: 20, marginBottom: 5 }}>Login</Text>
-            <View style={styles.inputView}>
+        <ScrollView style={styles.scroll} automaticallyAdjustKeyboardInsets={true}
+            contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+            >
+            <View style={styles.container}>
+                <Image style={styles.image} source={require("../../../../assets/airplane.png")} />
+                <Text style={{ fontSize: 20, marginBottom: 5 }}>Login</Text>
                 <TextInput
                     style={styles.TextInput}
-                    placeholder="Email"
-                    placeholderTextColor="#003f5c"
+                    label="Email"
+                    returnKeyType="next"
+                    value={user.email}
+                    underlineColor='transparent'
                     onChangeText={(v: string) => {
                         onUpdateField('email', v)
                     }}
+                    // errorText={email.error}
+                    autoCapitalize="none"
+                    textContentType="emailAddress"
+                    keyboardType="email-address"
                 />
-            </View>
-            <View style={styles.inputView}>
                 <TextInput
                     style={styles.TextInput}
-                    placeholder="Password"
-                    placeholderTextColor="#003f5c"
-                    secureTextEntry={true}
+                    label="Password"
+                    returnKeyType="done"
+                    value={user.password}
+                    underlineColor='transparent'
                     onChangeText={(v: string) => {
                         onUpdateField('password', v)
                     }}
+                    // error={!!password.error}
+                    secureTextEntry
                 />
-            </View>
-            <TouchableOpacity>
-                <Text style={styles.forgot_button}>Forgot Password?</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.loginBtn}
-                onPress={handleSubmit}
-            >
-                <Text>Login</Text>
-            </TouchableOpacity>
 
-            <Text> {user.email}</Text>
-            <Text>{user.password}</Text>
-        </View>
+                {/* <KeyboardAvoidingView style={{ width: '90%', alignItems: 'center' }} behavior="padding"> */}
+
+                {/* </KeyboardAvoidingView> */}
+
+                <TouchableOpacity>
+                    <Text style={styles.forgot_button}>Forgot Password?</Text>
+                </TouchableOpacity>
+                <Button icon={'send'} mode="contained" onPress={handleSubmit}>
+                    Login to your account
+                </Button>
+                <View style={styles.row}>
+                    <Text>Don’t have an account? </Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('Sign up')}>
+                        <Text style={styles.link}>Sign up</Text>
+                    </TouchableOpacity>
+                </View>
+            </View >
+        </ScrollView>
+
+
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         backgroundColor: "#fff",
         alignItems: "center",
         justifyContent: "center",
     },
+    scroll: {
+        flex: 1,
+        backgroundColor: "#fff",
+
+    },
+
     image: {
         margin: 'auto',
-        width: 270,
-        height: 270,
-
         marginBottom: 50,
     },
     input: {
         height: 40,
         margin: 5,
-        width: '60%',
+        width: '80%',
         borderWidth: 1,
         padding: 10,
         borderRadius: 15
@@ -117,16 +128,22 @@ const styles = StyleSheet.create({
     inputView: {
         backgroundColor: "#ADD8E6",
         borderRadius: 12,
-        width: "85%",
+        width: "100%",
         height: 45,
         marginBottom: 10,
         alignItems: "center",
     },
     TextInput: {
         height: 50,
-        flex: 1,
-        padding: 10,
-        marginLeft: 20,
+        width: '85%',
+        backgroundColor: '#ADD8E6',
+        padding: 1,
+        marginBottom: 10,
+        borderRadius: 12,
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 12,
+        borderWidth: 0,
+        borderBottomWidth: 0
     },
     forgot_button: {
         height: 30,
@@ -140,6 +157,18 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         marginTop: 40,
         backgroundColor: "#ADD8E6",
+    },
+    row: {
+        flexDirection: 'row',
+        marginTop: 4,
+    },
+    forgot: {
+        fontSize: 13,
+        color: 'orange'
+    },
+    link: {
+        fontWeight: 'bold',
+        color: "#800080",
     },
 
 });

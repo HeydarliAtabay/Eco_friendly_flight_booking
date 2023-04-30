@@ -7,12 +7,15 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import ListOfBookingsPage from "./Pages/ListOfBookings";
 import BookingPage from "./Pages/BookingPage";
+// import UserProfilePage from "./Pages/UserAccount/UserProfilePage";
+import UserProfilePage from "./Pages/UserAccount/UserProfilePage";
 import { MainPageStackNavigator } from "./Pages/MainPageStackNav";
 
 // Screen names
 const MainName = "Main";
 const BookingName = "Booking";
 const ListName = "List of Bookings";
+const UserProfileName = 'Account'
 
 const Tab = createBottomTabNavigator();
 
@@ -30,9 +33,12 @@ export default function MainContainer() {
               if (rn === MainName) {
                 iconName = focused ? "home" : "home-outline";
               } else if (rn === BookingName) {
-                iconName = focused ? "camera" : "camera-outline";
+                iconName = focused ? "airplane" : "airplane-outline";
               } else if (rn === ListName) {
                 iconName = focused ? "list" : "list-outline";
+              }
+              else if (rn === UserProfileName) {
+                iconName = focused ? "person" : "person-outline";
               }
 
               return (
@@ -44,11 +50,11 @@ export default function MainContainer() {
               );
             },
           })}
-          // tabBarOptions={{
-          //     activeTintColor: '#385399',
-          //     inactiveTintColor: 'grey',
-          //     labelStyle: { paddingBottom: 5, fontSize: 10 },
-          // }}
+        // tabBarOptions={{
+        //     activeTintColor: '#385399',
+        //     inactiveTintColor: 'grey',
+        //     labelStyle: { paddingBottom: 5, fontSize: 10 },
+        // }}
         >
           <Tab.Screen
             name={MainName}
@@ -59,6 +65,7 @@ export default function MainContainer() {
           />
           <Tab.Screen name={BookingName} component={BookingPage} />
           <Tab.Screen name={ListName} component={ListOfBookingsPage} />
+          <Tab.Screen name={UserProfileName} component={UserProfilePage}  />
         </Tab.Navigator>
       </NavigationContainer>
     </>
