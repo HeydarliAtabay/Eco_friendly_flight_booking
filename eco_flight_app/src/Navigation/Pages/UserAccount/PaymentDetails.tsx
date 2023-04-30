@@ -1,26 +1,24 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React from 'react';
-import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { Image, Modal, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Button, Card, Text } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/Ionicons';
+import CreditCardAdd from './CreditCardAdd';
 
-interface MainPageProps {
-    navigation: NativeStackNavigationProp<any, any>;
-}
-export default function PaymentDetailsPage({ navigation }: MainPageProps) {
+export default function PaymentDetailsPage() {
+    const [showCreditCardPage, setShowCreditCardPage] = useState(false)
     return (
         <View style={styles.container}>
             <ScrollView style={{ width: '100%', marginTop: 10 }}
                 contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}
             >
                 <Card style={styles.card}
-                    onPress={() => {
-                        navigation.navigate('CreditAdd')
-                    }}
+
                 >
                     <TouchableOpacity
                         style={{ width: '100%' }}
                         onPress={() => {
-                            navigation.navigate('CreditAdd')
+                            setShowCreditCardPage(true)
                         }}
                     >
                         <Card.Content style={{ width: '100%' }}>
@@ -31,15 +29,9 @@ export default function PaymentDetailsPage({ navigation }: MainPageProps) {
                     </TouchableOpacity>
                 </Card>
                 <Card style={styles.card}
-                    onPress={() => {
-                        navigation.navigate('CreditAdd')
-                    }}
                 >
                     <TouchableOpacity
                         style={{ width: '100%' }}
-                        onPress={() => {
-                            navigation.navigate('CreditAdd')
-                        }}
                     >
                         <Card.Content style={{ width: '100%' }}>
                             <Card.Cover
@@ -49,15 +41,9 @@ export default function PaymentDetailsPage({ navigation }: MainPageProps) {
                     </TouchableOpacity>
                 </Card>
                 <Card style={styles.card}
-                    onPress={() => {
-                        navigation.navigate('CreditAdd')
-                    }}
                 >
                     <TouchableOpacity
                         style={{ width: '100%' }}
-                        onPress={() => {
-                            navigation.navigate('CreditAdd')
-                        }}
                     >
                         <Card.Content style={{ width: '100%' }}>
                             <Card.Cover
@@ -67,7 +53,23 @@ export default function PaymentDetailsPage({ navigation }: MainPageProps) {
                     </TouchableOpacity>
                 </Card>
             </ScrollView>
-
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={showCreditCardPage}
+                onRequestClose={() => {
+                    setShowCreditCardPage(!showCreditCardPage);
+                }}>
+                <View style={styles.header}>
+                    <Icon
+                        name="chevron-down"
+                        size={30}
+                        onPress={() => setShowCreditCardPage(false)}
+                    />
+                    <Text style={styles.title}>Credit card info</Text>
+                </View>
+                <CreditCardAdd />
+            </Modal>
         </View>
     );
 }
@@ -84,5 +86,17 @@ const styles = StyleSheet.create({
         padding: 0,
         marginBottom: 10,
         backgroundColor: '#fff'
-    }
+    },
+    header: {
+        height: 60,
+        backgroundColor: '#ededed',
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 15,
+        marginTop: 45
+    },
+    title: {
+        fontSize: 20,
+        marginLeft: 30,
+    },
 });

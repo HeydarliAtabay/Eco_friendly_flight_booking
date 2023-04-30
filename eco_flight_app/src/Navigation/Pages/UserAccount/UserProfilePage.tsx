@@ -1,3 +1,4 @@
+import { NavigationContainer } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
@@ -10,7 +11,7 @@ import API from '../../../services/API';
 import { store } from '../../../store/store';
 import { useStore } from '../../../store/storeHooks';
 import { initializeLogin } from '../Login/Login.slice';
-import { PaymentStackNavigator } from './PaymentStackNav';
+import PaymentDetailsPage from './PaymentDetails';
 
 interface UserUpdateInterface {
     name: string,
@@ -163,7 +164,7 @@ export default function UserProfilePage() {
                     />
                     <Text style={styles.title}>Payment details</Text>
                 </View>
-                <PaymentStackNavigator />
+                <PaymentDetailsPage />
             </Modal>
         </View>
     );
