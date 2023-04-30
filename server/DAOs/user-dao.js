@@ -32,6 +32,8 @@ exports.getUserById = (id) => {
           id: row[0].id,
           username: row[0].email,
           name: row[0].name,
+          surname: row[0].surname,
+          phone_number: row[0].phone_number,
         };
         resolve(user);
       }
@@ -53,14 +55,34 @@ exports.getUser = (email, password) => {
         const user = {
           id: row[0].id,
           name: row[0].name,
+          surname: row[0].surname,
           username: row[0].email,
+          phone_number: row[0].phone_number,
         };
+
         // check the hashes with an async call, given that the operation may be CPU-intensive (and we don't want to block the server)
-        bcrypt.compare(password, row[0].hash).then((result) => {
+        bcrypt.compare(password, row[0].hashed_password).then((result) => {
+          console.log(result);
           if (result) resolve(user);
           else resolve(false);
         });
       }
+    });
+  });
+};
+
+exports.updatePersonalInfo = function (body, id) {
+  return new Promise((resolve, reject) => {
+    // const sql = 'UPDATE tasks SET completed = CASE status WHEN completed=0 THEN 1 WHEN completed=1 THEN 0 END WHERE id = ?';
+    const sql =
+      "UPDATE users SET name=?, surname=?, phone_number=?  WHERE id=?";
+    db.query(sql, [body.name, body.surname, body.phone_number, id], (err) => {
+      if (err) {
+        console.log(err);
+        reject(err);
+        return;
+      }
+      resolve(this.lastID);
     });
   });
 };
