@@ -2,6 +2,7 @@ import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { GRAY, GREEN } from "../../helpers/styles";
 import { Flight_Mode } from "../../helpers";
+import React from "react";
 
 export default function RouteSwitch(props: {
   flightMode: Flight_Mode;

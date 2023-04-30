@@ -7,8 +7,15 @@ import { useState } from "react";
 import { Flight_Mode } from "../../helpers";
 import PassengerCounter from "./PassengerCounter";
 import { GRAY, GREEN } from "../../helpers/styles";
+import React from "react";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-export default function SearchFlight() {
+interface MainPageProps {
+  navigation: NativeStackNavigationProp<any, any>;
+}
+
+
+export default function SearchFlight({ navigation }: MainPageProps) {
   const [flightMode, setFlightMode] = useState<Flight_Mode>(
     Flight_Mode.ONE_WAY
   );
@@ -24,7 +31,7 @@ export default function SearchFlight() {
         <TouchableHighlight
           activeOpacity={0.7}
           underlayColor={GRAY}
-          // onPress={() => {}}
+          onPress={() => navigation.navigate('Results')}
         >
           <Text style={styles.footer_button}>Search</Text>
         </TouchableHighlight>
