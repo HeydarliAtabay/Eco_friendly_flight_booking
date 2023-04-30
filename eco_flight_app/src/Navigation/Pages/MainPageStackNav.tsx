@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import SearchFlight from "../../Components/SearchFlight";
+import SearchFlight from "../../Components/SearchFlight/SearchFlight";
 import MainPage from "./MainPage";
 
 const Stack = createNativeStackNavigator();
