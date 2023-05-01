@@ -87,6 +87,48 @@ exports.updatePersonalInfo = function (body, id) {
   });
 };
 
+exports.signUp = (user) => {
+  return new Promise((resolve, reject) => {
+    const sql =
+      "INSERT INTO users(name, surname, phone_number, email, hashed_password) VALUES(?,?,?,?,?)";
+
+    const password = user.hashed_password;
+    const saltRounds = 10;
+    let hashedPassword; // Declare the variable outside the promise chain
+
+    bcrypt
+      .hash(password, saltRounds)
+      .then((hash) => {
+        // Update the value of hashedPassword inside the promise chain
+        hashedPassword = hash;
+        console.log("Hashed password:", hashedPassword);
+
+        db.query(
+          sql,
+          [
+            user.name,
+            user.surname,
+            user.phone_number,
+            user.email,
+            hashedPassword,
+          ],
+          function (err) {
+            if (err) {
+              reject(err);
+              return;
+            }
+            console.log(this.lastID);
+            resolve(this.lastID);
+          }
+        );
+      })
+      .catch((error) => {
+        // Handle error
+        console.error("Error:", error);
+      });
+  });
+};
+
 // exports.insertAirports = function (code, name, city, country) {
 //   return new Promise((resolve, reject) => {
 //     const sql =

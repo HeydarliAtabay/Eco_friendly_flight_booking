@@ -1,14 +1,39 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
+import API from '../../../services/API';
 
 
 interface MainPageProps {
     navigation: NativeStackNavigationProp<any, any>;
 }
+interface userSignUpInterface {
+    name: string,
+    surname: string,
+    phone_number: string,
+    email: string,
+    hashed_password: string
+}
 export default function SignupPage({ navigation }: MainPageProps) {
+    const [userInfo, setUserInfo] = useState<userSignUpInterface>({
+        name: '',
+        surname: '',
+        phone_number: '',
+        email: '',
+        hashed_password: ''
+    })
+    const [secondPassword, setSecondPassword] = useState('')
+    const [paswordsAreSame, setPasswordsAreSame] = useState(false)
+
+    async function handleSignUp() {
+        if (userInfo.name !== '' && userInfo.surname !== '' && userInfo.phone_number !== '' && userInfo.email !== '' && userInfo.hashed_password !== '') {
+            await API.userSignUp(userInfo).then(() => {
+                navigation.navigate('Login')
+            }).catch((error) => alert(error))
+        }
+    }
     return (
         <ScrollView style={styles.scroll} automaticallyAdjustKeyboardInsets={true}
             contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
@@ -17,12 +42,14 @@ export default function SignupPage({ navigation }: MainPageProps) {
             <View style={styles.container}>
                 <Text style={styles.titleText}>Create Account</Text>
                 <TextInput
+
                     style={styles.TextInput}
                     label="Name"
                     returnKeyType="next"
                     underlineColor='transparent'
-                // value={name.value}
-                // onChangeText={(text) => setName({ value: text, error: '' })}
+                    value={userInfo.name}
+                    onChangeText={(text) => setUserInfo({ ...userInfo, name: text })}
+
                 // error={!!name.error}
                 />
                 <TextInput
@@ -30,8 +57,8 @@ export default function SignupPage({ navigation }: MainPageProps) {
                     label="Surname"
                     returnKeyType="next"
                     underlineColor='transparent'
-                // value={name.value}
-                // onChangeText={(text) => setName({ value: text, error: '' })}
+                    value={userInfo.surname}
+                    onChangeText={(text) => setUserInfo({ ...userInfo, surname: text })}
                 // error={!!name.error}
                 />
                 <TextInput
@@ -40,9 +67,8 @@ export default function SignupPage({ navigation }: MainPageProps) {
                     label="Telephone"
                     returnKeyType="next"
                     underlineColor='transparent'
-
-                    // value={email.value}
-                    // onChangeText={(text) => setEmail({ value: text, error: '' })}
+                    value={userInfo.phone_number}
+                    onChangeText={(text) => setUserInfo({ ...userInfo, phone_number: text })}
                     // error={!!email.error}
                     // errorText={email.error}
                     autoCapitalize="none"
@@ -56,9 +82,8 @@ export default function SignupPage({ navigation }: MainPageProps) {
                     label="Email"
                     returnKeyType="next"
                     underlineColor='transparent'
-
-                    // value={email.value}
-                    // onChangeText={(text) => setEmail({ value: text, error: '' })}
+                    value={userInfo.email}
+                    onChangeText={(text) => setUserInfo({ ...userInfo, email: text })}
                     // error={!!email.error}
                     // errorText={email.error}
                     autoCapitalize="none"
@@ -72,19 +97,40 @@ export default function SignupPage({ navigation }: MainPageProps) {
                     label="Password"
                     returnKeyType="done"
                     underlineColor='transparent'
-
-                    // value={password.value}
-                    // onChangeText={(text) => setPassword({ value: text, error: '' })}
+                    value={userInfo.hashed_password}
+                    onChangeText={(text) => setUserInfo({ ...userInfo, hashed_password: text })}
                     // error={!!password.error}
                     secureTextEntry
                 />
+                <TextInput
+                    style={styles.TextInput}
+
+                    label="Confirm Password"
+                    returnKeyType="done"
+                    underlineColor='transparent'
+                    value={secondPassword}
+                    onChangeText={(text) => {
+                        if (text === userInfo.hashed_password) {
+                            setPasswordsAreSame(true)
+                        }
+                        else {
+                            setPasswordsAreSame(false)
+                        }
+                        setSecondPassword(text)
+
+                    }}
+                    error={secondPassword.length !== 0 && !paswordsAreSame}
+                    secureTextEntry
+                />
                 <Button
+                    onPress={handleSignUp}
                     mode="contained"
-                    // onPress={onSignUpPressed}
                     style={{ marginTop: 24 }}
+                    disabled={!paswordsAreSame ? true : false}
                 >
                     Sign Up
                 </Button>
+
                 <View style={styles.row}>
                     <Text>Already have an account? </Text>
                     <TouchableOpacity onPress={() => navigation.navigate('Login')}>

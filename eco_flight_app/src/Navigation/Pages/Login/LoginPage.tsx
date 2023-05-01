@@ -23,7 +23,6 @@ export default function LoginPage({ navigation }: MainPageProps) {
             await API.logIn(credentials).then((result) => {
                 API.getUserInfo().then((result) => {
                     store.dispatch(loadUser(result))
-                    // setFirstLetters(result?.name[0] + '' + result?.surname[0])
                 }).catch(function (error) {
                     alert(error.message)
                     throw error;
