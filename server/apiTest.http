@@ -28,3 +28,40 @@ POST http://localhost:3001/api/signUp
 Content-Type: application/json
 
 { "name":"Emin", "surname":"Suleymanov","phone_number":"+994505050505", "email":"emin@gmail.com", "hashed_password":"emin111"}
+
+
+### Getting all effects
+
+GET http://localhost:3001/api/airlines
+
+
+### flight search
+
+POST http://localhost:3001/api/searchFlights
+Content-Type: application/json
+
+{ "departure_date":"2023-05-09", "arrival_date":"2023-05-14","arrival_airport":"MXP", "departure_airport":"KRK"}
+
+
+### flight create
+
+POST http://localhost:3001/api/createflight
+Content-Type: application/json
+
+{     "departure_airport": 56,
+      "arrival_airport": 69,
+      "departure_date": "2023-05-11",
+      "departure_time": "10:00:00",
+      "arrival_date": "2023-05-11",
+      "arrival_time": "12:10",
+      "econom_price": 59.99,
+      "business_price": 160,
+      "first_class_price": 350,
+      "airline": 4,
+      "flight_number": "AB321"
+}
+
+### generate flights
+
+POST http://localhost:3001/api/createFakeFlights/250
+Content-Type: application/json
