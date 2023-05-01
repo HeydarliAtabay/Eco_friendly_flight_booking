@@ -7,4 +7,14 @@ export interface CalendarProps {
   minDate?: Date;
   initialDate?: Date;
   selectedDate?: Date;
+  departureAirport?: string;
+  arrivalAirport?: string;
+}
+
+export interface Airport {
+  id: number;
+  code: string;
+  name: string;
+  city: string;
+  country: string;
 }

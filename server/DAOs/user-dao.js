@@ -128,3 +128,18 @@ exports.signUp = (user) => {
       });
   });
 };
+
+// exports.insertAirports = function (code, name, city, country) {
+//   return new Promise((resolve, reject) => {
+//     const sql =
+//       "INSERT INTO airports (code, name, city, country) VALUES (?, ?, ?, ?);";
+//     db.query(sql, [code, name, city, country], (err) => {
+//       if (err) {
+//         console.log(err);
+//         reject(err);
+//         return;
+//       }
+//       resolve(this.lastID);
+//     });
+//   });
+// };

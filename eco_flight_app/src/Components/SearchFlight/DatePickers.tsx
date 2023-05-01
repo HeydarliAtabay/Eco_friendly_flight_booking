@@ -4,10 +4,21 @@ import { DARK_GRAY, GRAY } from "../../helpers/styles";
 import moment, { Moment } from "moment";
 import CalendarModal from "./CalendarModal";
 import { CalendarProps, Flight_Mode } from "../../helpers";
+import { useSelector } from "react-redux";
+import { State, store } from "../../store/store";
+import { loadDepartureDate, loadReturnDate } from "./SearchFlight.slice";
 
-export default function DatePickers(props: { flightMode: Flight_Mode }) {
-  const [departureDate, setDepartureDate] = useState<Moment>(moment());
-  const [returnDate, setReturnDate] = useState<Moment>();
+export default function DatePickers() {
+  const flightMode = useSelector(
+    (state: State) => state.search_flight.flightMode
+  );
+  const departureDate = useSelector(
+    (state: State) => state.search_flight.departureDate
+  );
+  const returnDate = useSelector(
+    (state: State) => state.search_flight.returnDate
+  );
+  const airports = useSelector((state: State) => state.search_flight.airports);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [requestor, setRequestor] = useState<"Departure" | "Return">();
   const [calendarProps, setCalendarProps] = useState<CalendarProps>({});
@@ -20,6 +31,8 @@ export default function DatePickers(props: { flightMode: Flight_Mode }) {
         minDate: moment().toDate(),
         initialDate: departureDate.toDate(),
         selectedDate: departureDate.toDate(),
+        departureAirport: airports.from?.city as string,
+        arrivalAirport: airports.to?.city as string,
       });
     }
     if (req === "Return") {
@@ -27,19 +40,21 @@ export default function DatePickers(props: { flightMode: Flight_Mode }) {
         minDate: departureDate.toDate(),
         initialDate: returnDate?.toDate(),
         selectedDate: returnDate?.toDate(),
+        departureAirport: airports.to?.city as string,
+        arrivalAirport: airports.from?.city as string,
       });
     }
   };
 
   const setDate = (date: Moment) => {
     if (requestor === "Departure") {
-      setDepartureDate(date);
-      if (returnDate && date.isAfter(returnDate)) {
-        setReturnDate(date);
+      store.dispatch(loadDepartureDate(date));
+      if (!returnDate || date.isAfter(returnDate)) {
+        store.dispatch(loadReturnDate(date));
       }
     }
     if (requestor === "Return") {
-      setReturnDate(date);
+      store.dispatch(loadReturnDate(date));
     }
   };
 
@@ -66,7 +81,7 @@ export default function DatePickers(props: { flightMode: Flight_Mode }) {
         </View>
       </TouchableHighlight>
 
-      {props.flightMode === Flight_Mode.RETURN && (
+      {flightMode === Flight_Mode.RETURN && (
         <>
           <View style={styles.divider} />
           <TouchableHighlight

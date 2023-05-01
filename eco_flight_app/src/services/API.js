@@ -55,16 +55,6 @@ async function getUserInfo() {
   }
 }
 
-const getAllUsers = async () => {
-  try {
-    const response = await fetch(url + "/api/users");
-    const json = await response.json();
-    return json.movies;
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 function updateUserPersonalData(body, userid) {
   return new Promise((resolve, reject) => {
     fetch(url + "/api/users/update/" + userid, {
@@ -136,12 +126,25 @@ function userSignUp(user) {
   });
 }
 
+// Airport APIs
+
+// list all
+const getAirportList = async () => {
+  try {
+    const response = await fetch(url + "/api/airports");
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const API = {
   logIn,
   logOut,
   getUserInfo,
-  getAllUsers,
   updateUserPersonalData,
   userSignUp,
+  getAirportList,
 };
 export default API;

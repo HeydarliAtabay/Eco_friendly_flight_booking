@@ -2,23 +2,25 @@ import React, { useState } from "react";
 import { StyleSheet, Text, TouchableHighlight, View } from "react-native";
 import { DARK_GRAY, GRAY } from "../../helpers/styles";
 import Icon from "react-native-vector-icons/Ionicons";
+import { useSelector } from "react-redux";
+import { State, store } from "../../store/store";
+import { loadPassengers } from "./SearchFlight.slice";
 
 export default function PassengerCounter() {
-  const [passengers, setPassengers] = useState<{
-    adults: number;
-    childen: number;
-  }>({ adults: 0, childen: 0 });
+  const passengers = useSelector(
+    (state: State) => state.search_flight.passengers
+  );
 
   const countPassenger = (ageGroup: "Adult" | "Child", count: number) => {
     if (ageGroup === "Adult") {
       let adults = passengers.adults + count;
       if (adults < 0) adults = 0;
-      setPassengers((p) => ({ ...p, adults: adults }));
+      store.dispatch(loadPassengers({ count: adults, type: "Adult" }));
     }
     if (ageGroup === "Child") {
       let childen = passengers.childen + count;
       if (childen < 0) childen = 0;
-      setPassengers((p) => ({ ...p, childen: childen }));
+      store.dispatch(loadPassengers({ count: childen, type: "Child" }));
     }
   };
   return (
