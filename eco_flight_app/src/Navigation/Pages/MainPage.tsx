@@ -2,7 +2,6 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack/lib/ty
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
-import { store } from "../../store/store";
 import { useStore } from "../../store/storeHooks";
 
 interface MainPageProps {
@@ -10,11 +9,14 @@ interface MainPageProps {
 }
 
 export default function MainPage({ navigation }: MainPageProps) {
-  const { user } = useStore(({ app }) => app)
+  const { user } = useStore(({ app }) => app);
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      <Text style={{fontWeight:'bold', fontSize:20}}>{`Welcome ${user?.name} ${user?.surname}`}</Text>
+      <Text
+        style={{ fontWeight: "bold", fontSize: 20 }}
+      >{`Welcome ${user?.name} ${user?.surname}`}</Text>
       <Text>Main Page will be shown here</Text>
 
       <Button

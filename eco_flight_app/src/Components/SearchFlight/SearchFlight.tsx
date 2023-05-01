@@ -1,24 +1,40 @@
+import React, { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, TouchableHighlight, View } from "react-native";
 import RouteSwitch from "./RouteSwitch";
 import AirportSelect from "./AirportSelect";
 import DatePickers from "./DatePickers";
-import { useState } from "react";
-import { Flight_Mode } from "../../helpers";
 import PassengerCounter from "./PassengerCounter";
 import { GRAY, GREEN } from "../../helpers/styles";
+import API from "../../services/API";
+import { store } from "../../store/store";
+import { loadAirportList } from "./SearchFlight.slice";
 
 export default function SearchFlight() {
-  const [flightMode, setFlightMode] = useState<Flight_Mode>(
-    Flight_Mode.ONE_WAY
-  );
+  useEffect(() => {
+    try {
+      API.getAirportList()
+        .then((list) => {
+          if (list) {
+            store.dispatch(loadAirportList(list));
+          }
+        })
+        .catch(function (error) {
+          alert(error.message);
+          throw error;
+        });
+    } catch (err) {
+      alert({ msg: err, type: "danger" });
+    }
+  }, []);
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
 
-      <RouteSwitch flightMode={flightMode} setFlightMode={setFlightMode} />
+      <RouteSwitch />
       <AirportSelect />
-      <DatePickers flightMode={flightMode} />
+      <DatePickers />
       <PassengerCounter />
       <View style={styles.footer}>
         <TouchableHighlight

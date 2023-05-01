@@ -6,10 +6,12 @@ const morgan = require("morgan");
 const db = require("./db");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const usersDao = require("./DAOs/user-dao");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy; // username and password for login
 const session = require("express-session");
+const usersDao = require("./DAOs/user-dao");
+const airportsDao = require("./DAOs/airport-dao");
+// const { RAW_LIST } = require("./rawData");
 
 app.use(morgan("dev"));
 app.use(express.json());
@@ -19,6 +21,28 @@ app.use(cors());
 app.use(express.static("./public"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// API to insert or update new into DB
+// app.get("/updatedb", (req, res) => {
+//   RAW_LIST.forEach(async (airport) => {
+//     try {
+//       await usersDao.insertAirports(
+//         airport.code,
+//         airport.name,
+//         airport.city.name,
+//         airport.country.name
+//       );
+//     } catch (error) {
+//       res
+//         .status(500)
+//         .json(`Error while updating info of user with id:  ` + error);
+//     }
+//   });
+
+//   res.send(
+//     `Hi from the server, which is running on  http://localhost:${PORT}/`
+//   );
+// });
 
 app.get("/", (req, res) => {
   res.send(
@@ -145,6 +169,18 @@ app.put("/api/users/update/:id", async (req, res) => {
       .status(500)
       .json(`Error while updating info of user with id: ${id}   ` + error);
   }
+});
+
+/*** Airports APIs ***/
+app.get("/api/airports", (req, res) => {
+  airportsDao
+    .listAllAirports()
+    .then((airports) => {
+      res.json(airports);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
 });
 
 // activate the server

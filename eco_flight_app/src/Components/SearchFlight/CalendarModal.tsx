@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Modal,
+  Platform,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -51,11 +52,11 @@ export default function CalendarModal(props: {
       <View style={styles.directions_container}>
         <View style={styles.directions_inner_container}>
           <Text style={styles.directions_title} numberOfLines={1}>
-            Departure
+            {calendarProps.departureAirport}
           </Text>
           <Icon name="airplane" size={15} style={{ marginHorizontal: 20 }} />
           <Text style={styles.directions_title} numberOfLines={1}>
-            Arrival
+            {calendarProps.arrivalAirport}
           </Text>
         </View>
         {selectedDate && (
@@ -99,6 +100,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 15,
+    marginTop: Platform.OS === "ios" ? "10%" : 0,
   },
   title: {
     fontSize: 20,
@@ -127,7 +129,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: GRAY,
     padding: 5,
-    borderRadius: 50,
+    borderRadius: 17,
+    overflow: "hidden",
     width: 170,
   },
   footer: {
