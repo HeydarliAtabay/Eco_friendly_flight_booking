@@ -40,7 +40,7 @@ GET http://localhost:3001/api/airlines
 POST http://localhost:3001/api/searchFlights
 Content-Type: application/json
 
-{ "departure_date":"2023-05-09", "arrival_date":"2023-05-14","arrival_airport":"MXP", "departure_airport":"KRK"}
+{ "departure_date":"2023-05-09","arrival_airport":"MXP", "departure_airport":"KRK"}
 
 
 ### flight create

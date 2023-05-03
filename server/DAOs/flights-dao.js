@@ -18,9 +18,19 @@ exports.getFlightsByDateAndAirpot = (body) => {
 
     const sqlForGettingAirportInfo = "SELECT * FROM airports WHERE code=?";
 
+    const sqlForGetAirlineInfo = "SELECT * FROM airlines WHERE id=?";
+
     const getAirportInfo = (airportCode) => {
       return new Promise((resolve, reject) => {
         db.query(sqlForGettingAirportInfo, [airportCode], (err, row) => {
+          if (err) reject(err);
+          else resolve(row[0]);
+        });
+      });
+    };
+    const getAirlineInfo = (airlineId) => {
+      return new Promise((resolve, reject) => {
+        db.query(sqlForGetAirlineInfo, [airlineId], (err, row) => {
           if (err) reject(err);
           else resolve(row[0]);
         });
@@ -32,11 +42,6 @@ exports.getFlightsByDateAndAirpot = (body) => {
       getAirportInfo(body.arrival_airport),
     ])
       .then(([departureAirport, arrivalAirport]) => {
-        console.log(arrivalAirport.id);
-        console.log(departureAirport.id);
-        console.log(body.arrival_date);
-        console.log(body.departure_date);
-
         if (body.arrival_date !== undefined) {
           const departurePromise = new Promise((resolve, reject) => {
             db.query(
@@ -46,7 +51,9 @@ exports.getFlightsByDateAndAirpot = (body) => {
                 if (err) reject(err);
                 else if (rows.length === 0)
                   resolve({ error: "Flight not found" });
-                else resolve(rows);
+                else {
+                  resolve(rows);
+                }
               }
             );
           });
@@ -65,7 +72,13 @@ exports.getFlightsByDateAndAirpot = (body) => {
 
           Promise.all([departurePromise, arrivalPromise])
             .then(([departureRows, arrivalRows]) => {
-              // Add additional information to arrivalRows and departureRows
+              let airlineid;
+              if (!Array.isArray(departureRows)) {
+                departureRows = [];
+              }
+              if (!Array.isArray(arrivalRows)) {
+                arrivalRows = [];
+              }
               const augmentedDepartureRows = departureRows.map((row) => {
                 return {
                   ...row,
@@ -79,6 +92,7 @@ exports.getFlightsByDateAndAirpot = (body) => {
                   arrival_airport_city: arrivalAirport.city,
                 };
               });
+
               const augmentedArrivalRows = arrivalRows.map((row) => {
                 return {
                   ...row,
@@ -92,25 +106,61 @@ exports.getFlightsByDateAndAirpot = (body) => {
                   arrival_airport_city: departureAirport.city,
                 };
               });
+              const result = {
+                Departure: augmentedDepartureRows,
+                Return: augmentedArrivalRows,
+              };
 
-              resolve([augmentedDepartureRows, augmentedArrivalRows]);
+              resolve(result);
+              // resolve([augmentedDepartureRows, augmentedArrivalRows]);
             })
             .catch((err) => {
               reject(err);
             });
         } else {
-          db.query(
-            sqlForOneWayTickets,
-            [body.departure_date, departureAirport.id, arrivalAirport.id],
-            (err, rows) => {
-              if (err) reject(err);
-              else if (rows.length === 0)
-                resolve({ error: "Flight not found" });
-              else {
-                resolve(rows);
+          const oneWayPromise = new Promise((resolve, reject) => {
+            db.query(
+              sqlForOneWayTickets,
+              [body.departure_date, departureAirport.id, arrivalAirport.id],
+              (err, rows) => {
+                if (err) reject(err);
+                else if (rows.length === 0)
+                  resolve({ error: "Flight not found" });
+                else {
+                  resolve(rows);
+                }
               }
-            }
-          );
+            );
+          });
+
+          Promise.all([oneWayPromise])
+            .then(([oneWayRows]) => {
+              if (!Array.isArray(oneWayRows)) {
+                oneWayRows = [];
+              }
+              const augmentedOneWayFLights = oneWayRows.map((row) => {
+                return {
+                  ...row,
+                  departure_airport_name: departureAirport.name,
+                  departure_airport_code: departureAirport.code,
+                  departure_airport_country: departureAirport.country,
+                  departure_airport_city: departureAirport.city,
+                  arrival_airport_name: arrivalAirport.name,
+                  arrival_airport_code: arrivalAirport.code,
+                  arrival_airport_country: arrivalAirport.country,
+                  arrival_airport_city: arrivalAirport.city,
+                };
+              });
+              const result = {
+                Departure: augmentedOneWayFLights,
+              };
+
+              resolve(result);
+              // resolve([augmentedDepartureRows, augmentedArrivalRows]);
+            })
+            .catch((err) => {
+              reject(err);
+            });
         }
       })
       .catch((err) => {
@@ -173,8 +223,8 @@ const generateRandomAlphaNumeric = (length) => {
 };
 
 const generateRandomTime = () => {
-  const maxDepartureHour = 20; 
-  const maxDifference = 4; 
+  const maxDepartureHour = 20;
+  const maxDifference = 4;
 
   const departureHour = Math.floor(Math.random() * (maxDepartureHour + 1));
   const departureMinute = Math.floor(Math.random() * 60);
@@ -183,8 +233,8 @@ const generateRandomTime = () => {
     .padStart(2, "0")}:${departureMinute.toString().padStart(2, "0")}`;
 
   let arrivalHour, arrivalMinute, arrivalTime;
-  arrivalHour=casual.integer(departureHour+1, departureHour+3);
-  arrivalMinute=casual.integer(0, 59);
+  arrivalHour = casual.integer(departureHour + 1, departureHour + 3);
+  arrivalMinute = casual.integer(0, 59);
   arrivalTime = `${arrivalHour.toString().padStart(2, "0")}:${arrivalMinute
     .toString()
     .padStart(2, "0")}`;
@@ -199,6 +249,7 @@ const generateRandomDate = (startDate, endDate) => {
   const randomDate = start.add(randomDiff, "day");
   return randomDate.format("YYYY-MM-DD");
 };
+
 exports.generateFlight = () => {
   const departureAirport = casual.integer(1, 234);
   let arrivalAirport = casual.integer(1, 234);
@@ -207,7 +258,7 @@ exports.generateFlight = () => {
     arrivalAirport = casual.integer(1, 234);
   }
 
-  const departureDate = generateRandomDate("2023-05-05", "2023-12-31");
+  const departureDate = generateRandomDate("2023-05-05", "2023-01-08");
   const arrivalDate = departureDate;
 
   const { departureTime, arrivalTime } = generateRandomTime();

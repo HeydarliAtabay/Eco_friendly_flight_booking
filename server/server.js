@@ -11,7 +11,6 @@ const flightsDao = require("./DAOs/flights-dao");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy; // username and password for login
 const session = require("express-session");
-const usersDao = require("./DAOs/user-dao");
 const airportsDao = require("./DAOs/airport-dao");
 // const { RAW_LIST } = require("./rawData");
 
@@ -140,13 +139,14 @@ app.get("/api/airlines", (req, res) => {
 /******* Flights APIs ********/
 app.post("/api/searchflights/", (req, res) => {
   const body = req.body;
+  console.log(body);
   flightsDao
     .getFlightsByDateAndAirpot(body)
     .then((flights) => {
       res.json(flights);
     })
     .catch((error) => {
-      res.status(500).json(error);
+      res.status(500).json(error.message);
     });
 });
 

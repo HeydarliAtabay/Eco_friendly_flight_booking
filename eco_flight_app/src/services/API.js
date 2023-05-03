@@ -126,6 +126,44 @@ function userSignUp(user) {
   });
 }
 
+// FLIGHT APIS
+function searchFlights(flight) {
+  return new Promise((resolve, reject) => {
+    fetch(url + "/api/searchFlights", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      //body: JSON.stringify({code: exam.coursecode, score: exam.score, date: exam.date}),
+      body: JSON.stringify({
+        departure_date: flight.departure_date,
+        arrival_date: flight.arrival_date,
+        arrival_airport: flight.arrival_airport,
+        departure_airport: flight.departure_airport,
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          const json = response.json();
+          resolve(json);
+        } else {
+          // analyze the cause of error
+          response
+            .json()
+            .then((message) => {
+              reject(message);
+            }) // error message in the response body
+            .catch(() => {
+              reject({ error: "Cannot parse server response." });
+            }); // something else
+        }
+      })
+      .catch(() => {
+        reject({ error: "Cannot communicate with the server." });
+      }); // connection errors
+  });
+}
+
 // Airport APIs
 
 // list all
@@ -146,5 +184,6 @@ const API = {
   updateUserPersonalData,
   userSignUp,
   getAirportList,
+  searchFlights,
 };
 export default API;
