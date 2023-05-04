@@ -18,3 +18,9 @@ export interface Airport {
   city: string;
   country: string;
 }
+
+export enum FlightClass {
+  FIRST_CLASS,
+  BUSINESS_CLASS,
+  ECONOMY_CLASS,
+}
