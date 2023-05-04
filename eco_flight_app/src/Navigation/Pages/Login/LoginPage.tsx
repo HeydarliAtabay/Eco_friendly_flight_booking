@@ -34,7 +34,7 @@ export default function LoginPage({ navigation }: MainPageProps) {
     }
     const handleSubmit = () => {
         let valid = true;
-        if (user.email === "" || user.password === "" || user.password.length < 6)
+        if (user.email === "" || user.password === "" || user.password.length < 2)
             valid = false;
         if (valid) {
             doLogIn({ username: user.email, password: user.password }).catch(function (error) {

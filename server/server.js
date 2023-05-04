@@ -6,15 +6,17 @@ const morgan = require("morgan");
 const db = require("./db");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const usersDao = require("./DAOs/user-dao");
+const flightsDao = require("./DAOs/flights-dao");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy; // username and password for login
 const session = require("express-session");
-const usersDao = require("./DAOs/user-dao");
 const airportsDao = require("./DAOs/airport-dao");
 // const { RAW_LIST } = require("./rawData");
 
 app.use(morgan("dev"));
 app.use(express.json());
+const request = require("request");
 
 //use express static folder
 app.use(cors());
@@ -108,6 +110,120 @@ app.use(
 // tell passport to use session cookies
 app.use(passport.initialize());
 app.use(passport.session());
+
+/** Get Airlines */
+
+// var name = "Lufthansa";
+
+app.get("/api/airlines", (req, res) => {
+  request.get(
+    {
+      url: "https://api.api-ninjas.com/v1/airlines?name=" + "Qatar Airways",
+      headers: {
+        "X-Api-Key": "CLBZuWQZfjmrAXKJMAiWlA==gHG8CVs8NYpm2TXV",
+      },
+    },
+    function (error, response, body) {
+      if (error) return console.error("Request failed:", error);
+      else if (response.statusCode != 200)
+        return console.error(
+          "Error:",
+          response.statusCode,
+          body.toString("utf8")
+        );
+      else console.log(body);
+    }
+  );
+});
+
+/******* Flights APIs ********/
+app.post("/api/searchflights/", (req, res) => {
+  const body = req.body;
+  console.log(body);
+  flightsDao
+    .getFlightsByDateAndAirpot(body)
+    .then((flights) => {
+      res.json(flights);
+    })
+    .catch((error) => {
+      res.status(500).json(error.message);
+    });
+});
+
+app.post("/api/createflight/", (req, res) => {
+  const body = req.body;
+  if (!body) {
+    res.status(400).end();
+  } else {
+    flightsDao
+      .createFlight(body)
+      .then((id) => res.status(201).json({ id: id }))
+      .catch((err) => res.status(500).json(err.message));
+  }
+});
+
+app.post("/api/bookFlight", (req, res) => {
+  const body = req.body;
+  if (!body) {
+    res.status(400).end();
+  } else {
+    flightsDao
+      .bookFlight(body)
+      .then((id) => res.status(201).json({ id: id }))
+      .catch((err) => res.status(500).json(err.message));
+  }
+});
+
+app.get("/api/bookedFlights/:user", (req, res) => {
+  const user = Number(req.params.user);
+  flightsDao
+    .getBookedFlightsOfUser(user)
+    .then((flights) => {
+      res.json(flights);
+    })
+    .catch((error) => {
+      res.status(500).json(error.message);
+    });
+});
+
+app.get("/api/getSeatsOfFlight/:flight", (req, res) => {
+  const flightID = Number(req.params.flight);
+  flightsDao
+    .getBookedSeatsOfFlight(flightID)
+    .then((seats) => {
+      res.json(seats);
+    })
+    .catch((error) => {
+      res.status(500).json(error.message);
+    });
+});
+
+const generateAndInsertFlights = (number) => {
+  const flights = [];
+
+  for (let i = 0; i < number; i++) {
+    const flight = flightsDao.generateFlight();
+    flights.push(flight);
+  }
+  const promises = flights.map((flight) => flightsDao.createFlight(flight));
+  Promise.all(promises)
+    .then((ids) => {
+      console.log("Flights inserted:", ids);
+    })
+    .catch((err) => {
+      console.error("Error inserting flights:", err);
+    });
+};
+
+app.post("/api/createFakeFlights/:number", (req, res) => {
+  const numberOfFlights = Number(req.params.number);
+  const body = req.body;
+  if (!body) {
+    res.status(400).end();
+  } else {
+    generateAndInsertFlights(numberOfFlights);
+  }
+});
 
 /*** Users APIs ***/
 

@@ -4,7 +4,7 @@ import { GRAY, GREEN } from "../../helpers/styles";
 import { Flight_Mode } from "../../helpers";
 import { useSelector } from "react-redux";
 import { State, store } from "../../store/store";
-import { loadFlightMode } from "./SearchFlight.slice";
+import { loadFlightMode, loadReturnDate } from "./SearchFlight.slice";
 
 export default function RouteSwitch() {
   const flightMode = useSelector(
@@ -16,7 +16,10 @@ export default function RouteSwitch() {
     <View style={styles.container}>
       <Text
         style={[styles.switchButton, !isReturnSelected && styles.bgGreen]}
-        onPress={() => store.dispatch(loadFlightMode(Flight_Mode.ONE_WAY))}
+        onPress={() => {
+          store.dispatch(loadFlightMode(Flight_Mode.ONE_WAY))
+          store.dispatch(loadReturnDate(null))
+        }}
       >
         ONE WAY
       </Text>
