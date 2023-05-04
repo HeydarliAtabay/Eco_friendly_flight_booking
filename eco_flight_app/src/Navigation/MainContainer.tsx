@@ -5,7 +5,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 // Screens
 
-import ListOfBookingsPage from "./Pages/ListOfBookings";
+import ListOfBookingsPage from "../Components/BookingList/ListOfBookings";
 import BookingPage from "./Pages/BookingPage";
 // import UserProfilePage from "./Pages/UserAccount/UserProfilePage";
 import UserProfilePage from "./Pages/UserAccount/UserProfilePage";

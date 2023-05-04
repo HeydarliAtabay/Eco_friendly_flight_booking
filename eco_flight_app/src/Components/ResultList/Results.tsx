@@ -25,55 +25,56 @@ export default function ResultsPage() {
     }, [returnFlights])
 
     return (
-        <View style={styles.container}>
-            <SearchInfo />
-            {departureFlights.length === 0 ?
-                <EmptyResultPage />
-                :
-                <SafeAreaView style={{ padding: 0, flex: 1 }}>
-                    <FlatList
-                        data={departureFlights}
-                        initialNumToRender={5}
-                        renderItem={({ item }) => (
-                            <SingleResultCard flight={item} />
-                        )}
-                        keyExtractor={(item) => item.id as unknown as string}
-                    // ItemSeparatorComponent={() => <View style={styles.divider} />}
-                    />
-                </SafeAreaView>
-            }
+            <View style={styles.container}>
+                <SearchInfo />
+                {departureFlights.length === 0 ?
+                    <EmptyResultPage />
+                    :
+                    <SafeAreaView style={{ padding: 0, flex: 1 }}>
+                        <FlatList
+                            data={departureFlights}
+                            initialNumToRender={5}
+                            renderItem={({ item }) => (
+                                <SingleResultCard flight={item} />
+                            )}
+                            keyExtractor={(item) => item.id as unknown as string}
+                        // ItemSeparatorComponent={() => <View style={styles.divider} />}
+                        />
+                    </SafeAreaView>
+                }
 
-            <Modal
-                animationType="slide"
-                visible={activeModalIndex === 1 ? true : false}
+                <Modal
+                    animationType="slide"
+                    visible={activeModalIndex === 1 ? true : false}
                 // onRequestClose={() => store.dispatch(changeActiveModalIndex(Move_Modal.back))}
-            >
-                <View style={styles.header}>
-                    <Icon
-                        name="chevron-down"
-                        size={30}
-                        onPress={() => store.dispatch(changeActiveModalIndex(Move_Modal.back))}
-                    />
-                    <Text style={styles.title}>Seat Selection {activeModalIndex}</Text>
-                </View>
-                <SeatSelection />
-            </Modal>
-            <Modal
-                animationType="fade"
-                visible={activeModalIndex === 2 ? true : false}
+                >
+                    <View style={styles.header}>
+                        <Icon
+                            name="chevron-down"
+                            size={30}
+                            onPress={() => store.dispatch(changeActiveModalIndex(Move_Modal.back))}
+                        />
+                        <Text style={styles.title}>Seat Selection {activeModalIndex}</Text>
+                    </View>
+                    <SeatSelection />
+                </Modal>
+                <Modal
+                    animationType="fade"
+                    visible={activeModalIndex === 2 ? true : false}
                 // onRequestClose={() => store.dispatch(changeActiveModalIndex(Move_Modal.back))}
-            >
-                <View style={styles.header}>
-                    <Icon
-                        name="chevron-down"
-                        size={30}
-                        onPress={() => store.dispatch(changeActiveModalIndex(Move_Modal.back))}
-                    />
-                    <Text style={styles.title}>Pay for The flight {activeModalIndex}</Text>
-                </View>
-                <PaymentPageForBooking />
-            </Modal>
-        </View>
+                >
+                    <View style={styles.header}>
+                        <Icon
+                            name="chevron-down"
+                            size={30}
+                            onPress={() => store.dispatch(changeActiveModalIndex(Move_Modal.back))}
+                        />
+                        <Text style={styles.title}>Pay for The flight {activeModalIndex}</Text>
+                    </View>
+                    <PaymentPageForBooking />
+                </Modal>
+            </View>
+
     );
 }
 

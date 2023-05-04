@@ -3,11 +3,12 @@ import login from "../Navigation/Pages/Login/Login.slice";
 import app from "../../App.slice";
 import search_flight from "../Components/SearchFlight/SearchFlight.slice";
 import search_results from "../Components/ResultList/ResultList.slice";
+import booking from "../Components/BookingList/Booking.slice";
 
 const middlewareConfiguration = { serializableCheck: false };
 
 export const store = configureStore({
-  reducer: { app, login, search_flight, search_results },
+  reducer: { app, login, search_flight, search_results, booking },
   devTools: {
     name: "Iconic Gesture Control",
   },

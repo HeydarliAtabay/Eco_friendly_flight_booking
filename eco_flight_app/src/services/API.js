@@ -164,6 +164,60 @@ function searchFlights(flight) {
   });
 }
 
+// { "user_id":7,"flight_id":863, "seat":"11A", "payment_status":"PAID", "checkin_status":"DONE"}
+
+function bookFlight(flight) {
+  return new Promise((resolve, reject) => {
+    fetch(url + "/api/bookFlight", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      //body: JSON.stringify({code: exam.coursecode, score: exam.score, date: exam.date}),
+      body: JSON.stringify({
+        user_id: flight.user_id,
+        flight_id: flight.flight_id,
+        seat: flight.seat,
+        payment_status: flight.payment_status,
+        checkin_status: flight.checkin_status,
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          resolve(null);
+        } else {
+          // analyze the cause of error
+          response
+            .json()
+            .then((message) => {
+              reject(message);
+            }) // error message in the response body
+            .catch(() => {
+              reject({ error: "Cannot parse server response." });
+            }); // something else
+        }
+      })
+      .catch(() => {
+        reject({ error: "Cannot communicate with the server." });
+      }); // connection errors
+  });
+}
+
+async function getBookedFlights(userId) {
+  const response = await fetch(url + "/api/bookedFlights/" + userId).catch(
+    (error) => {
+      // Handle any errors that occur
+      console.error(error);
+    }
+  );
+  const flight = await response.json();
+  if (response && response.ok) {
+    return flight;
+  } else {
+    throw flight; // an object with the error coming from the server
+  }
+}
+
 // Airport APIs
 
 // list all
@@ -185,5 +239,7 @@ const API = {
   userSignUp,
   getAirportList,
   searchFlights,
+  bookFlight,
+  getBookedFlights
 };
 export default API;

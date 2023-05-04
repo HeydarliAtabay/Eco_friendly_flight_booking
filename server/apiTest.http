@@ -42,8 +42,19 @@ Content-Type: application/json
 
 { "departure_date":"2023-05-09","arrival_airport":"MXP", "departure_airport":"KRK"}
 
+### book flight
 
-### flight create
+POST http://localhost:3001/api/bookFlight
+Content-Type: application/json
+
+{ "user_id":7,"flight_id":1373, "seat":"11A", "payment_status":"PAID", "checkin_status":"DONE"}
+
+
+### Getting all flights of user
+
+GET http://localhost:3001/api/bookedFlights/7
+
+### random flight create
 
 POST http://localhost:3001/api/createflight
 Content-Type: application/json

@@ -162,6 +162,30 @@ app.post("/api/createflight/", (req, res) => {
   }
 });
 
+app.post("/api/bookFlight", (req, res) => {
+  const body = req.body;
+  if (!body) {
+    res.status(400).end();
+  } else {
+    flightsDao
+      .bookFlight(body)
+      .then((id) => res.status(201).json({ id: id }))
+      .catch((err) => res.status(500).json(err.message));
+  }
+});
+
+app.get("/api/bookedFlights/:user", (req, res) => {
+  const user = Number(req.params.user);
+  flightsDao
+    .getBookedFlightsOfUser(user)
+    .then((flights) => {
+      res.json(flights);
+    })
+    .catch((error) => {
+      res.status(500).json(error.message);
+    });
+});
+
 const generateAndInsertFlights = (number) => {
   const flights = [];
 

@@ -206,6 +206,101 @@ exports.createFlight = (flight) => {
   });
 };
 
+exports.bookFlight = (flight) => {
+  return new Promise((resolve, reject) => {
+    const sql =
+      "INSERT INTO booked_flights(user_id, flight_id, seat, payment_status," +
+      "checkin_status)" +
+      "VALUES(?,?,?,?,?)";
+    db.query(
+      sql,
+      [
+        flight.user_id,
+        flight.flight_id,
+        flight.seat,
+        flight.payment_status,
+        flight.checkin_status,
+      ],
+      function (err) {
+        if (err) {
+          reject(err);
+          return;
+        }
+        console.log("succesfully added");
+        resolve(this.lastID);
+      }
+    );
+  }).catch((error) => {
+    // Handle error
+    console.error("Error:", error);
+  });
+};
+
+exports.getBookedFlightsOfUser = (user) => {
+  return new Promise((resolve, reject) => {
+    const sqlForGettingBookedFlightsOfUser =
+      "SELECT * FROM booked_flights WHERE user_id=?";
+
+    const sqlForGettingFlightInfo = "SELECT * FROM flights WHERE id=?";
+
+    const sqlForGettingAirportInfo = "SELECT * FROM airports WHERE id=?";
+
+    const getFlightInfo = (flightId) => {
+      return new Promise((resolve, reject) => {
+        db.query(sqlForGettingFlightInfo, [flightId], (err, row) => {
+          if (err) reject(err);
+          else resolve(row[0]);
+        });
+      });
+    };
+
+    const getAirportInfo = (airportCode) => {
+      return new Promise((resolve, reject) => {
+        db.query(sqlForGettingAirportInfo, [airportCode], (err, row) => {
+          if (err) reject(err);
+          else resolve(row[0]);
+        });
+      });
+    };
+
+    const bookedFlightsPromise = new Promise((resolve, reject) => {
+      db.query(sqlForGettingBookedFlightsOfUser, [user], async (err, rows) => {
+        if (err) reject(err);
+        else if (rows.length === 0) resolve({ error: "Flights not found" });
+        else {
+          try {
+            // Iterate through each booked flight
+            for (let i = 0; i < rows.length; i++) {
+              const flight = rows[i];
+              const flightInfo = await getFlightInfo(flight.flight_id);
+              if (flightInfo) {
+                const departureAirport = await getAirportInfo(
+                  flightInfo.departure_airport
+                );
+                const arrivalAirport = await getAirportInfo(
+                  flightInfo.arrival_airport
+                );
+
+                // Add flight info and airport info to the flight object
+                flight.flight_info = flightInfo;
+                flight.departureAirport = departureAirport;
+                flight.arrivalAirport = arrivalAirport;
+              }
+            }
+            resolve(rows);
+          } catch (err) {
+            reject(err);
+          }
+        }
+      });
+    });
+
+    bookedFlightsPromise
+      .then((flights) => resolve(flights))
+      .catch((err) => reject(err));
+  });
+};
+
 const generateRandomAlphaNumeric = (length) => {
   let result = "";
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
