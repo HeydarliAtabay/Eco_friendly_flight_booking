@@ -115,3 +115,4 @@ export type BookedFlightInfo = {
     departureAirport: Airport,
     arrivalAirport: Airport
 }
+

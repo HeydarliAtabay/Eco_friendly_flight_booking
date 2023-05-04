@@ -54,6 +54,11 @@ Content-Type: application/json
 
 GET http://localhost:3001/api/bookedFlights/7
 
+
+### Getting all seats of flight
+
+GET http://localhost:3001/api/getSeatsOfFlight/2
+
 ### random flight create
 
 POST http://localhost:3001/api/createflight

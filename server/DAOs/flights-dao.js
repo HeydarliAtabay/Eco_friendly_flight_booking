@@ -301,6 +301,44 @@ exports.getBookedFlightsOfUser = (user) => {
   });
 };
 
+exports.getBookedSeatsOfFlight = (flight) => {
+  return new Promise((resolve, reject) => {
+    const sqlForGettingBookedSeatsOfFlight =
+      "SELECT seat FROM booked_flights WHERE flight_id=?";
+    db.query(
+      sqlForGettingBookedSeatsOfFlight,
+      [flight],
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          const bookedSeatsByRow = {};
+
+          for (let i = 0; i < results.length; i++) {
+            const seat = results[i].seat;
+            const rowNumber = parseInt(seat.substring(0, seat.length - 1));
+            const seatLetter = seat.substring(seat.length - 1);
+
+            if (bookedSeatsByRow[rowNumber.toString()]) {
+              bookedSeatsByRow[rowNumber.toString()].push(seatLetter);
+            } else {
+              bookedSeatsByRow[rowNumber.toString()] = [seatLetter];
+            }
+          }
+          const seatData = [];
+          for (let row = 1; row <= 30; row++) {
+            const rowNumber = row.toString();
+            const seatLetters = bookedSeatsByRow[rowNumber] || [];
+            seatData.push({ [rowNumber]: seatLetters });
+          }
+
+          resolve(seatData);
+        }
+      }
+    );
+  });
+};
+
 const generateRandomAlphaNumeric = (length) => {
   let result = "";
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";

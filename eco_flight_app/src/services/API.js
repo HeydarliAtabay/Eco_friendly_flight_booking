@@ -218,6 +218,21 @@ async function getBookedFlights(userId) {
   }
 }
 
+async function getSeatsOfFlight(flightID) {
+  const response = await fetch(url + "/api/getSeatsOfFlight/" + flightID).catch(
+    (error) => {
+      // Handle any errors that occur
+      console.error(error);
+    }
+  );
+  const seats = await response.json();
+  if (response && response.ok) {
+    return seats;
+  } else {
+    throw seats; // an object with the error coming from the server
+  }
+}
+
 // Airport APIs
 
 // list all
@@ -240,6 +255,7 @@ const API = {
   getAirportList,
   searchFlights,
   bookFlight,
-  getBookedFlights
+  getBookedFlights,
+  getSeatsOfFlight
 };
 export default API;

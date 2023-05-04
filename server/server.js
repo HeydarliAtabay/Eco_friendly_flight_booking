@@ -186,6 +186,18 @@ app.get("/api/bookedFlights/:user", (req, res) => {
     });
 });
 
+app.get("/api/getSeatsOfFlight/:flight", (req, res) => {
+  const flightID = Number(req.params.flight);
+  flightsDao
+    .getBookedSeatsOfFlight(flightID)
+    .then((seats) => {
+      res.json(seats);
+    })
+    .catch((error) => {
+      res.status(500).json(error.message);
+    });
+});
+
 const generateAndInsertFlights = (number) => {
   const flights = [];
 
