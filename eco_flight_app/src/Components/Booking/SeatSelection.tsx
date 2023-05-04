@@ -1,47 +1,8 @@
-import { StatusBar } from "expo-status-bar";
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { Button, TextInput } from "react-native-paper";
-import { Move_Modal } from "../../services/interfaces.ts/interfaces";
-import { store } from "../../store/store";
-import { useStore } from "../../store/storeHooks";
-import {
-  changeActiveModalIndex,
-  selectSeat,
-} from "../ResultList/ResultList.slice";
-import SearchInfo from "../ResultList/SearchInfo";
-
-export default function SeatSelection() {
-  const { selectedFlight } = useStore(({ search_results }) => search_results);
-  return (
-    <View style={styles.container}>
-      <SearchInfo />
-
-      <Text>Select your seat</Text>
-      <TextInput
-        style={styles.TextInput}
-        label="Seat"
-        returnKeyType="next"
-        underlineColor="transparent"
-        value={selectedFlight?.seat ? selectedFlight.seat : ""}
-        onChangeText={(text) => store.dispatch(selectSeat(text))}
-      />
-      <Button
-        onPress={() => {
-          store.dispatch(changeActiveModalIndex(Move_Modal.forward));
-        }}
-      >
-        Go for payment
-      </Button>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Modal,
   Platform,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -50,20 +11,29 @@ import {
 } from "react-native";
 import { DARK_GRAY, GRAY, GREEN, LIGHT_GRAY } from "../../helpers/styles";
 import Icon from "react-native-vector-icons/Ionicons";
-import { State } from "../../store/store";
-import { FlightClass } from "../../helpers";
+// import { State } from "../../store/store";
+// import { FlightClass } from "../../helpers";
+import { Move_Modal } from "../../services/interfaces.ts/interfaces";
+import { store } from "../../store/store";
+import { useStore } from "../../store/storeHooks";
+import {
+  changeActiveModalIndex,
+  selectSeat,
+} from "../ResultList/ResultList.slice";
+import SearchInfo from "../ResultList/SearchInfo";
+import API from "../../services/API";
 
 const Seat = (props: {
   isBlocked: boolean;
   isSelected: boolean;
-  flightClass: FlightClass;
+  // flightClass: FlightClass;
   selectSeat: () => void;
 }) => {
   const seatStyles = [
     styles.seat,
     props.isBlocked ? styles.reservedSeat : styles.freeSeat,
-    props.flightClass === FlightClass.FIRST_CLASS && styles.seatFirstClass,
-    props.flightClass === FlightClass.BUSINESS_CLASS && styles.seatBusiness,
+    // props.flightClass === FlightClass.FIRST_CLASS && styles.seatFirstClass,
+    // props.flightClass === FlightClass.BUSINESS_CLASS && styles.seatBusiness,
     props.isSelected && { backgroundColor: GREEN },
   ];
   return (
@@ -83,190 +53,244 @@ const Seat = (props: {
 
 export default function SeatSelection(props: {
   isModalVisible: boolean;
-  setIsModalVisible: (val: boolean) => void;
-  flightClass: FlightClass;
+  // flightClass: FlightClass;
 }) {
-  const { isModalVisible, setIsModalVisible, flightClass } = props;
+  const { isModalVisible } = props;
+  const { selectedFlight } = useStore(({ search_results }) => search_results);
+  const [bookedSeats, setBookedSeats] = useState<string[]>([]);
   const [selectedSeat, setSelectedSeat] = useState<{
     row: number;
     seat: string;
   }>();
+  const [loading, setLoading] = useState<boolean>(true);
 
   const isSelected = (row: number, seat: string) => {
     return selectedSeat?.row === row && selectedSeat.seat === seat;
   };
-  const selectSeat = (seat: string, row: number) => {
+  const isBooked = (row: number, seat: string) => {
+    const seatNumber = row + seat;
+    // if (bookedSeats[row as unknown as string]) {
+    //   console.log(
+    //     "SEAT ::: ",
+    //     row,
+    //     " ::: ",
+    //     bookedSeats[row as unknown as string]
+    //   );
+    return bookedSeats.includes(seatNumber);
+    // }
+    // return false;
+  };
+  const chooseSeat = (seat: string, row: number) => {
     setSelectedSeat({ row: row, seat: seat });
   };
+
+  useEffect(() => {
+    try {
+      API.getSeatsOfFlight(selectedFlight?.flight_id)
+        .then((list) => {
+          setBookedSeats(list);
+          setLoading(false);
+        })
+        .catch(function (error) {
+          setLoading(false);
+          alert(error.message);
+          throw error;
+        });
+    } catch (err) {
+      alert({ msg: err, type: "danger" });
+    }
+  }, []);
+
   return (
     <Modal
       animationType="slide"
       visible={isModalVisible}
-      onRequestClose={() => setIsModalVisible(false)}
+      // onRequestClose={() => store.dispatch(changeActiveModalIndex(Move_Modal.back))}
     >
       <View style={styles.header}>
         <Icon
           name="chevron-down"
           size={30}
-          onPress={() => setIsModalVisible(false)}
+          onPress={() =>
+            store.dispatch(changeActiveModalIndex(Move_Modal.back))
+          }
         />
         <Text style={styles.title}>Select your seat</Text>
       </View>
-      <ScrollView>
-        <View style={[styles.airplainEdge, styles.airplainTop]}>
-          <View style={[styles.wc, { top: -1, left: -2 }]}>
-            <Icon
-              name="man"
-              size={30}
-              color={GRAY}
-              style={{ borderRightColor: GRAY, borderRightWidth: 1 }}
-            />
-            <Icon name="woman" size={30} color={GRAY} />
-          </View>
-          <View style={[styles.wc, { top: -1, right: -2 }]}>
-            <Icon
-              name="woman"
-              size={30}
-              color={GRAY}
-              style={{ borderRightColor: GRAY, borderRightWidth: 1 }}
-            />
-            <Icon name="man" size={30} color={GRAY} />
-          </View>
+      <SearchInfo />
+      {loading ? (
+        <View style={styles.loader}>
+          <ActivityIndicator size="large" color="#00ff00" />
         </View>
-        <View style={styles.doors}>
-          <View style={styles.divider}>
-            <Text style={{ color: DARK_GRAY }}>First Class</Text>
-          </View>
-        </View>
-        <View style={styles.board}>
-          {[...Array(3)].map((_data, _index) => (
-            <View style={styles.seatRow} key={`F${_index}`}>
-              <Seat
-                key={"A"}
-                isBlocked={flightClass !== FlightClass.FIRST_CLASS}
-                isSelected={isSelected(_index + 1, "A")}
-                flightClass={FlightClass.FIRST_CLASS}
-                selectSeat={() => selectSeat("A", _index + 1)}
+      ) : (
+        <ScrollView>
+          <View style={[styles.airplainEdge, styles.airplainTop]}>
+            <View style={[styles.wc, { top: -1, left: -2 }]}>
+              <Icon
+                name="man"
+                size={30}
+                color={GRAY}
+                style={{ borderRightColor: GRAY, borderRightWidth: 1 }}
               />
-              <Text style={styles.rowNumber}>{_index + 1}</Text>
-              <Seat
-                key={"B"}
-                isBlocked={flightClass !== FlightClass.FIRST_CLASS}
-                isSelected={isSelected(_index + 1, "B")}
-                flightClass={FlightClass.FIRST_CLASS}
-                selectSeat={() => selectSeat("B", _index + 1)}
-              />
+              <Icon name="woman" size={30} color={GRAY} />
             </View>
-          ))}
-          <View style={styles.divider}>
-            <Text style={{ color: DARK_GRAY }}>Business Class</Text>
-          </View>
-          {[...Array(4)].map((_data, _index) => (
-            <View style={styles.seatRow} key={`B${_index}`}>
-              <Seat
-                key={"A"}
-                isBlocked={flightClass !== FlightClass.BUSINESS_CLASS}
-                isSelected={isSelected(_index + 4, "A")}
-                flightClass={FlightClass.BUSINESS_CLASS}
-                selectSeat={() => selectSeat("A", _index + 4)}
+            <View style={[styles.wc, { top: -1, right: -2 }]}>
+              <Icon
+                name="woman"
+                size={30}
+                color={GRAY}
+                style={{ borderRightColor: GRAY, borderRightWidth: 1 }}
               />
-              <Seat
-                key={"B"}
-                isBlocked={flightClass !== FlightClass.BUSINESS_CLASS}
-                isSelected={isSelected(_index + 4, "B")}
-                flightClass={FlightClass.BUSINESS_CLASS}
-                selectSeat={() => selectSeat("B", _index + 4)}
-              />
-              <Text style={styles.rowNumber}>{_index + 4}</Text>
-              <Seat
-                key={"C"}
-                isBlocked={flightClass !== FlightClass.BUSINESS_CLASS}
-                isSelected={isSelected(_index + 4, "C")}
-                flightClass={FlightClass.BUSINESS_CLASS}
-                selectSeat={() => selectSeat("C", _index + 4)}
-              />
-              <Seat
-                key={"D"}
-                isBlocked={flightClass !== FlightClass.BUSINESS_CLASS}
-                isSelected={isSelected(_index + 4, "D")}
-                flightClass={FlightClass.BUSINESS_CLASS}
-                selectSeat={() => selectSeat("D", _index + 4)}
-              />
+              <Icon name="man" size={30} color={GRAY} />
             </View>
-          ))}
-          <View style={styles.divider}>
-            <Text style={{ color: DARK_GRAY }}>Economy Class</Text>
           </View>
-          {[...Array(23)].map((_data, _index) => (
-            <View style={styles.seatRow} key={`E${_index}`}>
-              <Seat
-                key={"A"}
-                isBlocked={flightClass !== FlightClass.ECONOMY_CLASS}
-                isSelected={isSelected(_index + 8, "A")}
-                flightClass={FlightClass.ECONOMY_CLASS}
-                selectSeat={() => selectSeat("A", _index + 8)}
-              />
-              <Seat
-                key={"B"}
-                isBlocked={flightClass !== FlightClass.ECONOMY_CLASS}
-                isSelected={isSelected(_index + 8, "B")}
-                flightClass={FlightClass.ECONOMY_CLASS}
-                selectSeat={() => selectSeat("B", _index + 8)}
-              />
-              <Seat
-                key={"C"}
-                isBlocked={flightClass !== FlightClass.ECONOMY_CLASS}
-                isSelected={isSelected(_index + 8, "C")}
-                flightClass={FlightClass.ECONOMY_CLASS}
-                selectSeat={() => selectSeat("C", _index + 8)}
-              />
-              <Text style={styles.rowNumber}>{_index + 8}</Text>
-              <Seat
-                key={"D"}
-                isBlocked={flightClass !== FlightClass.ECONOMY_CLASS}
-                isSelected={isSelected(_index + 8, "D")}
-                flightClass={FlightClass.ECONOMY_CLASS}
-                selectSeat={() => selectSeat("D", _index + 8)}
-              />
-              <Seat
-                key={"E"}
-                isBlocked={flightClass !== FlightClass.ECONOMY_CLASS}
-                isSelected={isSelected(_index + 8, "E")}
-                flightClass={FlightClass.ECONOMY_CLASS}
-                selectSeat={() => selectSeat("E", _index + 8)}
-              />
-              <Seat
-                key={"F"}
-                isBlocked={flightClass !== FlightClass.ECONOMY_CLASS}
-                isSelected={isSelected(_index + 8, "F")}
-                flightClass={FlightClass.ECONOMY_CLASS}
-                selectSeat={() => selectSeat("F", _index + 8)}
-              />
+          <View style={styles.doors}>
+            <View style={styles.divider}>
+              <Text style={{ color: DARK_GRAY }}>First Class</Text>
             </View>
-          ))}
-        </View>
-        <View style={styles.doors} />
-        <View style={[styles.airplainEdge, styles.airplainBottom]}>
-          <View style={[styles.wc, { marginTop: 11, left: -2 }]}>
-            <Icon
-              name="woman"
-              size={30}
-              color={GRAY}
-              style={{ borderRightColor: GRAY, borderRightWidth: 1 }}
-            />
-            <Icon name="man" size={30} color={GRAY} />
           </View>
-          <View style={[styles.wc, { marginTop: 11, right: -2 }]}>
-            <Icon
-              name="man"
-              size={30}
-              color={GRAY}
-              style={{ borderRightColor: GRAY, borderRightWidth: 1 }}
-            />
-            <Icon name="woman" size={30} color={GRAY} />
+          <View style={styles.board}>
+            {[...Array(3)].map((_data, _index) => (
+              <View style={styles.seatRow} key={`F${_index}`}>
+                <Seat
+                  key={"A"}
+                  // isBlocked={flightClass !== FlightClass.FIRST_CLASS}
+                  isBlocked={isBooked(_index + 1, "A")}
+                  isSelected={isSelected(_index + 1, "A")}
+                  // flightClass={FlightClass.FIRST_CLASS}
+                  selectSeat={() => chooseSeat("A", _index + 1)}
+                />
+                <Text style={styles.rowNumber}>{_index + 1}</Text>
+                <Seat
+                  key={"B"}
+                  isBlocked={isBooked(_index + 1, "B")}
+                  // isBlocked={flightClass !== FlightClass.FIRST_CLASS}
+                  isSelected={isSelected(_index + 1, "B")}
+                  // flightClass={FlightClass.FIRST_CLASS}
+                  selectSeat={() => chooseSeat("B", _index + 1)}
+                />
+              </View>
+            ))}
+            <View style={styles.divider}>
+              <Text style={{ color: DARK_GRAY }}>Business Class</Text>
+            </View>
+            {[...Array(4)].map((_data, _index) => (
+              <View style={styles.seatRow} key={`B${_index}`}>
+                <Seat
+                  key={"A"}
+                  isBlocked={isBooked(_index + 4, "A")}
+                  // isBlocked={flightClass !== FlightClass.BUSINESS_CLASS}
+                  isSelected={isSelected(_index + 4, "A")}
+                  // flightClass={FlightClass.BUSINESS_CLASS}
+                  selectSeat={() => chooseSeat("A", _index + 4)}
+                />
+                <Seat
+                  key={"B"}
+                  isBlocked={isBooked(_index + 4, "B")}
+                  // isBlocked={flightClass !== FlightClass.BUSINESS_CLASS}
+                  isSelected={isSelected(_index + 4, "B")}
+                  // flightClass={FlightClass.BUSINESS_CLASS}
+                  selectSeat={() => chooseSeat("B", _index + 4)}
+                />
+                <Text style={styles.rowNumber}>{_index + 4}</Text>
+                <Seat
+                  key={"C"}
+                  isBlocked={isBooked(_index + 4, "C")}
+                  // isBlocked={flightClass !== FlightClass.BUSINESS_CLASS}
+                  isSelected={isSelected(_index + 4, "C")}
+                  // flightClass={FlightClass.BUSINESS_CLASS}
+                  selectSeat={() => chooseSeat("C", _index + 4)}
+                />
+                <Seat
+                  key={"D"}
+                  isBlocked={isBooked(_index + 4, "D")}
+                  // isBlocked={flightClass !== FlightClass.BUSINESS_CLASS}
+                  isSelected={isSelected(_index + 4, "D")}
+                  // flightClass={FlightClass.BUSINESS_CLASS}
+                  selectSeat={() => chooseSeat("D", _index + 4)}
+                />
+              </View>
+            ))}
+            <View style={styles.divider}>
+              <Text style={{ color: DARK_GRAY }}>Economy Class</Text>
+            </View>
+            {[...Array(23)].map((_data, _index) => (
+              <View style={styles.seatRow} key={`E${_index}`}>
+                <Seat
+                  key={"A"}
+                  isBlocked={isBooked(_index + 8, "A")}
+                  // isBlocked={flightClass !== FlightClass.ECONOMY_CLASS}
+                  isSelected={isSelected(_index + 8, "A")}
+                  // flightClass={FlightClass.ECONOMY_CLASS}
+                  selectSeat={() => chooseSeat("A", _index + 8)}
+                />
+                <Seat
+                  key={"B"}
+                  isBlocked={isBooked(_index + 8, "B")}
+                  // isBlocked={flightClass !== FlightClass.ECONOMY_CLASS}
+                  isSelected={isSelected(_index + 8, "B")}
+                  // flightClass={FlightClass.ECONOMY_CLASS}
+                  selectSeat={() => chooseSeat("B", _index + 8)}
+                />
+                <Seat
+                  key={"C"}
+                  isBlocked={isBooked(_index + 8, "C")}
+                  // isBlocked={flightClass !== FlightClass.ECONOMY_CLASS}
+                  isSelected={isSelected(_index + 8, "C")}
+                  // flightClass={FlightClass.ECONOMY_CLASS}
+                  selectSeat={() => chooseSeat("C", _index + 8)}
+                />
+                <Text style={styles.rowNumber}>{_index + 8}</Text>
+                <Seat
+                  key={"D"}
+                  isBlocked={isBooked(_index + 8, "D")}
+                  // isBlocked={flightClass !== FlightClass.ECONOMY_CLASS}
+                  isSelected={isSelected(_index + 8, "D")}
+                  // flightClass={FlightClass.ECONOMY_CLASS}
+                  selectSeat={() => chooseSeat("D", _index + 8)}
+                />
+                <Seat
+                  key={"E"}
+                  isBlocked={isBooked(_index + 8, "E")}
+                  // isBlocked={flightClass !== FlightClass.ECONOMY_CLASS}
+                  isSelected={isSelected(_index + 8, "E")}
+                  // flightClass={FlightClass.ECONOMY_CLASS}
+                  selectSeat={() => chooseSeat("E", _index + 8)}
+                />
+                <Seat
+                  key={"F"}
+                  isBlocked={isBooked(_index + 8, "F")}
+                  // isBlocked={flightClass !== FlightClass.ECONOMY_CLASS}
+                  isSelected={isSelected(_index + 8, "F")}
+                  // flightClass={FlightClass.ECONOMY_CLASS}
+                  selectSeat={() => chooseSeat("F", _index + 8)}
+                />
+              </View>
+            ))}
           </View>
-        </View>
-      </ScrollView>
+          <View style={styles.doors} />
+          <View style={[styles.airplainEdge, styles.airplainBottom]}>
+            <View style={[styles.wc, { marginTop: 11, left: -2 }]}>
+              <Icon
+                name="woman"
+                size={30}
+                color={GRAY}
+                style={{ borderRightColor: GRAY, borderRightWidth: 1 }}
+              />
+              <Icon name="man" size={30} color={GRAY} />
+            </View>
+            <View style={[styles.wc, { marginTop: 11, right: -2 }]}>
+              <Icon
+                name="man"
+                size={30}
+                color={GRAY}
+                style={{ borderRightColor: GRAY, borderRightWidth: 1 }}
+              />
+              <Icon name="woman" size={30} color={GRAY} />
+            </View>
+          </View>
+        </ScrollView>
+      )}
       <View style={styles.footer}>
         <View style={styles.footer_text_container}>
           <Text style={{ fontSize: 17, color: DARK_GRAY }}>Seat: </Text>
@@ -278,7 +302,14 @@ export default function SeatSelection(props: {
           <TouchableHighlight
             activeOpacity={0.7}
             underlayColor={GRAY}
-            // onPress={handleDone}
+            disabled={!selectedSeat}
+            onPress={() => {
+              const seat = selectedSeat
+                ? selectedSeat?.row + selectedSeat?.seat
+                : null;
+              store.dispatch(selectSeat(seat));
+              store.dispatch(changeActiveModalIndex(Move_Modal.forward));
+            }}
           >
             <Text style={styles.footer_button}>Select</Text>
           </TouchableHighlight>
@@ -435,21 +466,9 @@ const styles = StyleSheet.create({
     paddingVertical: 11,
     borderRadius: 8,
   },
-});
-
-const styles = StyleSheet.create({
-  container: {
+  loader: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
-  },
-  TextInput: {
-    width: "40%",
-    marginBottom: 5,
-    borderRadius: 12,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-    borderWidth: 0,
-    borderBottomWidth: 0,
+    justifyContent: "center",
   },
 });
