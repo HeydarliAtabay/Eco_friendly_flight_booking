@@ -4,7 +4,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import API from '../../services/API';
-import { Payment_Status } from '../../services/interfaces.ts/interfaces';
+import { Payment_Status, Selected_class } from '../../services/interfaces.ts/interfaces';
 import { store } from '../../store/store';
 import { useStore } from '../../store/storeHooks';
 import { payForFlight } from '../ResultList/ResultList.slice';
@@ -15,7 +15,9 @@ import SearchInfo from '../ResultList/SearchInfo';
 //     navigation: NativeStackNavigationProp<any, any>;
 // }
 export default function PaymentPageForBooking() {
-    const { selectedFlight } = useStore(({ search_results }) => search_results)
+    const { selectedFlight, selectedFlightDetailedIngo } = useStore(({ search_results }) => search_results)
+    const { passengers } = useStore(({ search_flight }) => search_flight)
+    console.log(selectedFlight)
 
     async function bookAFlight() {
         if (selectedFlight) {
@@ -27,9 +29,27 @@ export default function PaymentPageForBooking() {
     }
 
     const handleFlightBooking = () => {
-        store.dispatch(payForFlight(Payment_Status.paid))
+        let paidPrice: number = 0
         if (selectedFlight !== undefined) {
-            bookAFlight()
+
+            if (selectedFlight?.selected_class === Selected_class.econom) {
+                paidPrice = Number(selectedFlightDetailedIngo.econom_price) * (passengers.adults + (passengers.childen * 0.75))
+                store.dispatch(payForFlight(paidPrice))
+                bookAFlight()
+
+            }
+            if (selectedFlight?.selected_class === Selected_class.business) {
+                paidPrice = Number(selectedFlightDetailedIngo.business_price) * (passengers.adults + (passengers.childen * 0.75))
+                store.dispatch(payForFlight(paidPrice))
+                bookAFlight()
+
+            }
+            if (selectedFlight?.selected_class === Selected_class.first) {
+                paidPrice = Number(selectedFlightDetailedIngo.first_class_price) * (passengers.adults + (passengers.childen * 0.75))
+                store.dispatch(payForFlight(paidPrice))
+                bookAFlight()
+
+            }
         }
     }
 

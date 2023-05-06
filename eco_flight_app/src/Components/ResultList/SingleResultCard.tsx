@@ -3,12 +3,12 @@ import { Card } from "react-native-paper";
 import { Text, StyleSheet, Image, View, TouchableOpacity } from 'react-native'
 import { ECO, getLogoFromAirlineId, getLogoFromAirlineName, RYANAIR } from "../../helpers/images";
 import { DARKER_GRAY, DARK_GRAY, GRAY, GREEN } from "../../helpers/styles";
-import { Checkin_Status, Move_Modal, Payment_Status, SearchFlightResultSingle, SelectedFlight } from "../../services/interfaces.ts/interfaces";
+import { Checkin_Status, Move_Modal, Payment_Status, SearchFlightResultSingle, SelectedFlight, Selected_class } from "../../services/interfaces.ts/interfaces";
 import { useStore } from "../../store/storeHooks";
 import Icon from "react-native-vector-icons/Ionicons";
 import moment from "moment";
 import { store } from "../../store/store";
-import { changeActiveModalIndex, selectFlight } from "./ResultList.slice";
+import { changeActiveModalIndex, selectFlight, selectFlightDetailedInfo } from "./ResultList.slice";
 
 
 interface CardInterface {
@@ -39,8 +39,16 @@ export default function SingleResultCard(props: CardInterface) {
                                 seat: null,
                                 payment_status: Payment_Status.unpaid,
                                 checkin_status: Checkin_Status.not,
+                                selected_class: Selected_class.econom,
+                                paid_price: 0,
+                                baggage: [{
+                                    type: 'Hand',
+                                    kg: 10,
+                                    amount: 1
+                                }]
                             }
                             store.dispatch(selectFlight(selectedFlight))
+                            store.dispatch(selectFlightDetailedInfo(props.flight))
                             store.dispatch(changeActiveModalIndex(Move_Modal.forward))
                         }
                     }}

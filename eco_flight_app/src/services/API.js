@@ -180,6 +180,9 @@ function bookFlight(flight) {
         seat: flight.seat,
         payment_status: flight.payment_status,
         checkin_status: flight.checkin_status,
+        selected_class: flight.selected_class,
+        paid_price: flight.paid_price,
+        baggage: flight.baggage,
       }),
     })
       .then((response) => {
@@ -256,6 +259,6 @@ const API = {
   searchFlights,
   bookFlight,
   getBookedFlights,
-  getSeatsOfFlight
+  getSeatsOfFlight,
 };
 export default API;

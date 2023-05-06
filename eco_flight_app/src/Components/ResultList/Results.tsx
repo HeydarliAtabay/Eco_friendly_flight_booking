@@ -54,7 +54,7 @@ export default function ResultsPage() {
                             size={30}
                             onPress={() => store.dispatch(changeActiveModalIndex(Move_Modal.back))}
                         />
-                        <Text style={styles.title}>Seat Selection {activeModalIndex}</Text>
+                        <Text style={styles.title}>Seat Selection</Text>
                     </View>
                     <SeatSelection />
                 </Modal>
@@ -69,7 +69,7 @@ export default function ResultsPage() {
                             size={30}
                             onPress={() => store.dispatch(changeActiveModalIndex(Move_Modal.back))}
                         />
-                        <Text style={styles.title}>Pay for The flight {activeModalIndex}</Text>
+                        <Text style={styles.title}>Pay for The flight</Text>
                     </View>
                     <PaymentPageForBooking />
                 </Modal>

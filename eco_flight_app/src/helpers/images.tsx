@@ -2,6 +2,7 @@ export const RYANAIR = require("../../assets/airlineLogos/ryanair.png")
 export const WIZZAIR = require("../../assets/airlineLogos/wizzair.png")
 export const ECO = require('../../assets/eco-friendly.png')
 export const NOFLIGHT = require('../../assets/no-flight.png')
+export const SEAT = require('../../assets/seat.png')
 
 
 

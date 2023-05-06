@@ -40,7 +40,6 @@ export type Airport = {
 }
 
 export type SearchFlightResultSingle = {
-
     id: number,
     departure_airport: number,
     arrival_airport: number,
@@ -61,7 +60,6 @@ export type SearchFlightResultSingle = {
     arrival_airport_code: string,
     arrival_airport_country: string,
     arrival_airport_city: string
-
 }
 
 export type FlighSearchFullResult = {
@@ -74,8 +72,11 @@ export type SelectedFlight = {
     user_id: number,
     flight_id: number,
     seat: string | null,
-    payment_status: 'PAID' | 'UNPAID',
-    checkin_status: 'NOT' | 'PENDING' | 'DONE',
+    payment_status: Payment_Status,
+    checkin_status: Checkin_Status,
+    selected_class: Selected_class,
+    paid_price:number,
+    baggage: BaggageObject[]
 }
 
 export enum Payment_Status {
@@ -88,10 +89,20 @@ export enum Checkin_Status {
     pending = "PENDING",
     done = "DONE"
 }
-
+export enum Selected_class {
+    econom = "ECONOM",
+    business = "BUSINESS",
+    first = "FIRST"
+}
 export enum Move_Modal {
     back = Number(-1),
     forward = 1
+}
+
+export type BaggageObject = {
+    type: string,
+    kg: number,
+    amount: number
 }
 
 
