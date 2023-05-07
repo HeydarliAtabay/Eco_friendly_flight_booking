@@ -99,7 +99,9 @@ export default function SeatSelection(props: {
     <Modal
       animationType="slide"
       visible={isModalVisible}
-      // onRequestClose={() => store.dispatch(changeActiveModalIndex(Move_Modal.back))}
+      onRequestClose={() =>
+        store.dispatch(changeActiveModalIndex(Move_Modal.back))
+      }
     >
       {openOptions && (
         <SeatSelectionOptions

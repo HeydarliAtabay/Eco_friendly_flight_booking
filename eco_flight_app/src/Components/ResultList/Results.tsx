@@ -20,6 +20,7 @@ import EmptyResultPage from "./EmptyResultPage";
 import { changeActiveModalIndex } from "./ResultList.slice";
 import SearchInfo from "./SearchInfo";
 import SingleResultCard from "./SingleResultCard";
+import FlightClassSelection from "../Booking/FlightClassSelection";
 
 export default function ResultsPage() {
   const { departureFlights, returnFlights, activeModalIndex } = useStore(
@@ -55,15 +56,21 @@ export default function ResultsPage() {
       )}
 
       {activeModalIndex === 1 && (
-        <SeatSelection
+        <FlightClassSelection
           isModalVisible={activeModalIndex === 1 ? true : false}
+          //   flightClass={FlightClass.BUSINESS_CLASS}
+        />
+      )}
+      {activeModalIndex === 2 && (
+        <SeatSelection
+          isModalVisible={activeModalIndex === 2 ? true : false}
           //   flightClass={FlightClass.BUSINESS_CLASS}
         />
       )}
 
       <Modal
         animationType="fade"
-        visible={activeModalIndex === 2 ? true : false}
+        visible={activeModalIndex === 3 ? true : false}
         // onRequestClose={() => store.dispatch(changeActiveModalIndex(Move_Modal.back))}
       >
         <View style={styles.header}>
