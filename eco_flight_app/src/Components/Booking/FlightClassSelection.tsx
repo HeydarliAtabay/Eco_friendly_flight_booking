@@ -26,7 +26,10 @@ import {
 import SearchInfo from "../ResultList/SearchInfo";
 import { BAGGAGE, HANDBAGGAGE, MONEY_REFUND, SEAT } from "../../helpers/images";
 import { FlightClass } from "../../helpers";
-import { FlightClass_To_SelectedClass } from "../../services/interactions";
+import {
+  FlightClass_To_SelectedClass,
+  SelectedClass_To_FlightClass,
+} from "../../services/interactions";
 import { useSelector } from "react-redux";
 
 export default function FlightClassSelection(props: {
@@ -34,11 +37,13 @@ export default function FlightClassSelection(props: {
 }) {
   const { isModalVisible } = props;
 
-  const selectedFlightInfo = useSelector(
-    (state: State) => state.search_results.selectedFlightDetailedIngo
+  const { selectedFlightDetailedIngo, selectedFlight } = useSelector(
+    (state: State) => state.search_results
   );
   const [isSelectedClass, setIsSelectedClass] = useState<FlightClass>(
-    FlightClass.ECONOMY_CLASS
+    selectedFlight?.selected_class !== undefined
+      ? SelectedClass_To_FlightClass(selectedFlight.selected_class)
+      : FlightClass.ECONOMY_CLASS
   );
 
   const getSelectedClass = () => {
@@ -49,7 +54,7 @@ export default function FlightClassSelection(props: {
 
   return (
     <Modal
-      animationType="slide"
+      animationType="fade"
       visible={isModalVisible}
       onRequestClose={() =>
         store.dispatch(changeActiveModalIndex(Move_Modal.back))
@@ -85,7 +90,7 @@ export default function FlightClassSelection(props: {
             )}
             <View style={styles.card_header}>
               <Text style={styles.card_header_price}>
-                {selectedFlightInfo.econom_price}
+                {selectedFlightDetailedIngo.econom_price}
                 <Icon name="logo-euro" size={15} />
               </Text>
               <Text style={styles.card_header_class}>Economy Class</Text>
@@ -126,7 +131,7 @@ export default function FlightClassSelection(props: {
             )}
             <View style={styles.card_header}>
               <Text style={styles.card_header_price}>
-                {selectedFlightInfo.business_price}
+                {selectedFlightDetailedIngo.business_price}
                 <Icon name="logo-euro" size={15} />
               </Text>
               <Text style={styles.card_header_class}>Business Class</Text>
@@ -176,7 +181,7 @@ export default function FlightClassSelection(props: {
             )}
             <View style={styles.card_header}>
               <Text style={styles.card_header_price}>
-                {selectedFlightInfo.first_class_price}
+                {selectedFlightDetailedIngo.first_class_price}
                 <Icon name="logo-euro" size={15} />
               </Text>
               <Text style={styles.card_header_class}>First Class</Text>
