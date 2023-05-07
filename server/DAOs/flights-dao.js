@@ -313,27 +313,29 @@ exports.getBookedSeatsOfFlight = (flight) => {
       if (err) {
         reject(err);
       } else {
-        const bookedSeatsByRow = {};
+        // const bookedSeatsByRow = {};
 
-        for (let i = 0; i < results.length; i++) {
-          const seat = results[i].seat;
-          const rowNumber = parseInt(seat.substring(0, seat.length - 1));
-          const seatLetter = seat.substring(seat.length - 1);
+        // for (let i = 0; i < results.length; i++) {
+        //   const seat = results[i].seat;
+        //   const rowNumber = parseInt(seat.substring(0, seat.length - 1));
+        //   const seatLetter = seat.substring(seat.length - 1);
 
-          if (bookedSeatsByRow[rowNumber.toString()]) {
-            bookedSeatsByRow[rowNumber.toString()].push(seatLetter);
-          } else {
-            bookedSeatsByRow[rowNumber.toString()] = [seatLetter];
-          }
-        }
-        const seatData = [];
-        for (let row = 1; row <= 30; row++) {
-          const rowNumber = row.toString();
-          const seatLetters = bookedSeatsByRow[rowNumber] || [];
-          seatData.push({ [rowNumber]: seatLetters });
-        }
+        //   if (bookedSeatsByRow[rowNumber.toString()]) {
+        //     bookedSeatsByRow[rowNumber.toString()].push(seatLetter);
+        //   } else {
+        //     bookedSeatsByRow[rowNumber.toString()] = [seatLetter];
+        //   }
+        // }
+        // const seatData = [];
+        // for (let row = 1; row <= 30; row++) {
+        //   const rowNumber = row.toString();
+        //   const seatLetters = bookedSeatsByRow[rowNumber] || [];
+        //   seatData.push({ [rowNumber]: seatLetters });
+        // }
 
-        resolve(seatData);
+        const seats = results.map((b) => b.seat);
+
+        resolve(seats);
       }
     });
   });

@@ -188,9 +188,11 @@ app.get("/api/bookedFlights/:user", (req, res) => {
 
 app.get("/api/getSeatsOfFlight/:flight", (req, res) => {
   const flightID = Number(req.params.flight);
+  console.log("get seats", flightID);
   flightsDao
     .getBookedSeatsOfFlight(flightID)
     .then((seats) => {
+      console.log("SS", seats);
       res.json(seats);
     })
     .catch((error) => {

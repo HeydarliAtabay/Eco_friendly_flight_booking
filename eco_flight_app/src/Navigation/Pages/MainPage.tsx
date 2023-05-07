@@ -10,7 +10,6 @@ interface MainPageProps {
 
 export default function MainPage({ navigation }: MainPageProps) {
   const { user } = useStore(({ app }) => app);
-
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
