@@ -13,7 +13,6 @@ import { MainPageStackNavigator } from "./Pages/MainPageStackNav";
 
 // Screen names
 const MainName = "Main";
-const BookingName = "Booking";
 const ListName = "List of Bookings";
 const UserProfileName = 'Account'
 
@@ -32,8 +31,6 @@ export default function MainContainer() {
               let rn = route.name;
               if (rn === MainName) {
                 iconName = focused ? "home" : "home-outline";
-              } else if (rn === BookingName) {
-                iconName = focused ? "airplane" : "airplane-outline";
               } else if (rn === ListName) {
                 iconName = focused ? "list" : "list-outline";
               }
@@ -63,7 +60,6 @@ export default function MainContainer() {
               headerShown: false,
             }}
           />
-          <Tab.Screen name={BookingName} component={BookingPage} />
           <Tab.Screen name={ListName} component={ListOfBookingsPage} />
           <Tab.Screen name={UserProfileName} component={UserProfilePage}  />
         </Tab.Navigator>

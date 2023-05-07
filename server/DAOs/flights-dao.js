@@ -210,8 +210,8 @@ exports.bookFlight = (flight) => {
   return new Promise((resolve, reject) => {
     const sql =
       "INSERT INTO booked_flights(user_id, flight_id, seat, payment_status," +
-      "checkin_status)" +
-      "VALUES(?,?,?,?,?)";
+      "checkin_status,selected_class,paid_price,baggage)" +
+      "VALUES(?,?,?,?,?,?,?,?)";
     db.query(
       sql,
       [
@@ -220,6 +220,9 @@ exports.bookFlight = (flight) => {
         flight.seat,
         flight.payment_status,
         flight.checkin_status,
+        flight.selected_class,
+        flight.paid_price,
+        JSON.stringify(flight.baggage),
       ],
       function (err) {
         if (err) {

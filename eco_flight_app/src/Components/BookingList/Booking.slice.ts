@@ -12,10 +12,12 @@ import {
 
 export interface BookingState {
   bookedFlights: BookedFlightInfo[];
+  selectedBookedFLight: BookedFlightInfo | undefined;
 }
 
 const initialState: BookingState = {
   bookedFlights: [],
+  selectedBookedFLight: undefined,
 };
 
 const slice = createSlice({
@@ -29,10 +31,20 @@ const slice = createSlice({
     ) => {
       state.bookedFlights = list;
     },
+
+    selectBookedFlight: (
+      state,
+      { payload: flight }: PayloadAction<BookedFlightInfo|undefined>
+    ) => {
+      state.selectedBookedFLight = flight;
+    },
   },
 });
 
-export const { initializeBookedFlightResults, loadBookedFlights } =
-  slice.actions;
+export const {
+  initializeBookedFlightResults,
+  loadBookedFlights,
+  selectBookedFlight,
+} = slice.actions;
 
 export default slice.reducer;
