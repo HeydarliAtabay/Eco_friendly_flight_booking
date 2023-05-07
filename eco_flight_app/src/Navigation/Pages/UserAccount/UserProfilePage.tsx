@@ -3,7 +3,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { ActivityIndicator, Avatar, Button, TextInput } from 'react-native-paper';
+import { ActivityIndicator, Avatar, Button, Card, TextInput } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { initializeApp, loadUser, logout } from '../../../../App.slice';
 import API from '../../../services/API';
@@ -70,117 +70,124 @@ export default function UserProfilePage() {
     }
     return (
         <View style={styles.container}>
-            {loading ?
-                <View style={{ display: 'flex', height: 450 }}>
-                    <ActivityIndicator style={{ marginTop: 'auto', marginBottom: 'auto' }} size={56} animating={true} color={'black'} />
-                </View>
-                :
-                <View style={styles.userInfoView}>
-                    <Avatar.Text
-                        style={{ marginTop: 25, marginRight: 'auto', position: 'relative', maxWidth: '35%' }}
-                        size={130} label={user?.name[0] + '' + user?.surname[0]} />
-                    <View style={styles.nameEmailBox}>
-                        <Text style={styles.nameSurnameText}>{`${user?.name} ${user?.surname}`}</Text>
-                        <Text style={styles.emailText}>{`${user?.username}`}</Text>
-                    </View>
-                </View>
-            }
-            <View style={{ height: 60, width: '100%', backgroundColor: '#ededed', display: 'flex', flexDirection: 'row' }}>
-                <Text style={{ fontSize: 18, marginTop: 'auto', marginBottom: 'auto', marginLeft: '5%' }}>Account</Text>
+            <Card style={styles.cardContainer}>
 
-                {!activeModify ?
-                    <Button style={{ marginTop: 'auto', marginBottom: 'auto', width: 50, marginLeft: 'auto' }}
-                        labelStyle={{ fontSize: 30 }}
-                        icon="pen"
-                        onPress={handleModify}
-                    >
-                    </Button>
+                <Button icon={'close'} mode="contained"
+                    buttonColor='#FF6666'
+                    style={{ display: 'flex', marginTop: 'auto', width: '35%', marginLeft: 'auto' }}
+                    onPress={handleLogout}>
+                    Log out
+                </Button>
+                {loading ?
+                    <View style={{ display: 'flex', height: 450 }}>
+                        <ActivityIndicator style={{ marginTop: 'auto', marginBottom: 'auto' }} size={56} animating={true} color={'black'} />
+                    </View>
                     :
-                    <View style={{ display: 'flex', flexDirection: 'row', width: 100, marginLeft: 'auto' }}>
-                        <Button style={{ marginTop: 'auto', marginBottom: 'auto', width: 30, marginLeft: 'auto', marginRight: 20 }}
-                            labelStyle={{ fontSize: 26 }}
-                            icon="close"
-                            onPress={handleDiscardChanges}
-                            textColor={'red'}
-                        >
-                        </Button>
-                        <Button style={{ marginTop: 'auto', marginBottom: 'auto', width: 30, marginLeft: 'auto', marginRight: 20 }}
-                            labelStyle={{ fontSize: 26 }}
-                            icon="check"
-                            onPress={updateUserInfo}
-                            textColor={'green'}
-                        >
-                        </Button>
+                    <View style={styles.userInfoView}>
+
+                        <Avatar.Text
+                            style={{ marginRight: 'auto', position: 'relative', maxWidth: '35%' }}
+                            size={100} label={user?.name[0] + '' + user?.surname[0]} />
+                        <View style={styles.nameEmailBox}>
+                            <Text style={styles.nameSurnameText}>{`${user?.name} ${user?.surname}`}</Text>
+                            <Text style={styles.emailText}>{`${user?.username}`}</Text>
+                        </View>
                     </View>
                 }
-            </View>
-            <View style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-                <TextInput
-                    style={styles.TextInput}
-                    label="Name"
-                    returnKeyType="next"
-                    value={userInfo.name}
-                    onChangeText={(text) => setUserinfo({ ...userInfo, name: text })}
-                    autoCapitalize="none"
-                    textContentType="name"
-                    disabled={activeModify ? false : true}
-                />
-                <TextInput
-                    style={styles.TextInput}
-                    label="Surname"
-                    returnKeyType="next"
-                    value={userInfo.surname}
-                    onChangeText={(text) => setUserinfo({ ...userInfo, surname: text })}
-                    autoCapitalize="none"
-                    textContentType="name"
-                    disabled={activeModify ? false : true}
-                />
-                <TextInput
-                    style={styles.TextInput}
-                    label="Telephone"
-                    returnKeyType="next"
-                    value={userInfo.phone_number}
-                    onChangeText={(text) => setUserinfo({ ...userInfo, phone_number: text })}
-                    autoCapitalize="none"
-                    textContentType="telephoneNumber"
-                    keyboardType="phone-pad"
-                    disabled={activeModify ? false : true}
-                />
-
-                <Button icon={'bank'} mode="contained"
-                    buttonColor='#ededed'
-                    labelStyle={{ fontSize: 18, margin:'auto', marginTop:13 }}
-                    textColor='black'
-                    style={{ display: 'flex', marginTop: 'auto', borderRadius: 0, height: 50 }}
-                    onPress={() => setPaymentDetailsShow(true)}>
-                    Payment Details
-                </Button>
-
-            </View>
-            <Text>{process.env.REACT_APP_LOCAL_IPv4_ADRESS}</Text>
-            <Button icon={'close'} mode="contained"
-                buttonColor='#FF6666'
-                style={{ display: 'flex', marginTop: 'auto', marginBottom: 25 }}
-                onPress={handleLogout}>
-                Log out from account
-            </Button>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={paymentDetailsShow}
-                onRequestClose={() => {
-                    setPaymentDetailsShow(!paymentDetailsShow);
+                <View style={{
+                    height: 60, width: '100%', backgroundColor: '#ededed', display: 'flex', flexDirection: 'row',
+                    borderTopLeftRadius: 12, borderTopRightRadius: 12
                 }}>
-                <View style={styles.header}>
-                    <Icon
-                        name="chevron-down"
-                        size={30}
-                        onPress={() => setPaymentDetailsShow(false)}
-                    />
-                    <Text style={styles.title}>Payment details</Text>
+                    <Text style={{ fontSize: 18, marginTop: 'auto', marginBottom: 'auto', marginLeft: '5%' }}>Account</Text>
+
+                    {!activeModify ?
+                        <Button style={{ marginTop: 'auto', marginBottom: 'auto', width: 50, marginLeft: 'auto' }}
+                            labelStyle={{ fontSize: 30 }}
+                            icon="pen"
+                            onPress={handleModify}
+                        >
+                        </Button>
+                        :
+                        <View style={{ display: 'flex', flexDirection: 'row', width: 100, marginLeft: 'auto' }}>
+                            <Button style={{ marginTop: 'auto', marginBottom: 'auto', width: 30, marginLeft: 'auto', marginRight: 20 }}
+                                labelStyle={{ fontSize: 26 }}
+                                icon="close"
+                                onPress={handleDiscardChanges}
+                                textColor={'red'}
+                            >
+                            </Button>
+                            <Button style={{ marginTop: 'auto', marginBottom: 'auto', width: 30, marginLeft: 'auto', marginRight: 20 }}
+                                labelStyle={{ fontSize: 26 }}
+                                icon="check"
+                                onPress={updateUserInfo}
+                                textColor={'green'}
+                            >
+                            </Button>
+                        </View>
+                    }
                 </View>
-                <PaymentDetailsPage />
-            </Modal>
+                <View style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <TextInput
+                        style={styles.TextInput}
+                        label="Name"
+                        returnKeyType="next"
+                        value={userInfo.name}
+                        onChangeText={(text) => setUserinfo({ ...userInfo, name: text })}
+                        autoCapitalize="none"
+                        textContentType="name"
+                        disabled={activeModify ? false : true}
+                    />
+                    <TextInput
+                        style={styles.TextInput}
+                        label="Surname"
+                        returnKeyType="next"
+                        value={userInfo.surname}
+                        onChangeText={(text) => setUserinfo({ ...userInfo, surname: text })}
+                        autoCapitalize="none"
+                        textContentType="name"
+                        disabled={activeModify ? false : true}
+                    />
+                    <TextInput
+                        style={styles.TextInput}
+                        label="Telephone"
+                        returnKeyType="next"
+                        value={userInfo.phone_number}
+                        onChangeText={(text) => setUserinfo({ ...userInfo, phone_number: text })}
+                        autoCapitalize="none"
+                        textContentType="telephoneNumber"
+                        keyboardType="phone-pad"
+                        disabled={activeModify ? false : true}
+                    />
+
+                    <Button icon={'bank'} mode="contained"
+                        buttonColor='#ededed'
+                        labelStyle={{ fontSize: 18, margin: 'auto', marginTop: 13 }}
+                        textColor='black'
+                        style={{ display: 'flex', marginTop: 'auto', borderRadius: 0, height: 50, borderBottomLeftRadius: 12, borderBottomRightRadius: 12 }}
+                        onPress={() => setPaymentDetailsShow(true)}>
+                        Payment Details
+                    </Button>
+
+                </View>
+
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={paymentDetailsShow}
+                    onRequestClose={() => {
+                        setPaymentDetailsShow(!paymentDetailsShow);
+                    }}>
+                    <View style={styles.header}>
+                        <Icon
+                            name="chevron-down"
+                            size={30}
+                            onPress={() => setPaymentDetailsShow(false)}
+                        />
+                        <Text style={styles.title}>Payment details</Text>
+                    </View>
+                    <PaymentDetailsPage />
+                </Modal>
+            </Card>
         </View>
     );
 }
@@ -191,6 +198,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    cardContainer: {
+        width: '95%',
+        padding: 10,
     },
     loginBtn: {
         width: "85%",
@@ -220,10 +231,10 @@ const styles = StyleSheet.create({
         position: 'relative'
     },
     nameEmailBox: {
-        padding: 10,
+        padding: 0,
         justifyContent: 'center',
         position: 'relative',
-        maxWidth: '65%'
+        maxWidth: '80%'
     },
     TextInput: {
         width: '100%',

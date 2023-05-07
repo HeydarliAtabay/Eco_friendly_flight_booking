@@ -17,7 +17,6 @@ import SearchInfo from '../ResultList/SearchInfo';
 export default function PaymentPageForBooking() {
     const { selectedFlight, selectedFlightDetailedIngo } = useStore(({ search_results }) => search_results)
     const { passengers } = useStore(({ search_flight }) => search_flight)
-    console.log(selectedFlight)
 
     async function bookAFlight() {
         if (selectedFlight) {

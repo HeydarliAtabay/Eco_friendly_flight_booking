@@ -75,7 +75,7 @@ export type SelectedFlight = {
     payment_status: Payment_Status,
     checkin_status: Checkin_Status,
     selected_class: Selected_class,
-    paid_price:number,
+    paid_price: number,
     baggage: BaggageObject[]
 }
 
@@ -122,6 +122,9 @@ export type BookedFlightInfo = {
     seat: string | null,
     payment_status: 'PAID' | 'UNPAID',
     checkin_status: 'NOT' | 'PENDING' | 'DONE',
+    selected_class: Selected_class,
+    paid_price: number,
+    baggage: BaggageObject[]
     flight_info: Flight,
     departureAirport: Airport,
     arrivalAirport: Airport

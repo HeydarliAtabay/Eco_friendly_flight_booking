@@ -3,9 +3,8 @@ export const WIZZAIR = require("../../assets/airlineLogos/wizzair.png")
 export const ECO = require('../../assets/eco-friendly.png')
 export const NOFLIGHT = require('../../assets/no-flight.png')
 export const SEAT = require('../../assets/seat.png')
-
-
-
+export const HANDBAGGAGE = require('../../assets/bag.png')
+export const BAGGAGE = require('../../assets/suitcase.png')
 export function getLogoFromAirlineName(airlineName: string) {
     if (airlineName.toLowerCase() === 'ryanair') return RYANAIR
     if (airlineName.toLowerCase() === 'wizzair') return WIZZAIR

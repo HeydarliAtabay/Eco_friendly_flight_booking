@@ -47,7 +47,7 @@ Content-Type: application/json
 POST http://localhost:3001/api/bookFlight
 Content-Type: application/json
 
-{ "user_id":7,"flight_id":1295, "seat":"22B", "payment_status":"PAID", "checkin_status":"NOT","selected_class":"ECONOM", "paid_price":120, "baggage":[{"type":"Hand","kg":10,"amount":1}]}
+{ "user_id":7,"flight_id":1295, "seat":"29B", "payment_status":"PAID", "checkin_status":"NOT","selected_class":"ECONOM", "paid_price":120, "baggage":[{"type":"Hand","kg":10,"amount":1},{"type":"Checkin","kg":20,"amount":1}]}
 
 
 ### Getting all flights of user

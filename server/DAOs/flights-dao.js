@@ -285,6 +285,7 @@ exports.getBookedFlightsOfUser = (user) => {
                 );
 
                 // Add flight info and airport info to the flight object
+                flight.baggage = JSON.parse(flight.baggage);
                 flight.flight_info = flightInfo;
                 flight.departureAirport = departureAirport;
                 flight.arrivalAirport = arrivalAirport;

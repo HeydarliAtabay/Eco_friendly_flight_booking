@@ -34,7 +34,7 @@ const slice = createSlice({
 
     selectBookedFlight: (
       state,
-      { payload: flight }: PayloadAction<BookedFlightInfo|undefined>
+      { payload: flight }: PayloadAction<BookedFlightInfo | undefined>
     ) => {
       state.selectedBookedFLight = flight;
     },

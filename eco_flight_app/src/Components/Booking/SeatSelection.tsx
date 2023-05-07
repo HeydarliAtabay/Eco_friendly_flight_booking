@@ -10,7 +10,6 @@ import SearchInfo from '../ResultList/SearchInfo';
 
 export default function SeatSelection() {
     const { selectedFlight } = useStore(({ search_results }) => search_results)
-    console.log(selectedFlight)
     return (
         <View style={styles.container}>
             <SearchInfo />
