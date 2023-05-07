@@ -58,35 +58,17 @@ export default function ResultsPage() {
       {activeModalIndex === 1 && (
         <FlightClassSelection
           isModalVisible={activeModalIndex === 1 ? true : false}
-          //   flightClass={FlightClass.BUSINESS_CLASS}
         />
       )}
       {activeModalIndex === 2 && (
-        <SeatSelection
-          isModalVisible={activeModalIndex === 2 ? true : false}
-          //   flightClass={FlightClass.BUSINESS_CLASS}
-        />
+        <SeatSelection isModalVisible={activeModalIndex === 2 ? true : false} />
       )}
 
-      <Modal
-        animationType="fade"
-        visible={activeModalIndex === 3 ? true : false}
-        // onRequestClose={() => store.dispatch(changeActiveModalIndex(Move_Modal.back))}
-      >
-        <View style={styles.header}>
-          <Icon
-            name="chevron-down"
-            size={30}
-            onPress={() =>
-              store.dispatch(changeActiveModalIndex(Move_Modal.back))
-            }
-          />
-          <Text style={styles.title}>
-            Pay for The flight {activeModalIndex}
-          </Text>
-        </View>
-        <PaymentPageForBooking />
-      </Modal>
+      {activeModalIndex === 3 && (
+        <PaymentPageForBooking
+          isModalVisible={activeModalIndex === 3 ? true : false}
+        />
+      )}
     </View>
   );
 }
