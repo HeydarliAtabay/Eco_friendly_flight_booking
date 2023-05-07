@@ -22,6 +22,7 @@ import {
 } from "../ResultList/ResultList.slice";
 import SearchInfo from "../ResultList/SearchInfo";
 import API from "../../services/API";
+import SeatSelectionOptions from "./SeatSelectionOptions";
 
 const Seat = (props: {
   isBlocked: boolean;
@@ -63,22 +64,14 @@ export default function SeatSelection(props: {
     seat: string;
   }>();
   const [loading, setLoading] = useState<boolean>(true);
+  const [openOptions, setOpenOptions] = useState<boolean>(false);
 
   const isSelected = (row: number, seat: string) => {
     return selectedSeat?.row === row && selectedSeat.seat === seat;
   };
   const isBooked = (row: number, seat: string) => {
     const seatNumber = row + seat;
-    // if (bookedSeats[row as unknown as string]) {
-    //   console.log(
-    //     "SEAT ::: ",
-    //     row,
-    //     " ::: ",
-    //     bookedSeats[row as unknown as string]
-    //   );
     return bookedSeats.includes(seatNumber);
-    // }
-    // return false;
   };
   const chooseSeat = (seat: string, row: number) => {
     setSelectedSeat({ row: row, seat: seat });
@@ -90,6 +83,7 @@ export default function SeatSelection(props: {
         .then((list) => {
           setBookedSeats(list);
           setLoading(false);
+          setOpenOptions(true);
         })
         .catch(function (error) {
           setLoading(false);
@@ -107,6 +101,13 @@ export default function SeatSelection(props: {
       visible={isModalVisible}
       // onRequestClose={() => store.dispatch(changeActiveModalIndex(Move_Modal.back))}
     >
+      {openOptions && (
+        <SeatSelectionOptions
+          isModalVisible={openOptions}
+          setIsModalVisible={setOpenOptions}
+          bookedSeats={bookedSeats}
+        />
+      )}
       <View style={styles.header}>
         <Icon
           name="chevron-down"
@@ -120,7 +121,7 @@ export default function SeatSelection(props: {
       <SearchInfo />
       {loading ? (
         <View style={styles.loader}>
-          <ActivityIndicator size="large" color="#00ff00" />
+          <ActivityIndicator size="large" color={GREEN} />
         </View>
       ) : (
         <ScrollView>
@@ -412,6 +413,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: DARK_GRAY,
     marginHorizontal: 15,
+    minWidth: 20,
+    textAlign: "center",
   },
   seat: {
     width: seatSize.width,
