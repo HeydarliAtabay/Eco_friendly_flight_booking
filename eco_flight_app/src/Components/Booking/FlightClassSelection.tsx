@@ -144,7 +144,7 @@ export default function FlightClassSelection(props: {
             <View style={styles.card_row}>
               <Image source={SEAT} style={styles.icon} />
               <Text style={styles.card_row_text}>
-                Free seat selection with extra legroom
+                Free extra legroom seat selection
               </Text>
             </View>
             <View style={styles.divider} />
