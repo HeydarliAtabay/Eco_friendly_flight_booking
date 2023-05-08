@@ -236,6 +236,39 @@ async function getSeatsOfFlight(flightID) {
   }
 }
 
+function updateCheckinInformation(body, flightID) {
+  return new Promise((resolve, reject) => {
+    fetch(url + "/api/updateBookedFlight/" + flightID, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        selected_class: body.selected_class,
+        seat: body.seat,
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          resolve(null);
+        } else {
+          // analyze the cause of error
+          response
+            .json()
+            .then((obj) => {
+              reject(obj);
+            }) // error message in the response body
+            .catch(() => {
+              reject({ error: "Cannot parse server response." });
+            }); // something else
+        }
+      })
+      .catch(() => {
+        reject({ error: "Cannot communicate with the server." });
+      }); // connection errors
+  });
+}
+
 // Airport APIs
 
 // list all
@@ -260,5 +293,6 @@ const API = {
   bookFlight,
   getBookedFlights,
   getSeatsOfFlight,
+  updateCheckinInformation,
 };
 export default API;

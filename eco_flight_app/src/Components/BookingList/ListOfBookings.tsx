@@ -6,7 +6,7 @@ import { GRAY, GREEN } from '../../helpers/styles';
 import API from '../../services/API';
 import { store } from '../../store/store';
 import { useStore } from '../../store/storeHooks';
-import { initializeBookedFlightResults, loadBookedFlights, selectBookedFlight } from './Booking.slice';
+import { changeBoardingBassVisibility, changeCheckinVisibility, initializeBookedFlightResults, loadBookedFlights, selectBookedFlight } from './Booking.slice';
 import DetailedInfoOfBookedFlight from './BoardingPass';
 import EmptyBookingListpage from './EmptyBookingListPage';
 import SingleBookingCard from './SingleBookingCard';
@@ -17,9 +17,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 export default function ListOfBookingsPage() {
     const [loading, setLoading] = useState(true)
     const { user } = useStore(({ app }) => app)
-    const { bookedFlights, selectedBookedFLight } = useStore(({ booking }) => booking)
-    const [openModal, setOpenModal] = useState(false)
-    const [openChecking, setOpenCheckin] = useState(false)
+    const { bookedFlights, selectedBookedFLight, showBoardingPass, showCheckIn } = useStore(({ booking }) => booking)
 
     async function getBookedFlightsOfUser() {
         store.dispatch(initializeBookedFlightResults())
@@ -37,23 +35,23 @@ export default function ListOfBookingsPage() {
             getBookedFlightsOfUser()
         }
         return (() => {
-            setOpenModal(false)
+            store.dispatch(changeBoardingBassVisibility(false))
             store.dispatch(loadBookedFlights([]))
         })
     }, [])
 
     useEffect(() => {
         if (selectedBookedFLight !== undefined && selectedBookedFLight.checkin_status === 'DONE') {
-            setOpenModal(true)
-            setOpenCheckin(false)
+            store.dispatch(changeBoardingBassVisibility(true))
+            store.dispatch(changeCheckinVisibility(false))
         }
         else if (selectedBookedFLight !== undefined && selectedBookedFLight.checkin_status === 'PENDING') {
-            setOpenCheckin(true)
-            setOpenModal(false)
+            store.dispatch(changeCheckinVisibility(true))
+            store.dispatch(changeBoardingBassVisibility(false))
         }
         else {
-            setOpenModal(false)
-            setOpenCheckin(false)
+            store.dispatch(changeBoardingBassVisibility(false))
+            store.dispatch(changeCheckinVisibility(false))
         }
     }, [selectedBookedFLight])
     return (
@@ -79,14 +77,14 @@ export default function ListOfBookingsPage() {
             }
             <Modal
                 animationType="slide"
-                visible={openModal}
-                onRequestClose={() => setOpenModal(false)}
+                visible={showBoardingPass}
+                onRequestClose={() => store.dispatch(changeBoardingBassVisibility(false))}
             >
                 <View style={styles.header}>
                     <Icon
                         name="chevron-down"
                         size={30}
-                        onPress={() => setOpenModal(false)}
+                        onPress={() => store.dispatch(changeBoardingBassVisibility(false))}
                     />
                     <Text style={styles.title}>Booking details</Text>
                 </View>
@@ -94,14 +92,14 @@ export default function ListOfBookingsPage() {
             </Modal>
             <Modal
                 animationType="slide"
-                visible={openChecking}
-                onRequestClose={() => setOpenCheckin(false)}
+                visible={showCheckIn}
+                onRequestClose={() => store.dispatch(changeCheckinVisibility(false))}
             >
                 <View style={styles.header}>
                     <Icon
                         name="chevron-down"
                         size={30}
-                        onPress={() => setOpenCheckin(false)}
+                        onPress={() => store.dispatch(changeCheckinVisibility(false))}
                     />
                     <Text style={styles.title}>Checkin</Text>
                 </View>

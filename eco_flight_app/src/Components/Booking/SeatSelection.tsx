@@ -24,6 +24,7 @@ import {
 import SearchInfo from "../ResultList/SearchInfo";
 import API from "../../services/API";
 import SeatSelectionOptions from "./SeatSelectionOptions";
+import { changeSeatModalVisibility, changeSelectedSeat } from "../BookingList/Booking.slice";
 
 const Seat = (props: {
   isBlocked: boolean;
@@ -50,9 +51,10 @@ const Seat = (props: {
   );
 };
 
-export default function SeatSelection(props: { isModalVisible: boolean }) {
+export default function SeatSelection(props: { isModalVisible: boolean, checkinPage?: boolean }) {
   const { isModalVisible } = props;
   const { selectedFlight } = useStore(({ search_results }) => search_results);
+  const { selectedBookedFLight } = useStore(({ booking }) => booking)
   const [bookedSeats, setBookedSeats] = useState<string[]>([]);
   const [selectedSeat, setSelectedSeat] = useState<{
     row: number;
@@ -72,7 +74,8 @@ export default function SeatSelection(props: { isModalVisible: boolean }) {
     const seatNumber = row + seat;
     return (
       bookedSeats.includes(seatNumber) ||
-      selectedFlight?.selected_class !== flightClass
+        !props.checkinPage ? selectedFlight?.selected_class !== flightClass :
+        selectedBookedFLight?.selected_class !== flightClass
     );
   };
   const chooseSeat = (seat: string, row: number) => {
@@ -80,29 +83,51 @@ export default function SeatSelection(props: { isModalVisible: boolean }) {
   };
 
   useEffect(() => {
-    try {
-      API.getSeatsOfFlight(selectedFlight?.flight_id)
-        .then((list) => {
-          setBookedSeats(list);
-          setLoading(false);
-          setOpenOptions(true);
-        })
-        .catch(function (error) {
-          setLoading(false);
-          alert(error.message);
-          throw error;
-        });
-    } catch (err) {
-      alert({ msg: err, type: "danger" });
+    if (props.checkinPage) {
+      try {
+        API.getSeatsOfFlight(selectedBookedFLight?.flight_id)
+          .then((list) => {
+            setBookedSeats(list);
+            setLoading(false);
+            setOpenOptions(true);
+          })
+          .catch(function (error) {
+            setLoading(false);
+            alert(error.message);
+            throw error;
+          });
+      } catch (err) {
+        alert({ msg: err, type: "danger" });
+      }
     }
+    else {
+      try {
+        API.getSeatsOfFlight(selectedFlight?.flight_id)
+          .then((list) => {
+            setBookedSeats(list);
+            setLoading(false);
+            setOpenOptions(true);
+          })
+          .catch(function (error) {
+            setLoading(false);
+            alert(error.message);
+            throw error;
+          });
+      } catch (err) {
+        alert({ msg: err, type: "danger" });
+      }
+    }
+
   }, []);
 
   return (
     <Modal
       animationType="slide"
       visible={isModalVisible}
-      onRequestClose={() =>
-        store.dispatch(changeActiveModalIndex(Move_Modal.back))
+      onRequestClose={() => {
+        if (!props.checkinPage) store.dispatch(changeActiveModalIndex(Move_Modal.back))
+        else store.dispatch(changeSeatModalVisibility(false))
+      }
       }
     >
       {openOptions && (
@@ -110,19 +135,22 @@ export default function SeatSelection(props: { isModalVisible: boolean }) {
           isModalVisible={openOptions}
           setIsModalVisible={setOpenOptions}
           bookedSeats={bookedSeats}
+          checkinPage={props.checkinPage}
         />
       )}
       <View style={styles.header}>
         <Icon
           name="chevron-down"
           size={30}
-          onPress={() =>
-            store.dispatch(changeActiveModalIndex(Move_Modal.back))
+          onPress={() => {
+            if (!props.checkinPage) store.dispatch(changeActiveModalIndex(Move_Modal.back))
+            else store.dispatch(changeSeatModalVisibility(false))
+          }
           }
         />
         <Text style={styles.title}>Select your seat</Text>
       </View>
-      <SearchInfo />
+      {!props.checkinPage && <SearchInfo />}
       {loading ? (
         <View style={styles.loader}>
           <ActivityIndicator size="large" color={GREEN} />
@@ -304,8 +332,13 @@ export default function SeatSelection(props: { isModalVisible: boolean }) {
               const seat = selectedSeat
                 ? selectedSeat?.row + selectedSeat?.seat
                 : null;
-              store.dispatch(selectSeat(seat));
-              store.dispatch(changeActiveModalIndex(Move_Modal.forward));
+              if (props.checkinPage && seat !== null) {
+                store.dispatch(changeSelectedSeat(seat))
+                store.dispatch(changeSeatModalVisibility(false))
+              } else if (!props.checkinPage) {
+                store.dispatch(selectSeat(seat));
+                store.dispatch(changeActiveModalIndex(Move_Modal.forward));
+              }
             }}
           >
             <Text style={styles.footer_button}>Select</Text>

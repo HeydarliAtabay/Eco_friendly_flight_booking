@@ -217,6 +217,24 @@ const generateAndInsertFlights = (number) => {
     });
 };
 
+app.put("/api/updateBookedFlight/:flightid", async (req, res) => {
+  const id = Number(req.params.flightid);
+  const body = req.body;
+  console.log(body);
+  try {
+    await flightsDao.updateFlightInfoDuringCheckin(body, id);
+    res.json(
+      `Booked flight data with: ${id}  was changed modified succesfully`
+    );
+  } catch (error) {
+    res
+      .status(500)
+      .json(
+        `Error while updating info of booked flight with id: ${id}` + error
+      );
+  }
+});
+
 app.post("/api/createFakeFlights/:number", (req, res) => {
   const numberOfFlights = Number(req.params.number);
   const body = req.body;
