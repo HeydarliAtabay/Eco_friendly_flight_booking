@@ -7,3 +7,10 @@ export const FlightClass_To_SelectedClass = (flightClass: FlightClass) => {
     return Selected_class.business;
   return Selected_class.econom;
 };
+
+export const SelectedClass_To_FlightClass = (flightClass: Selected_class) => {
+  if (flightClass === Selected_class.first) return FlightClass.FIRST_CLASS;
+  if (flightClass === Selected_class.business)
+    return FlightClass.BUSINESS_CLASS;
+  return FlightClass.ECONOMY_CLASS;
+};

@@ -11,9 +11,10 @@ import {
 } from "react-native";
 import { DARK_GRAY, GRAY, GREEN, LIGHT_GRAY } from "../../helpers/styles";
 import Icon from "react-native-vector-icons/Ionicons";
-// import { State } from "../../store/store";
-// import { FlightClass } from "../../helpers";
-import { Move_Modal } from "../../services/interfaces.ts/interfaces";
+import {
+  Move_Modal,
+  Selected_class,
+} from "../../services/interfaces.ts/interfaces";
 import { store } from "../../store/store";
 import { useStore } from "../../store/storeHooks";
 import {
@@ -27,14 +28,11 @@ import SeatSelectionOptions from "./SeatSelectionOptions";
 const Seat = (props: {
   isBlocked: boolean;
   isSelected: boolean;
-  // flightClass: FlightClass;
   selectSeat: () => void;
 }) => {
   const seatStyles = [
     styles.seat,
     props.isBlocked ? styles.reservedSeat : styles.freeSeat,
-    // props.flightClass === FlightClass.FIRST_CLASS && styles.seatFirstClass,
-    // props.flightClass === FlightClass.BUSINESS_CLASS && styles.seatBusiness,
     props.isSelected && { backgroundColor: GREEN },
   ];
   return (
@@ -52,10 +50,7 @@ const Seat = (props: {
   );
 };
 
-export default function SeatSelection(props: {
-  isModalVisible: boolean;
-  // flightClass: FlightClass;
-}) {
+export default function SeatSelection(props: { isModalVisible: boolean }) {
   const { isModalVisible } = props;
   const { selectedFlight } = useStore(({ search_results }) => search_results);
   const [bookedSeats, setBookedSeats] = useState<string[]>([]);
@@ -69,9 +64,16 @@ export default function SeatSelection(props: {
   const isSelected = (row: number, seat: string) => {
     return selectedSeat?.row === row && selectedSeat.seat === seat;
   };
-  const isBooked = (row: number, seat: string) => {
+  const isBlocked = (
+    row: number,
+    seat: string,
+    flightClass: Selected_class
+  ) => {
     const seatNumber = row + seat;
-    return bookedSeats.includes(seatNumber);
+    return (
+      bookedSeats.includes(seatNumber) ||
+      selectedFlight?.selected_class !== flightClass
+    );
   };
   const chooseSeat = (seat: string, row: number) => {
     setSelectedSeat({ row: row, seat: seat });
@@ -157,19 +159,15 @@ export default function SeatSelection(props: {
               <View style={styles.seatRow} key={`F${_index}`}>
                 <Seat
                   key={"A"}
-                  // isBlocked={flightClass !== FlightClass.FIRST_CLASS}
-                  isBlocked={isBooked(_index + 1, "A")}
+                  isBlocked={isBlocked(_index + 1, "A", Selected_class.first)}
                   isSelected={isSelected(_index + 1, "A")}
-                  // flightClass={FlightClass.FIRST_CLASS}
                   selectSeat={() => chooseSeat("A", _index + 1)}
                 />
                 <Text style={styles.rowNumber}>{_index + 1}</Text>
                 <Seat
                   key={"B"}
-                  isBlocked={isBooked(_index + 1, "B")}
-                  // isBlocked={flightClass !== FlightClass.FIRST_CLASS}
+                  isBlocked={isBlocked(_index + 1, "B", Selected_class.first)}
                   isSelected={isSelected(_index + 1, "B")}
-                  // flightClass={FlightClass.FIRST_CLASS}
                   selectSeat={() => chooseSeat("B", _index + 1)}
                 />
               </View>
@@ -181,35 +179,43 @@ export default function SeatSelection(props: {
               <View style={styles.seatRow} key={`B${_index}`}>
                 <Seat
                   key={"A"}
-                  isBlocked={isBooked(_index + 4, "A")}
-                  // isBlocked={flightClass !== FlightClass.BUSINESS_CLASS}
+                  isBlocked={isBlocked(
+                    _index + 4,
+                    "A",
+                    Selected_class.business
+                  )}
                   isSelected={isSelected(_index + 4, "A")}
-                  // flightClass={FlightClass.BUSINESS_CLASS}
                   selectSeat={() => chooseSeat("A", _index + 4)}
                 />
                 <Seat
                   key={"B"}
-                  isBlocked={isBooked(_index + 4, "B")}
-                  // isBlocked={flightClass !== FlightClass.BUSINESS_CLASS}
+                  isBlocked={isBlocked(
+                    _index + 4,
+                    "B",
+                    Selected_class.business
+                  )}
                   isSelected={isSelected(_index + 4, "B")}
-                  // flightClass={FlightClass.BUSINESS_CLASS}
                   selectSeat={() => chooseSeat("B", _index + 4)}
                 />
                 <Text style={styles.rowNumber}>{_index + 4}</Text>
                 <Seat
                   key={"C"}
-                  isBlocked={isBooked(_index + 4, "C")}
-                  // isBlocked={flightClass !== FlightClass.BUSINESS_CLASS}
+                  isBlocked={isBlocked(
+                    _index + 4,
+                    "C",
+                    Selected_class.business
+                  )}
                   isSelected={isSelected(_index + 4, "C")}
-                  // flightClass={FlightClass.BUSINESS_CLASS}
                   selectSeat={() => chooseSeat("C", _index + 4)}
                 />
                 <Seat
                   key={"D"}
-                  isBlocked={isBooked(_index + 4, "D")}
-                  // isBlocked={flightClass !== FlightClass.BUSINESS_CLASS}
+                  isBlocked={isBlocked(
+                    _index + 4,
+                    "D",
+                    Selected_class.business
+                  )}
                   isSelected={isSelected(_index + 4, "D")}
-                  // flightClass={FlightClass.BUSINESS_CLASS}
                   selectSeat={() => chooseSeat("D", _index + 4)}
                 />
               </View>
@@ -221,51 +227,39 @@ export default function SeatSelection(props: {
               <View style={styles.seatRow} key={`E${_index}`}>
                 <Seat
                   key={"A"}
-                  isBlocked={isBooked(_index + 8, "A")}
-                  // isBlocked={flightClass !== FlightClass.ECONOMY_CLASS}
+                  isBlocked={isBlocked(_index + 8, "A", Selected_class.econom)}
                   isSelected={isSelected(_index + 8, "A")}
-                  // flightClass={FlightClass.ECONOMY_CLASS}
                   selectSeat={() => chooseSeat("A", _index + 8)}
                 />
                 <Seat
                   key={"B"}
-                  isBlocked={isBooked(_index + 8, "B")}
-                  // isBlocked={flightClass !== FlightClass.ECONOMY_CLASS}
+                  isBlocked={isBlocked(_index + 8, "B", Selected_class.econom)}
                   isSelected={isSelected(_index + 8, "B")}
-                  // flightClass={FlightClass.ECONOMY_CLASS}
                   selectSeat={() => chooseSeat("B", _index + 8)}
                 />
                 <Seat
                   key={"C"}
-                  isBlocked={isBooked(_index + 8, "C")}
-                  // isBlocked={flightClass !== FlightClass.ECONOMY_CLASS}
+                  isBlocked={isBlocked(_index + 8, "C", Selected_class.econom)}
                   isSelected={isSelected(_index + 8, "C")}
-                  // flightClass={FlightClass.ECONOMY_CLASS}
                   selectSeat={() => chooseSeat("C", _index + 8)}
                 />
                 <Text style={styles.rowNumber}>{_index + 8}</Text>
                 <Seat
                   key={"D"}
-                  isBlocked={isBooked(_index + 8, "D")}
-                  // isBlocked={flightClass !== FlightClass.ECONOMY_CLASS}
+                  isBlocked={isBlocked(_index + 8, "D", Selected_class.econom)}
                   isSelected={isSelected(_index + 8, "D")}
-                  // flightClass={FlightClass.ECONOMY_CLASS}
                   selectSeat={() => chooseSeat("D", _index + 8)}
                 />
                 <Seat
                   key={"E"}
-                  isBlocked={isBooked(_index + 8, "E")}
-                  // isBlocked={flightClass !== FlightClass.ECONOMY_CLASS}
+                  isBlocked={isBlocked(_index + 8, "E", Selected_class.econom)}
                   isSelected={isSelected(_index + 8, "E")}
-                  // flightClass={FlightClass.ECONOMY_CLASS}
                   selectSeat={() => chooseSeat("E", _index + 8)}
                 />
                 <Seat
                   key={"F"}
-                  isBlocked={isBooked(_index + 8, "F")}
-                  // isBlocked={flightClass !== FlightClass.ECONOMY_CLASS}
+                  isBlocked={isBlocked(_index + 8, "F", Selected_class.econom)}
                   isSelected={isSelected(_index + 8, "F")}
-                  // flightClass={FlightClass.ECONOMY_CLASS}
                   selectSeat={() => chooseSeat("F", _index + 8)}
                 />
               </View>

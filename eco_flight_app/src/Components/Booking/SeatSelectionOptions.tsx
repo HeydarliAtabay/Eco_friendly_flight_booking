@@ -11,17 +11,16 @@ import {
 } from "react-native";
 import { DARK_GRAY, GRAY, GREEN, LIGHT_GRAY } from "../../helpers/styles";
 import Icon from "react-native-vector-icons/Ionicons";
-// import { State } from "../../store/store";
-// import { FlightClass } from "../../helpers";
-import { Move_Modal } from "../../services/interfaces.ts/interfaces";
-import { store } from "../../store/store";
-import { useStore } from "../../store/storeHooks";
+import {
+  Move_Modal,
+  Selected_class,
+} from "../../services/interfaces.ts/interfaces";
+import { State, store } from "../../store/store";
 import {
   changeActiveModalIndex,
   selectSeat,
 } from "../ResultList/ResultList.slice";
-import SearchInfo from "../ResultList/SearchInfo";
-import API from "../../services/API";
+import { useSelector } from "react-redux";
 
 export default function SeatSelectionOptions(props: {
   isModalVisible: boolean;
@@ -29,12 +28,24 @@ export default function SeatSelectionOptions(props: {
   bookedSeats: string[];
 }) {
   const { isModalVisible, setIsModalVisible, bookedSeats } = props;
-
+  const selectedFlight = useSelector(
+    (state: State) => state.search_results.selectedFlight
+  );
   const [randomSeat, setRandomSeat] = useState<string | null>(null);
 
   useEffect(() => {
     const seats: string[] = [];
-    for (let i = 0; i < 30; i++) {
+    let row_limit = 3,
+      row_start = 0;
+    if (selectedFlight?.selected_class === Selected_class.business) {
+      row_limit = 7;
+      row_start = 3;
+    }
+    if (selectedFlight?.selected_class === Selected_class.econom) {
+      row_limit = 30;
+      row_start = 7;
+    }
+    for (let i = row_start; i < row_limit; i++) {
       const letters = ["A", "B", "C", "D", "E", "F"];
       const let_index = i < 3 ? 2 : i < 7 ? 4 : 6;
       for (let j = 0; j < let_index; j++) {
@@ -43,7 +54,7 @@ export default function SeatSelectionOptions(props: {
           seats.push(seatRow + letters[j]);
       }
     }
-    const max_limit = seats.length; // depends on flight class /default 161
+    const max_limit = seats.length;
     const index = Math.floor(Math.random() * max_limit);
     setRandomSeat(seats[index]);
   }, []);
