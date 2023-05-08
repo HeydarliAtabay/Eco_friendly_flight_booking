@@ -202,6 +202,7 @@ const styles = StyleSheet.create({
     cardContainer: {
         width: '95%',
         padding: 10,
+        backgroundColor: 'white'
     },
     loginBtn: {
         width: "85%",

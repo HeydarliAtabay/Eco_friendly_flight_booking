@@ -3,8 +3,10 @@ import { View, Text, StyleSheet } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Button, Card, TextInput } from "react-native-paper";
 import { DARKER_GRAY, GREEN } from "../../helpers/styles";
+import { useStore } from "../../store/storeHooks";
 
 export default function Checkin() {
+    const { selectedBookedFLight } = useStore(({ booking }) => booking)
     const [value, setValue] = useState<string | null>(null);
     const [open, setOpen] = useState(false);
 
@@ -35,14 +37,34 @@ export default function Checkin() {
                             textContentType="telephoneNumber"
                             keyboardType="phone-pad"
                         />
-                        <View style={{ display: 'flex', flexDirection: 'row' }}>
+
+                        <View style={{
+                            borderWidth: 2, borderColor: 'lightgreen', display: 'flex', flexDirection: 'column', width: '90%',
+                            padding: 10, height: 150, borderRadius: 12
+
+                        }}>
+                            {selectedBookedFLight && selectedBookedFLight.seat === null ?
+                                <View style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <Text>You didn't select your seat</Text>
+                                    <Button mode='outlined' buttonColor="lightgreen">
+                                        Select Your seat
+                                    </Button>
+                                </View>
+
+                                : selectedBookedFLight && selectedBookedFLight.seat !== null &&
+                                <Text>{`Your seat is ${selectedBookedFLight?.seat}`}</Text>
+
+                            }
+                        </View>
+                        <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: '#fff', marginTop: 10 }}>
                             <DropDownPicker
+
                                 style={styles.TextInput}
-                                containerStyle={{ width: '100%', alignItems: 'flex-start', marginRight: 'auto', marginLeft: 18 }}
+                                containerStyle={{ width: '100%', alignItems: 'flex-start', marginRight: 'auto', marginLeft: 18, elevation: 1, zIndex: 9999 }}
                                 labelStyle={{ width: '80%', fontSize: 16, marginLeft: 5 }}
                                 placeholder={'Document type'}
                                 placeholderStyle={{ fontSize: 16, marginLeft: 5 }}
-                                dropDownContainerStyle={{ width: '90%' }}
+                                dropDownContainerStyle={{ width: '90%', backgroundColor: '#fff', elevation: 1 }}
                                 badgeStyle={{ backgroundColor: 'red' }}
                                 open={open}
                                 value={value}
@@ -78,7 +100,6 @@ export default function Checkin() {
                                 </Button>
                             </>
                         }
-
 
                     </View>
 
@@ -135,5 +156,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 2,
         backgroundColor: 'white',
         borderColor: 'lightgreen',
+        elevation: 1,
+        zIndex: 9999
     },
 });
