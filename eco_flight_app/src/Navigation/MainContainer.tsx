@@ -13,8 +13,8 @@ import { MainPageStackNavigator } from "./Pages/MainPageStackNav";
 
 // Screen names
 const MainName = "Main";
-const ListName = "List of Bookings";
-const UserProfileName = 'Account'
+const ListName = "My flights";
+const UserProfileName = 'Profile'
 
 const Tab = createBottomTabNavigator();
 
@@ -61,7 +61,7 @@ export default function MainContainer() {
             }}
           />
           <Tab.Screen name={ListName} component={ListOfBookingsPage} />
-          <Tab.Screen name={UserProfileName} component={UserProfilePage}  />
+          <Tab.Screen name={UserProfileName} component={UserProfilePage} />
         </Tab.Navigator>
       </NavigationContainer>
     </>

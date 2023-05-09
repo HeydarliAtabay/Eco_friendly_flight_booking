@@ -394,13 +394,49 @@ exports.updateFlightInfoDuringCheckin = function (body, flight_id) {
   });
 };
 
+// exports.getMostRecentFlightOfUser = (user) => {
+//   return new Promise((resolve, reject) => {
+//     const currentDate = new Date();
+//     const formattedDate = currentDate.toISOString().split("T")[0];
+
+//     const sqlForGettingRecentFlightOfUser =
+//       "SELECT bf.*, f.*, dep.*, arr.* " +
+//       "FROM booked_flights bf " +
+//       "JOIN flights f ON bf.flight_id = f.id " +
+//       "JOIN airports dep ON f.departure_airport = dep.id " +
+//       "JOIN airports arr ON f.arrival_airport = arr.id " +
+//       "WHERE bf.user_id = ? AND STR_TO_DATE(f.departure_date, '%Y-%m-%d') >= ? " +
+//       "ORDER BY STR_TO_DATE(f.departure_date, '%Y-%m-%d') ASC " +
+//       "LIMIT 1";
+
+//     db.query(
+//       sqlForGettingRecentFlightOfUser,
+//       [user, formattedDate],
+//       (err, rows) => {
+//         if (err) {
+//           reject(err);
+//         } else if (rows.length === 0) {
+//           resolve({ error: "Flights not found" });
+//         } else {
+//           const flight = rows[0];
+//           flight.baggage = JSON.parse(flight.baggage);
+//           resolve(flight);
+//         }
+//       }
+//     );
+//   });
+// };
+
+//
+
 exports.getMostRecentFlightOfUser = (user) => {
   return new Promise((resolve, reject) => {
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().split("T")[0];
 
     const sqlForGettingRecentFlightOfUser =
-      "SELECT bf.*, f.*, dep.*, arr.* " +
+      "SELECT bf.*, f.*, dep.*, arr.*, dep.name AS dep_name, arr.name AS arr_name, dep.code AS dep_code, " +
+      " arr.code AS arr_code, dep.city AS dep_city, dep.country as dep_country, arr.city AS arr_city, arr.country AS arr_country " +
       "FROM booked_flights bf " +
       "JOIN flights f ON bf.flight_id = f.id " +
       "JOIN airports dep ON f.departure_airport = dep.id " +
@@ -419,8 +455,51 @@ exports.getMostRecentFlightOfUser = (user) => {
           resolve({ error: "Flights not found" });
         } else {
           const flight = rows[0];
+          console.log(flight);
           flight.baggage = JSON.parse(flight.baggage);
-          resolve(flight);
+          const departureAirport = {
+            id: flight.departure_airport,
+            code: flight.dep_code,
+            name: flight.dep_name,
+            city: flight.dep_city,
+            country: flight.dep_country,
+          };
+          const arrivalAirport = {
+            id: flight.arrival_airport,
+            code: flight.arr_code,
+            name: flight.arr_name,
+            city: flight.arr_city,
+            country: flight.arr_country,
+          };
+          const flightInfo = {
+            id: flight.flight_id,
+            departure_airport: flight.departure_airport,
+            arrival_airport: flight.arrival_airport,
+            departure_date: flight.departure_date,
+            departure_time: flight.departure_time,
+            arrival_date: flight.arrival_date,
+            arrival_time: flight.arrival_time,
+            econom_price: flight.econom_price,
+            business_price: flight.business_price,
+            first_class_price: flight.first_class_price,
+            airline: flight.airline,
+            flight_number: flight.flight_number,
+          };
+          const result = {
+            id: flight.id,
+            user_id: flight.user_id,
+            flight_id: flight.flight_id,
+            seat: flight.seat,
+            payment_status: flight.payment_status,
+            checkin_status: flight.checkin_status,
+            selected_class: flight.selected_class,
+            paid_price: flight.paid_price,
+            baggage: flight.baggage,
+            flight_info: flightInfo,
+            departureAirport: departureAirport,
+            arrivalAirport: arrivalAirport,
+          };
+          resolve(result);
         }
       }
     );

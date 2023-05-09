@@ -236,7 +236,7 @@ async function getSeatsOfFlight(flightID) {
   }
 }
 
-async function getSeatsOfFlight(userID) {
+async function getMostRecentFlightOfUser(userID) {
   const response = await fetch(
     url + "/api/getMostRecentFlightOfUser/" + userID
   ).catch((error) => {
@@ -309,5 +309,6 @@ const API = {
   getBookedFlights,
   getSeatsOfFlight,
   updateCheckinInformation,
+  getMostRecentFlightOfUser,
 };
 export default API;

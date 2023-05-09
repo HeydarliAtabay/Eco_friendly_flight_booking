@@ -130,3 +130,6 @@ export type BookedFlightInfo = {
     arrivalAirport: Airport
 }
 
+
+
+
