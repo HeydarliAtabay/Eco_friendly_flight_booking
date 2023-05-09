@@ -394,6 +394,39 @@ exports.updateFlightInfoDuringCheckin = function (body, flight_id) {
   });
 };
 
+exports.getMostRecentFlightOfUser = (user) => {
+  return new Promise((resolve, reject) => {
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().split("T")[0];
+
+    const sqlForGettingRecentFlightOfUser =
+      "SELECT bf.*, f.*, dep.*, arr.* " +
+      "FROM booked_flights bf " +
+      "JOIN flights f ON bf.flight_id = f.id " +
+      "JOIN airports dep ON f.departure_airport = dep.id " +
+      "JOIN airports arr ON f.arrival_airport = arr.id " +
+      "WHERE bf.user_id = ? AND STR_TO_DATE(f.departure_date, '%Y-%m-%d') >= ? " +
+      "ORDER BY STR_TO_DATE(f.departure_date, '%Y-%m-%d') ASC " +
+      "LIMIT 1";
+
+    db.query(
+      sqlForGettingRecentFlightOfUser,
+      [user, formattedDate],
+      (err, rows) => {
+        if (err) {
+          reject(err);
+        } else if (rows.length === 0) {
+          resolve({ error: "Flights not found" });
+        } else {
+          const flight = rows[0];
+          flight.baggage = JSON.parse(flight.baggage);
+          resolve(flight);
+        }
+      }
+    );
+  });
+};
+
 const generateRandomAlphaNumeric = (length) => {
   let result = "";
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
