@@ -212,6 +212,22 @@ exports.bookFlight = (flight) => {
       "INSERT INTO booked_flights(user_id, flight_id, seat, payment_status," +
       "checkin_status,selected_class,paid_price,baggage)" +
       "VALUES(?,?,?,?,?,?,?,?)";
+    const baggageObject =
+      flight.selected_class === "ECONOM"
+        ? [
+            { type: "Checkin", kg: 23, amount: 1 },
+            { type: "Hand", kg: 10, amount: 1 },
+          ]
+        : flight.selected_class === "BUSINESS"
+        ? [
+            { type: "Checkin", kg: 32, amount: 1 },
+            { type: "Hand", kg: 10, amount: 1 },
+          ]
+        : [
+            { type: "Checkin", kg: 32, amount: 2 },
+            { type: "Hand", kg: 10, amount: 1 },
+          ];
+    const baggageJson = JSON.stringify(baggageObject);
     db.query(
       sql,
       [
@@ -222,7 +238,7 @@ exports.bookFlight = (flight) => {
         flight.checkin_status,
         flight.selected_class,
         flight.paid_price,
-        JSON.stringify(flight.baggage),
+        baggageJson,
       ],
       function (err) {
         if (err) {
@@ -285,6 +301,7 @@ exports.getBookedFlightsOfUser = (user) => {
                 );
 
                 // Add flight info and airport info to the flight object
+                flight.baggage = JSON.parse(flight.baggage);
                 flight.flight_info = flightInfo;
                 flight.departureAirport = departureAirport;
                 flight.arrivalAirport = arrivalAirport;
@@ -337,6 +354,43 @@ exports.getBookedSeatsOfFlight = (flight) => {
         resolve(seats);
       }
     });
+  });
+};
+
+exports.updateFlightInfoDuringCheckin = function (body, flight_id) {
+  return new Promise((resolve, reject) => {
+    // const sql = 'UPDATE tasks SET completed = CASE status WHEN completed=0 THEN 1 WHEN completed=1 THEN 0 END WHERE id = ?';
+    const sql =
+      "UPDATE booked_flights SET selected_class=?, seat=?, checkin_status='DONE', baggage=?  WHERE id=?";
+
+    const baggageObject =
+      body.selected_class === "ECONOM"
+        ? [
+            { type: "Checkin", kg: 23, amount: 1 },
+            { type: "Hand", kg: 10, amount: 1 },
+          ]
+        : body.selected_class === "BUSINESS"
+        ? [
+            { type: "Checkin", kg: 32, amount: 1 },
+            { type: "Hand", kg: 10, amount: 1 },
+          ]
+        : [
+            { type: "Checkin", kg: 32, amount: 2 },
+            { type: "Hand", kg: 10, amount: 1 },
+          ];
+    const baggageJson = JSON.stringify(baggageObject);
+    db.query(
+      sql,
+      [body.selected_class, body.seat, baggageJson, flight_id],
+      (err) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+          return;
+        }
+        resolve(this.lastID);
+      }
+    );
   });
 };
 

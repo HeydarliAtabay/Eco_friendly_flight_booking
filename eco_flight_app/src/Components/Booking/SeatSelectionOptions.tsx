@@ -21,30 +21,47 @@ import {
   selectSeat,
 } from "../ResultList/ResultList.slice";
 import { useSelector } from "react-redux";
+import { useStore } from "../../store/storeHooks";
+import { changeSeatModalVisibility, changeSelectedSeat } from "../BookingList/Booking.slice";
 
 export default function SeatSelectionOptions(props: {
   isModalVisible: boolean;
   setIsModalVisible: (v: boolean) => void;
   bookedSeats: string[];
+  checkinPage?: boolean
 }) {
   const { isModalVisible, setIsModalVisible, bookedSeats } = props;
   const selectedFlight = useSelector(
     (state: State) => state.search_results.selectedFlight
   );
+  const { selectedBookedFLight } = useStore(({ booking }) => booking)
   const [randomSeat, setRandomSeat] = useState<string | null>(null);
 
   useEffect(() => {
     const seats: string[] = [];
     let row_limit = 3,
       row_start = 0;
-    if (selectedFlight?.selected_class === Selected_class.business) {
-      row_limit = 7;
-      row_start = 3;
+    if (!props.checkinPage) {
+      if (selectedFlight?.selected_class === Selected_class.business) {
+        row_limit = 7;
+        row_start = 3;
+      }
+      if (selectedFlight?.selected_class === Selected_class.econom) {
+        row_limit = 30;
+        row_start = 7;
+      }
     }
-    if (selectedFlight?.selected_class === Selected_class.econom) {
-      row_limit = 30;
-      row_start = 7;
+    else {
+      if (selectedBookedFLight?.selected_class === Selected_class.business) {
+        row_limit = 7;
+        row_start = 3;
+      }
+      if (selectedBookedFLight?.selected_class === Selected_class.econom) {
+        row_limit = 30;
+        row_start = 7;
+      }
     }
+
     for (let i = row_start; i < row_limit; i++) {
       const letters = ["A", "B", "C", "D", "E", "F"];
       const let_index = i < 3 ? 2 : i < 7 ? 4 : 6;
@@ -70,8 +87,10 @@ export default function SeatSelectionOptions(props: {
         <Icon
           name="chevron-down"
           size={30}
-          onPress={() =>
-            store.dispatch(changeActiveModalIndex(Move_Modal.back))
+          onPress={() => {
+            if (!props.checkinPage) store.dispatch(changeActiveModalIndex(Move_Modal.back))
+            else store.dispatch(changeSeatModalVisibility(false))
+          }
           }
         />
         <Text style={styles.title}>Select your seat</Text>
@@ -89,8 +108,17 @@ export default function SeatSelectionOptions(props: {
           underlayColor={LIGHT_GRAY}
           style={styles.touchable}
           onPress={() => {
-            store.dispatch(selectSeat(randomSeat));
-            store.dispatch(changeActiveModalIndex(Move_Modal.forward));
+            if (props.checkinPage) {
+              if (randomSeat !== null) {
+                store.dispatch(changeSelectedSeat(randomSeat))
+                store.dispatch(changeSeatModalVisibility(false))
+              }
+            }
+            else {
+              store.dispatch(selectSeat(randomSeat));
+              store.dispatch(changeActiveModalIndex(Move_Modal.forward));
+            }
+
           }}
         >
           <Text style={[styles.footer_button, styles.footer_button_accept]}>

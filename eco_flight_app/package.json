@@ -25,6 +25,7 @@
     "react-native": "0.71.7",
     "react-native-calendar-picker": "^7.1.4",
     "react-native-credit-card-input": "^0.4.1",
+    "react-native-dropdown-picker": "^5.4.6",
     "react-native-ionicons": "^4.6.5",
     "react-native-paper": "^5.7.0",
     "react-native-qrcode-svg": "^6.2.0",

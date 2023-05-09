@@ -168,7 +168,8 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 12,
         borderTopRightRadius: 12,
         borderWidth: 0,
-        borderBottomWidth: 0
+        borderBottomWidth: 0,
+        backgroundColor: 'lightblue'
     },
     scroll: {
         flexGrow: 1,

@@ -47,7 +47,7 @@ Content-Type: application/json
 POST http://localhost:3001/api/bookFlight
 Content-Type: application/json
 
-{ "user_id":7,"flight_id":1295, "seat":"22B", "payment_status":"PAID", "checkin_status":"NOT","selected_class":"ECONOM", "paid_price":120, "baggage":[{"type":"Hand","kg":10,"amount":1}]}
+{ "user_id":7,"flight_id":1295, "seat":"1B", "payment_status":"PAID", "checkin_status":"NOT","selected_class":"First", "paid_price":120}
 
 
 ### Getting all flights of user
@@ -77,7 +77,26 @@ Content-Type: application/json
       "flight_number": "AB321"
 }
 
+
+
+### update flight
+PUT http://localhost:3001/api/updateBookedFlight/8
+Content-Type: application/json
+
+{ "selected_class":"BUSINESS","seat":"23C"}
+
+
+
+
+
+
+
+
+
+
 ### generate flights
 
 POST http://localhost:3001/api/createFakeFlights/250
 Content-Type: application/json
+
+
