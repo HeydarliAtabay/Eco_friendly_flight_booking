@@ -236,6 +236,21 @@ async function getSeatsOfFlight(flightID) {
   }
 }
 
+async function getMostRecentFlightOfUser(userID) {
+  const response = await fetch(
+    url + "/api/getMostRecentFlightOfUser/" + userID
+  ).catch((error) => {
+    // Handle any errors that occur
+    console.error(error);
+  });
+  const flight = await response.json();
+  if (response && response.ok) {
+    return flight;
+  } else {
+    throw flight; // an object with the error coming from the server
+  }
+}
+
 function updateCheckinInformation(body, flightID) {
   return new Promise((resolve, reject) => {
     fetch(url + "/api/updateBookedFlight/" + flightID, {
@@ -294,5 +309,6 @@ const API = {
   getBookedFlights,
   getSeatsOfFlight,
   updateCheckinInformation,
+  getMostRecentFlightOfUser,
 };
 export default API;

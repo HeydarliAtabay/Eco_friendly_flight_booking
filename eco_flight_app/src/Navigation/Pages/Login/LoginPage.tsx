@@ -1,12 +1,12 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, View, TouchableOpacity, ScrollView, KeyboardAvoidingView } from "react-native";
 import { store } from "../../../store/store";
 import { useStore } from "../../../store/storeHooks";
 import { LoginState, updateField } from "./Login.slice";
 import API from '../../../services/API'
 import { loadUser } from "../../../../App.slice";
-import { Button, TextInput } from "react-native-paper";
+import { ActivityIndicator, Button, TextInput } from "react-native-paper";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 interface MainPageProps {
@@ -14,15 +14,18 @@ interface MainPageProps {
 }
 
 export default function LoginPage({ navigation }: MainPageProps) {
+    const [loading, setLoading] = useState(false)
     const { user } = useStore(({ login }) => login)
     function onUpdateField(name: string, value: string) {
         store.dispatch(updateField({ name: name as keyof LoginState['user'], value }));
     }
     const doLogIn = async (credentials: { username: string, password: string }) => {
         try {
+            setLoading(true)
             await API.logIn(credentials).then((result) => {
                 API.getUserInfo().then((result) => {
                     store.dispatch(loadUser(result))
+                    setLoading(false)
                 }).catch(function (error) {
                     alert(error.message)
                     throw error;
@@ -80,16 +83,16 @@ export default function LoginPage({ navigation }: MainPageProps) {
                     // error={!!password.error}
                     secureTextEntry
                 />
-
-                {/* <KeyboardAvoidingView style={{ width: '90%', alignItems: 'center' }} behavior="padding"> */}
-
-                {/* </KeyboardAvoidingView> */}
-
-                <TouchableOpacity>
-                    <Text style={styles.forgot_button}>Forgot Password?</Text>
-                </TouchableOpacity>
-                <Button icon={'send'} mode="contained" onPress={handleSubmit}>
-                    Login to your account
+                <Button
+                    // disabled={loading}
+                    style={{ marginTop: 45, width: '70%' }}
+                    icon={!loading ? 'send' : ''}
+                    mode="contained" onPress={handleSubmit}>
+                    <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                        {loading && <ActivityIndicator size={'small'} color={'white'} style={{ margin: 'auto' }} />}
+                        <Text style={{ color: 'white', fontSize: 16, marginLeft: 10 }}>
+                            {!loading ? 'Login to your account' : 'Logging in...'}</Text>
+                    </View>
                 </Button>
                 <View style={styles.row}>
                     <Text>Don’t have an account? </Text>
