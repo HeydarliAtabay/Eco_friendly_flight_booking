@@ -2,10 +2,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Modal, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { ActivityIndicator, Avatar, Button, Card, TextInput } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { initializeApp, loadUser, logout } from '../../../../App.slice';
+import { PAYMENTMETHODSICON, SUPPORT, TRAVELER } from '../../../helpers/images';
+import { GRAY } from '../../../helpers/styles';
 import API from '../../../services/API';
 // import API from '../../services/API';
 import { store } from '../../../store/store';
@@ -74,7 +76,8 @@ export default function UserProfilePage() {
 
                 <Button icon={'close'} mode="contained"
                     buttonColor='#FF6666'
-                    style={{ display: 'flex', marginTop: 'auto', width: '35%', marginLeft: 'auto' }}
+                    style={{ display: 'flex', width: '30%', marginRight: 'auto', marginTop: 0 }}
+                    labelStyle={{ fontSize: 14 }}
                     onPress={handleLogout}>
                     Log out
                 </Button>
@@ -84,13 +87,16 @@ export default function UserProfilePage() {
                     </View>
                     :
                     <View style={styles.userInfoView}>
-
+                        {/* 
                         <Avatar.Text
                             style={{ marginRight: 'auto', position: 'relative', maxWidth: '35%' }}
-                            size={100} label={user?.name[0] + '' + user?.surname[0]} />
+                            size={100} label={user?.name[0] + '' + user?.surname[0]} /> */}
                         <View style={styles.nameEmailBox}>
                             <Text style={styles.nameSurnameText}>{`${user?.name} ${user?.surname}`}</Text>
                             <Text style={styles.emailText}>{`${user?.username}`}</Text>
+                        </View>
+                        <View style={{ alignItems: 'flex-end', display: 'flex', marginLeft: 'auto' }}>
+                            <Image source={TRAVELER} style={{ height: 140, width: 140, marginLeft: 'auto' }} />
                         </View>
                     </View>
                 }
@@ -158,15 +164,27 @@ export default function UserProfilePage() {
                         keyboardType="phone-pad"
                         disabled={activeModify ? false : true}
                     />
+                    <View style={{
+                        display: 'flex', flexDirection: 'row', width: '95%', height: 200, borderRadius: 12, padding: 10, columnGap: 20,
+                        rowGap: 20, alignItems: 'center'
+                    }}>
+                        <TouchableOpacity style={{
+                            alignItems: 'center', justifyContent: 'center', width: '50%', backgroundColor: GRAY,
+                            height: 140, borderRadius: 12, marginRight: 20, borderColor: 'black', borderWidth: 1
+                        }}
+                            onPress={() => setPaymentDetailsShow(true)}>
 
-                    <Button icon={'bank'} mode="contained"
-                        buttonColor='#ededed'
-                        labelStyle={{ fontSize: 18, margin: 'auto', marginTop: 13 }}
-                        textColor='black'
-                        style={{ display: 'flex', marginTop: 'auto', borderRadius: 0, height: 50, borderBottomLeftRadius: 12, borderBottomRightRadius: 12 }}
-                        onPress={() => setPaymentDetailsShow(true)}>
-                        Payment Details
-                    </Button>
+                            <Image style={{ width: 60, height: 60 }} source={PAYMENTMETHODSICON} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{
+                            alignItems: 'center', justifyContent: 'center', width: '50%', backgroundColor: GRAY,
+                            height: 140, borderRadius: 12, borderColor: 'black', borderWidth: 1
+                        }}
+                            onPress={() => setPaymentDetailsShow(true)}>
+
+                            <Image style={{ width: 60, height: 60 }} source={SUPPORT} />
+                        </TouchableOpacity>
+                    </View>
 
                 </View>
 
@@ -202,7 +220,9 @@ const styles = StyleSheet.create({
     cardContainer: {
         width: '95%',
         padding: 10,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        marginTop: 15,
+
     },
     loginBtn: {
         width: "85%",
@@ -214,14 +234,14 @@ const styles = StyleSheet.create({
         backgroundColor: "#ADD8E6",
     },
     nameSurnameText: {
-        fontSize: 26,
+        fontSize: 22,
         marginTop: 15,
         textAlign: 'left',
         flexWrap: 'wrap'
 
     },
     emailText: {
-        fontSize: 25,
+        fontSize: 18,
         flexWrap: 'wrap'
     },
     userInfoView: {
@@ -235,7 +255,7 @@ const styles = StyleSheet.create({
         padding: 0,
         justifyContent: 'center',
         position: 'relative',
-        maxWidth: '80%'
+        maxWidth: '75%'
     },
     TextInput: {
         width: '100%',
