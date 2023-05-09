@@ -60,7 +60,12 @@ export default function SeatSelectionOptions(props: {
   }, []);
 
   return (
-    <Modal animationType="fade" visible={isModalVisible} transparent={true}>
+    <Modal
+      animationType="fade"
+      visible={isModalVisible}
+      transparent={true}
+      onRequestClose={() => setIsModalVisible(false)}
+    >
       <View style={styles.header}>
         <Icon
           name="chevron-down"

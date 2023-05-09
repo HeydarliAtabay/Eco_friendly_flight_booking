@@ -56,18 +56,14 @@ export default function ResultsPage() {
       )}
 
       {activeModalIndex === 1 && (
-        <FlightClassSelection
-          isModalVisible={activeModalIndex === 1 ? true : false}
-        />
+        <FlightClassSelection isModalVisible={activeModalIndex === 1} />
       )}
       {activeModalIndex === 2 && (
-        <SeatSelection isModalVisible={activeModalIndex === 2 ? true : false} />
+        <SeatSelection isModalVisible={activeModalIndex === 2} />
       )}
 
       {activeModalIndex === 3 && (
-        <PaymentPageForBooking
-          isModalVisible={activeModalIndex === 3 ? true : false}
-        />
+        <PaymentPageForBooking isModalVisible={activeModalIndex === 3} />
       )}
     </View>
   );

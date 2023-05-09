@@ -1,20 +1,17 @@
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   Modal,
   Platform,
   StyleSheet,
   Text,
-  Touchable,
   TouchableHighlight,
   View,
 } from "react-native";
-import { Button } from "react-native-paper";
 import API from "../../services/API";
 import {
   Move_Modal,
-  Payment_Status,
   Selected_class,
 } from "../../services/interfaces.ts/interfaces";
 import { store } from "../../store/store";
@@ -23,10 +20,17 @@ import {
   changeActiveModalIndex,
   payForFlight,
 } from "../ResultList/ResultList.slice";
-import { DARK_GRAY_2, GRAY, GREEN, LIGHT_GRAY } from "../../helpers/styles";
+import {
+  DARK_GRAY,
+  DARK_GRAY_2,
+  GRAY,
+  GREEN,
+  LIGHT_GRAY,
+} from "../../helpers/styles";
 import Icon from "react-native-vector-icons/Ionicons";
 import { PayPal } from "../../helpers/images";
-import SearchInfo from "../ResultList/SearchInfo";
+import moment from "moment";
+import CardPaymentPage from "./CardPaymentPage";
 
 export default function PaymentPageForBooking(props: {
   isModalVisible: boolean;
@@ -35,7 +39,9 @@ export default function PaymentPageForBooking(props: {
     ({ search_results }) => search_results
   );
   const { passengers } = useStore(({ search_flight }) => search_flight);
-  console.log(selectedFlight);
+  const [visibleModal, setVisibleModal] = useState<"Card" | "PayPal" | "None">(
+    "None"
+  );
 
   async function bookAFlight() {
     if (selectedFlight) {
@@ -48,7 +54,7 @@ export default function PaymentPageForBooking(props: {
     }
   }
 
-  const handleFlightBooking = () => {
+  useEffect(() => {
     let paidPrice: number = 0;
     if (selectedFlight !== undefined) {
       if (selectedFlight?.selected_class === Selected_class.econom) {
@@ -56,24 +62,24 @@ export default function PaymentPageForBooking(props: {
           Number(selectedFlightDetailedIngo.econom_price) *
           (passengers.adults + passengers.childen * 0.75);
         store.dispatch(payForFlight(paidPrice));
-        bookAFlight();
+        // bookAFlight();
       }
       if (selectedFlight?.selected_class === Selected_class.business) {
         paidPrice =
           Number(selectedFlightDetailedIngo.business_price) *
           (passengers.adults + passengers.childen * 0.75);
         store.dispatch(payForFlight(paidPrice));
-        bookAFlight();
+        // bookAFlight();
       }
       if (selectedFlight?.selected_class === Selected_class.first) {
         paidPrice =
           Number(selectedFlightDetailedIngo.first_class_price) *
           (passengers.adults + passengers.childen * 0.75);
         store.dispatch(payForFlight(paidPrice));
-        bookAFlight();
+        // bookAFlight();
       }
     }
-  };
+  }, []);
 
   return (
     <Modal
@@ -95,39 +101,115 @@ export default function PaymentPageForBooking(props: {
         <Text style={styles.title}>Select payment method</Text>
       </View>
       <View style={styles.container}>
-        <SearchInfo />
         {/* <Button onPress={handleFlightBooking}>Pay for the flight</Button> */}
 
-        <TouchableHighlight
-          activeOpacity={0.7}
-          underlayColor={GREEN}
-          style={styles.touchable}
-          onPress={() => {
-            //   store.dispatch(selectSeat(null));
-            //   store.dispatch(changeActiveModalIndex(Move_Modal.forward));
-          }}
-        >
-          <View style={styles.payment_method}>
-            <Icon name="card" size={25} />
-            <Text style={styles.payment_method_title}>
-              Credit or Debit card
+        <View style={styles.payment_details}>
+          <View style={styles.directions_container}>
+            <View style={styles.directions_inner_container}>
+              <Text style={styles.directions_title} numberOfLines={1}>
+                {selectedFlightDetailedIngo.departure_airport_name}
+              </Text>
+              <Icon
+                name="airplane"
+                size={15}
+                style={{ marginHorizontal: 20 }}
+              />
+              <Text style={styles.directions_title} numberOfLines={1}>
+                {selectedFlightDetailedIngo.arrival_airport_name}
+              </Text>
+            </View>
+
+            <Text style={styles.directions_date}>
+              {moment(selectedFlightDetailedIngo.departure_date).format(
+                "DD MMM YYYY"
+              )}
             </Text>
           </View>
-        </TouchableHighlight>
-        <TouchableHighlight
-          activeOpacity={0.7}
-          underlayColor={GREEN}
-          style={styles.touchable}
-          onPress={() => {
-            //   store.dispatch(selectSeat(null));
-            //   store.dispatch(changeActiveModalIndex(Move_Modal.forward));
-          }}
-        >
-          <View style={styles.payment_method}>
-            <Image source={PayPal} style={styles.icon} />
-            <Text style={styles.payment_method_title}>PayPal</Text>
+          <View style={styles.payment_details_row}>
+            <Icon
+              name="people"
+              size={27}
+              color={DARK_GRAY}
+              style={{ marginRight: 8, width: 30 }}
+            />
+            <Text style={{ color: DARK_GRAY_2, fontSize: 17 }}>
+              Passengers:
+            </Text>
+            <Text style={{ color: DARK_GRAY_2, fontSize: 18, marginLeft: 7 }}>
+              {passengers.adults + passengers.childen}
+            </Text>
           </View>
-        </TouchableHighlight>
+          <View style={[styles.payment_details_row, styles.payment_amount]}>
+            <Text style={{ color: DARK_GRAY_2, fontSize: 17 }}>
+              Total amount:
+            </Text>
+            <Text style={{ color: GREEN, fontSize: 18, marginLeft: 7 }}>
+              {selectedFlight?.paid_price}
+            </Text>
+            <Icon name="logo-euro" size={15} color={GREEN} />
+          </View>
+        </View>
+
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <TouchableHighlight
+            activeOpacity={0.7}
+            underlayColor={GREEN}
+            style={styles.touchable}
+            onPress={() => setVisibleModal("Card")}
+          >
+            <View style={styles.payment_method}>
+              <Icon name="card" size={25} />
+              <Text style={styles.payment_method_title}>
+                Credit or Debit card
+              </Text>
+            </View>
+          </TouchableHighlight>
+          <View
+            style={{
+              flexDirection: "row",
+              marginHorizontal: 50,
+              marginVertical: 15,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <View
+              style={{
+                borderTopColor: GRAY,
+                borderTopWidth: 1,
+                flex: 1,
+              }}
+            />
+            <Text
+              style={{ color: DARK_GRAY, fontSize: 17, marginHorizontal: 20 }}
+            >
+              OR
+            </Text>
+            <View
+              style={{ borderTopColor: GRAY, borderTopWidth: 1, flex: 1 }}
+            />
+          </View>
+          <TouchableHighlight
+            activeOpacity={0.7}
+            underlayColor={GREEN}
+            style={styles.touchable}
+            onPress={() => {
+              //   store.dispatch(selectSeat(null));
+              //   store.dispatch(changeActiveModalIndex(Move_Modal.forward));
+            }}
+          >
+            <View style={styles.payment_method}>
+              <Image source={PayPal} style={styles.icon} />
+              <Text style={styles.payment_method_title}>PayPal</Text>
+            </View>
+          </TouchableHighlight>
+          {visibleModal === "Card" && (
+            <CardPaymentPage
+              isModalVisible={visibleModal === "Card"}
+              setHide={setVisibleModal}
+            />
+          )}
+        </View>
       </View>
     </Modal>
   );
@@ -137,8 +219,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    // paddingTop: 30,
-    // alignItems: "center",
+    paddingTop: 30,
+    justifyContent: "space-between",
   },
   header: {
     height: 60,
@@ -151,6 +233,57 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     marginLeft: 30,
+  },
+  payment_details: {
+    marginHorizontal: 30,
+    marginVertical: 10,
+    paddingTop: 10,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8,
+    backgroundColor: LIGHT_GRAY,
+    borderWidth: 1,
+    borderColor: GREEN,
+  },
+  directions_container: {
+    minWidth: 320,
+    marginVertical: 20,
+    alignItems: "center",
+  },
+  directions_inner_container: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
+  },
+  directions_title: {
+    fontSize: 20,
+    width: 150,
+    textAlign: "center",
+  },
+  directions_date: {
+    fontSize: 17,
+    color: DARK_GRAY,
+    textAlign: "center",
+    marginTop: 15,
+    borderWidth: 1,
+    borderColor: GRAY,
+    padding: 5,
+    borderRadius: 17,
+    overflow: "hidden",
+    width: 170,
+  },
+  payment_details_row: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  payment_amount: {
+    marginTop: 25,
+    borderTopColor: GRAY,
+    borderTopWidth: 1,
+    paddingVertical: 20,
+    marginHorizontal: 20,
   },
   touchable: {
     marginHorizontal: 40,

@@ -1,6 +1,8 @@
 export const GRAY = `rgb(232,232,232)`;
+export const GRAY_2 = `rgb(220,220,220)`;
 
 export const LIGHT_GRAY = `rgb(245,245,245)`;
+export const LIGHT_GRAY_2 = `rgb(248,248,248)`;
 
 export const DARK_GRAY = `rgb(169,169,169)`;
 export const DARK_GRAY_2 = `rgb(144,144,144)`;
