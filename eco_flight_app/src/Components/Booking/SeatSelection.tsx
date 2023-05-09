@@ -128,190 +128,217 @@ export default function SeatSelection(props: { isModalVisible: boolean }) {
           <ActivityIndicator size="large" color={GREEN} />
         </View>
       ) : (
-        <ScrollView>
-          <View style={[styles.airplainEdge, styles.airplainTop]}>
-            <View style={[styles.wc, { top: -1, left: -2 }]}>
-              <Icon
-                name="man"
-                size={30}
-                color={GRAY}
-                style={{ borderRightColor: GRAY, borderRightWidth: 1 }}
-              />
-              <Icon name="woman" size={30} color={GRAY} />
-            </View>
-            <View style={[styles.wc, { top: -1, right: -2 }]}>
-              <Icon
-                name="woman"
-                size={30}
-                color={GRAY}
-                style={{ borderRightColor: GRAY, borderRightWidth: 1 }}
-              />
-              <Icon name="man" size={30} color={GRAY} />
-            </View>
-          </View>
-          <View style={styles.doors}>
-            <View style={styles.divider}>
-              <Text style={{ color: DARK_GRAY }}>First Class</Text>
-            </View>
-          </View>
-          <View style={styles.board}>
-            {[...Array(3)].map((_data, _index) => (
-              <View style={styles.seatRow} key={`F${_index}`}>
-                <Seat
-                  key={"A"}
-                  isBlocked={isBlocked(_index + 1, "A", Selected_class.first)}
-                  isSelected={isSelected(_index + 1, "A")}
-                  selectSeat={() => chooseSeat("A", _index + 1)}
+        <>
+          <ScrollView>
+            <View style={[styles.airplainEdge, styles.airplainTop]}>
+              <View style={[styles.wc, { top: -1, left: -2 }]}>
+                <Icon
+                  name="man"
+                  size={30}
+                  color={GRAY}
+                  style={{ borderRightColor: GRAY, borderRightWidth: 1 }}
                 />
-                <Text style={styles.rowNumber}>{_index + 1}</Text>
-                <Seat
-                  key={"B"}
-                  isBlocked={isBlocked(_index + 1, "B", Selected_class.first)}
-                  isSelected={isSelected(_index + 1, "B")}
-                  selectSeat={() => chooseSeat("B", _index + 1)}
-                />
+                <Icon name="woman" size={30} color={GRAY} />
               </View>
-            ))}
-            <View style={styles.divider}>
-              <Text style={{ color: DARK_GRAY }}>Business Class</Text>
-            </View>
-            {[...Array(4)].map((_data, _index) => (
-              <View style={styles.seatRow} key={`B${_index}`}>
-                <Seat
-                  key={"A"}
-                  isBlocked={isBlocked(
-                    _index + 4,
-                    "A",
-                    Selected_class.business
-                  )}
-                  isSelected={isSelected(_index + 4, "A")}
-                  selectSeat={() => chooseSeat("A", _index + 4)}
+              <View style={[styles.wc, { top: -1, right: -2 }]}>
+                <Icon
+                  name="woman"
+                  size={30}
+                  color={GRAY}
+                  style={{ borderRightColor: GRAY, borderRightWidth: 1 }}
                 />
-                <Seat
-                  key={"B"}
-                  isBlocked={isBlocked(
-                    _index + 4,
-                    "B",
-                    Selected_class.business
-                  )}
-                  isSelected={isSelected(_index + 4, "B")}
-                  selectSeat={() => chooseSeat("B", _index + 4)}
-                />
-                <Text style={styles.rowNumber}>{_index + 4}</Text>
-                <Seat
-                  key={"C"}
-                  isBlocked={isBlocked(
-                    _index + 4,
-                    "C",
-                    Selected_class.business
-                  )}
-                  isSelected={isSelected(_index + 4, "C")}
-                  selectSeat={() => chooseSeat("C", _index + 4)}
-                />
-                <Seat
-                  key={"D"}
-                  isBlocked={isBlocked(
-                    _index + 4,
-                    "D",
-                    Selected_class.business
-                  )}
-                  isSelected={isSelected(_index + 4, "D")}
-                  selectSeat={() => chooseSeat("D", _index + 4)}
-                />
+                <Icon name="man" size={30} color={GRAY} />
               </View>
-            ))}
-            <View style={styles.divider}>
-              <Text style={{ color: DARK_GRAY }}>Economy Class</Text>
             </View>
-            {[...Array(23)].map((_data, _index) => (
-              <View style={styles.seatRow} key={`E${_index}`}>
-                <Seat
-                  key={"A"}
-                  isBlocked={isBlocked(_index + 8, "A", Selected_class.econom)}
-                  isSelected={isSelected(_index + 8, "A")}
-                  selectSeat={() => chooseSeat("A", _index + 8)}
-                />
-                <Seat
-                  key={"B"}
-                  isBlocked={isBlocked(_index + 8, "B", Selected_class.econom)}
-                  isSelected={isSelected(_index + 8, "B")}
-                  selectSeat={() => chooseSeat("B", _index + 8)}
-                />
-                <Seat
-                  key={"C"}
-                  isBlocked={isBlocked(_index + 8, "C", Selected_class.econom)}
-                  isSelected={isSelected(_index + 8, "C")}
-                  selectSeat={() => chooseSeat("C", _index + 8)}
-                />
-                <Text style={styles.rowNumber}>{_index + 8}</Text>
-                <Seat
-                  key={"D"}
-                  isBlocked={isBlocked(_index + 8, "D", Selected_class.econom)}
-                  isSelected={isSelected(_index + 8, "D")}
-                  selectSeat={() => chooseSeat("D", _index + 8)}
-                />
-                <Seat
-                  key={"E"}
-                  isBlocked={isBlocked(_index + 8, "E", Selected_class.econom)}
-                  isSelected={isSelected(_index + 8, "E")}
-                  selectSeat={() => chooseSeat("E", _index + 8)}
-                />
-                <Seat
-                  key={"F"}
-                  isBlocked={isBlocked(_index + 8, "F", Selected_class.econom)}
-                  isSelected={isSelected(_index + 8, "F")}
-                  selectSeat={() => chooseSeat("F", _index + 8)}
-                />
+            <View style={styles.doors}>
+              <View style={styles.divider}>
+                <Text style={{ color: DARK_GRAY }}>First Class</Text>
               </View>
-            ))}
-          </View>
-          <View style={styles.doors} />
-          <View style={[styles.airplainEdge, styles.airplainBottom]}>
-            <View style={[styles.wc, { marginTop: 11, left: -2 }]}>
-              <Icon
-                name="woman"
-                size={30}
-                color={GRAY}
-                style={{ borderRightColor: GRAY, borderRightWidth: 1 }}
-              />
-              <Icon name="man" size={30} color={GRAY} />
             </View>
-            <View style={[styles.wc, { marginTop: 11, right: -2 }]}>
-              <Icon
-                name="man"
-                size={30}
-                color={GRAY}
-                style={{ borderRightColor: GRAY, borderRightWidth: 1 }}
-              />
-              <Icon name="woman" size={30} color={GRAY} />
+            <View style={styles.board}>
+              {[...Array(3)].map((_data, _index) => (
+                <View style={styles.seatRow} key={`F${_index}`}>
+                  <Seat
+                    key={"A"}
+                    isBlocked={isBlocked(_index + 1, "A", Selected_class.first)}
+                    isSelected={isSelected(_index + 1, "A")}
+                    selectSeat={() => chooseSeat("A", _index + 1)}
+                  />
+                  <Text style={styles.rowNumber}>{_index + 1}</Text>
+                  <Seat
+                    key={"B"}
+                    isBlocked={isBlocked(_index + 1, "B", Selected_class.first)}
+                    isSelected={isSelected(_index + 1, "B")}
+                    selectSeat={() => chooseSeat("B", _index + 1)}
+                  />
+                </View>
+              ))}
+              <View style={styles.divider}>
+                <Text style={{ color: DARK_GRAY }}>Business Class</Text>
+              </View>
+              {[...Array(4)].map((_data, _index) => (
+                <View style={styles.seatRow} key={`B${_index}`}>
+                  <Seat
+                    key={"A"}
+                    isBlocked={isBlocked(
+                      _index + 4,
+                      "A",
+                      Selected_class.business
+                    )}
+                    isSelected={isSelected(_index + 4, "A")}
+                    selectSeat={() => chooseSeat("A", _index + 4)}
+                  />
+                  <Seat
+                    key={"B"}
+                    isBlocked={isBlocked(
+                      _index + 4,
+                      "B",
+                      Selected_class.business
+                    )}
+                    isSelected={isSelected(_index + 4, "B")}
+                    selectSeat={() => chooseSeat("B", _index + 4)}
+                  />
+                  <Text style={styles.rowNumber}>{_index + 4}</Text>
+                  <Seat
+                    key={"C"}
+                    isBlocked={isBlocked(
+                      _index + 4,
+                      "C",
+                      Selected_class.business
+                    )}
+                    isSelected={isSelected(_index + 4, "C")}
+                    selectSeat={() => chooseSeat("C", _index + 4)}
+                  />
+                  <Seat
+                    key={"D"}
+                    isBlocked={isBlocked(
+                      _index + 4,
+                      "D",
+                      Selected_class.business
+                    )}
+                    isSelected={isSelected(_index + 4, "D")}
+                    selectSeat={() => chooseSeat("D", _index + 4)}
+                  />
+                </View>
+              ))}
+              <View style={styles.divider}>
+                <Text style={{ color: DARK_GRAY }}>Economy Class</Text>
+              </View>
+              {[...Array(23)].map((_data, _index) => (
+                <View style={styles.seatRow} key={`E${_index}`}>
+                  <Seat
+                    key={"A"}
+                    isBlocked={isBlocked(
+                      _index + 8,
+                      "A",
+                      Selected_class.econom
+                    )}
+                    isSelected={isSelected(_index + 8, "A")}
+                    selectSeat={() => chooseSeat("A", _index + 8)}
+                  />
+                  <Seat
+                    key={"B"}
+                    isBlocked={isBlocked(
+                      _index + 8,
+                      "B",
+                      Selected_class.econom
+                    )}
+                    isSelected={isSelected(_index + 8, "B")}
+                    selectSeat={() => chooseSeat("B", _index + 8)}
+                  />
+                  <Seat
+                    key={"C"}
+                    isBlocked={isBlocked(
+                      _index + 8,
+                      "C",
+                      Selected_class.econom
+                    )}
+                    isSelected={isSelected(_index + 8, "C")}
+                    selectSeat={() => chooseSeat("C", _index + 8)}
+                  />
+                  <Text style={styles.rowNumber}>{_index + 8}</Text>
+                  <Seat
+                    key={"D"}
+                    isBlocked={isBlocked(
+                      _index + 8,
+                      "D",
+                      Selected_class.econom
+                    )}
+                    isSelected={isSelected(_index + 8, "D")}
+                    selectSeat={() => chooseSeat("D", _index + 8)}
+                  />
+                  <Seat
+                    key={"E"}
+                    isBlocked={isBlocked(
+                      _index + 8,
+                      "E",
+                      Selected_class.econom
+                    )}
+                    isSelected={isSelected(_index + 8, "E")}
+                    selectSeat={() => chooseSeat("E", _index + 8)}
+                  />
+                  <Seat
+                    key={"F"}
+                    isBlocked={isBlocked(
+                      _index + 8,
+                      "F",
+                      Selected_class.econom
+                    )}
+                    isSelected={isSelected(_index + 8, "F")}
+                    selectSeat={() => chooseSeat("F", _index + 8)}
+                  />
+                </View>
+              ))}
+            </View>
+            <View style={styles.doors} />
+            <View style={[styles.airplainEdge, styles.airplainBottom]}>
+              <View style={[styles.wc, { marginTop: 11, left: -2 }]}>
+                <Icon
+                  name="woman"
+                  size={30}
+                  color={GRAY}
+                  style={{ borderRightColor: GRAY, borderRightWidth: 1 }}
+                />
+                <Icon name="man" size={30} color={GRAY} />
+              </View>
+              <View style={[styles.wc, { marginTop: 11, right: -2 }]}>
+                <Icon
+                  name="man"
+                  size={30}
+                  color={GRAY}
+                  style={{ borderRightColor: GRAY, borderRightWidth: 1 }}
+                />
+                <Icon name="woman" size={30} color={GRAY} />
+              </View>
+            </View>
+          </ScrollView>
+
+          <View style={styles.footer}>
+            <View style={styles.footer_text_container}>
+              <Text style={{ fontSize: 17, color: DARK_GRAY }}>Seat: </Text>
+              <Text style={{ fontSize: 20, marginLeft: 7 }}>
+                {selectedSeat && selectedSeat?.row + selectedSeat?.seat}
+              </Text>
+            </View>
+            <View style={styles.footer_button_container}>
+              <TouchableHighlight
+                activeOpacity={0.7}
+                underlayColor={GRAY}
+                disabled={!selectedSeat}
+                onPress={() => {
+                  const seat = selectedSeat
+                    ? selectedSeat?.row + selectedSeat?.seat
+                    : null;
+                  store.dispatch(selectSeat(seat));
+                  store.dispatch(changeActiveModalIndex(Move_Modal.forward));
+                }}
+              >
+                <Text style={styles.footer_button}>Select</Text>
+              </TouchableHighlight>
             </View>
           </View>
-        </ScrollView>
+        </>
       )}
-      <View style={styles.footer}>
-        <View style={styles.footer_text_container}>
-          <Text style={{ fontSize: 17, color: DARK_GRAY }}>Seat: </Text>
-          <Text style={{ fontSize: 20, marginLeft: 7 }}>
-            {selectedSeat && selectedSeat?.row + selectedSeat?.seat}
-          </Text>
-        </View>
-        <View style={styles.footer_button_container}>
-          <TouchableHighlight
-            activeOpacity={0.7}
-            underlayColor={GRAY}
-            disabled={!selectedSeat}
-            onPress={() => {
-              const seat = selectedSeat
-                ? selectedSeat?.row + selectedSeat?.seat
-                : null;
-              store.dispatch(selectSeat(seat));
-              store.dispatch(changeActiveModalIndex(Move_Modal.forward));
-            }}
-          >
-            <Text style={styles.footer_button}>Select</Text>
-          </TouchableHighlight>
-        </View>
-      </View>
     </Modal>
   );
 }

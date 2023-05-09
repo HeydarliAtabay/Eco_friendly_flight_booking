@@ -31,6 +31,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { PayPal } from "../../helpers/images";
 import moment from "moment";
 import CardPaymentPage from "./CardPaymentPage";
+import PayPalPaymentPage from "./PayPalPaymentPage";
 
 export default function PaymentPageForBooking(props: {
   isModalVisible: boolean;
@@ -47,7 +48,6 @@ export default function PaymentPageForBooking(props: {
     if (selectedFlight) {
       await API.bookFlight(selectedFlight)
         .then(() => {
-          alert("Succesfully booked");
           // navigation.navigate('Main Page')
         })
         .catch((error) => alert(error));
@@ -62,21 +62,18 @@ export default function PaymentPageForBooking(props: {
           Number(selectedFlightDetailedIngo.econom_price) *
           (passengers.adults + passengers.childen * 0.75);
         store.dispatch(payForFlight(paidPrice));
-        // bookAFlight();
       }
       if (selectedFlight?.selected_class === Selected_class.business) {
         paidPrice =
           Number(selectedFlightDetailedIngo.business_price) *
           (passengers.adults + passengers.childen * 0.75);
         store.dispatch(payForFlight(paidPrice));
-        // bookAFlight();
       }
       if (selectedFlight?.selected_class === Selected_class.first) {
         paidPrice =
           Number(selectedFlightDetailedIngo.first_class_price) *
           (passengers.adults + passengers.childen * 0.75);
         store.dispatch(payForFlight(paidPrice));
-        // bookAFlight();
       }
     }
   }, []);
@@ -193,10 +190,7 @@ export default function PaymentPageForBooking(props: {
             activeOpacity={0.7}
             underlayColor={GREEN}
             style={styles.touchable}
-            onPress={() => {
-              //   store.dispatch(selectSeat(null));
-              //   store.dispatch(changeActiveModalIndex(Move_Modal.forward));
-            }}
+            onPress={() => setVisibleModal("PayPal")}
           >
             <View style={styles.payment_method}>
               <Image source={PayPal} style={styles.icon} />
@@ -207,6 +201,14 @@ export default function PaymentPageForBooking(props: {
             <CardPaymentPage
               isModalVisible={visibleModal === "Card"}
               setHide={setVisibleModal}
+              onSuccess={bookAFlight}
+            />
+          )}
+          {visibleModal === "PayPal" && (
+            <PayPalPaymentPage
+              isModalVisible={visibleModal === "PayPal"}
+              setHide={setVisibleModal}
+              onSuccess={bookAFlight}
             />
           )}
         </View>

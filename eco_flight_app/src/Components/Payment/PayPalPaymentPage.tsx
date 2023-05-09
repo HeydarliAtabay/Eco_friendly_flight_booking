@@ -2,6 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   Modal,
   Platform,
   StyleSheet,
@@ -19,55 +20,23 @@ import {
   LIGHT_GRAY_2,
 } from "../../helpers/styles";
 import Icon from "react-native-vector-icons/Ionicons";
+import { PayPal } from "../../helpers/images";
 
-export default function CardPaymentPage(props: {
+export default function PayPalPaymentPage(props: {
   isModalVisible: boolean;
   setHide: (val: "Card" | "PayPal" | "None") => void;
   onSuccess: () => Promise<void>;
 }) {
-  const [cardHoler, setCardHolder] = useState<string>("");
-  const [cardNumber, setCardNumber] = useState<string>();
-  const [expireDate, setExpireDate] = useState<{
-    month?: string;
-    year?: string;
-  }>({});
-  const [cvv, setCvv] = useState<string>();
+  const [email, setEmail] = useState<string>("");
+
   const [paymentProcess, setPaymentProcess] = useState<
     "Loading" | "Paid" | "Waiting"
   >("Waiting");
 
-  //   const getCardNumber = () => {
-  //     var chunks = [];
-  //     const charsLength = cardNumber ? cardNumber.length : 0;
-  //     for (var i = 0; i < charsLength; i += 4) {
-  //       chunks.push(cardNumber?.substring(i, i + 4));
-  //     }
-  //     return chunks.join(" ");
-  //   };
-
-  const handleCardExpireDate = (mm: string, type: "M" | "Y") => {
-    if (type === "M") {
-      setExpireDate((expr) => ({ ...expr, month: mm }));
-    }
-    if (type === "Y") {
-      setExpireDate((expr) => ({ ...expr, year: mm }));
-    }
-  };
-
   const isValidData = () => {
-    const name = cardHoler !== "";
-    const cardNum = cardNumber?.length === 16;
-    const exprDateMM =
-      0 < Number(expireDate.month) && Number(expireDate.month) < 13;
-    const exprDateYYYY = Number(expireDate.year) >= 2023;
-    const cvvCode = cvv?.length === 3;
-
-    if (!name) alert("Insert Card Holder name!");
-    else if (!cardNum) alert("Insert correct card number!");
-    else if (!exprDateMM || !exprDateYYYY) alert("Insert valid expire date!");
-    else if (!cvvCode) alert("Insert valid security code!");
-
-    return name && cardNum && exprDateMM && exprDateYYYY && cvvCode;
+    const isValid = email.toLowerCase().match(/\S+@\S+\.\S+/);
+    if (!isValid) alert("Insert valid paypal address!");
+    return isValid;
   };
 
   const payAmount = () => {
@@ -90,7 +59,7 @@ export default function CardPaymentPage(props: {
           size={30}
           onPress={() => props.setHide("None")}
         />
-        <Text style={styles.title}>Insert card details</Text>
+        <Text style={styles.title}>Insert payment details</Text>
       </View>
       <View style={styles.container}>
         {paymentProcess === "Paid" ? (
@@ -102,77 +71,29 @@ export default function CardPaymentPage(props: {
           </View>
         ) : (
           <View style={styles.payment_method_details}>
-            <View style={{ width: "100%" }}>
-              <Text style={styles.label}>Card holder</Text>
-              <TextInput
-                style={styles.input}
-                onChangeText={setCardHolder}
-                value={cardHoler}
-                placeholder="Name & Surname"
-                inputMode="text"
-              />
-            </View>
-            <View style={{ width: "100%", marginTop: 10 }}>
-              <Text style={styles.label}>Card number</Text>
-              <TextInput
-                style={styles.input}
-                onChangeText={setCardNumber}
-                value={cardNumber}
-                placeholder="XXXX XXXX XXXX XXXX"
-                inputMode="numeric"
-                maxLength={16}
-              />
-            </View>
             <View
-              style={{ width: "100%", marginTop: 10, flexDirection: "row" }}
+              style={{
+                width: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
-              <View>
-                <Text style={styles.label}>Expire date</Text>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <TextInput
-                    style={[
-                      styles.input,
-                      { width: "30%", textAlign: "center" },
-                    ]}
-                    onChangeText={(expr) => handleCardExpireDate(expr, "M")}
-                    value={expireDate.month as unknown as string}
-                    placeholder="MM"
-                    inputMode="numeric"
-                    maxLength={2}
-                  />
-                  <View
-                    style={{
-                      borderLeftColor: GRAY,
-                      borderLeftWidth: 1,
-                      marginHorizontal: 10,
-                      height: 35,
-                      transform: [{ rotate: "15deg" }],
-                    }}
-                  />
-                  <TextInput
-                    style={[
-                      styles.input,
-                      { width: "40%", textAlign: "center" },
-                    ]}
-                    onChangeText={(expr) => handleCardExpireDate(expr, "Y")}
-                    value={expireDate.year as unknown as string}
-                    placeholder="YYYY"
-                    inputMode="numeric"
-                    maxLength={4}
-                  />
-                </View>
-              </View>
-              <View>
-                <Text style={styles.label}>CVV code</Text>
-                <TextInput
-                  style={[styles.input, { textAlign: "center" }]}
-                  onChangeText={setCvv}
-                  value={cvv}
-                  placeholder="123"
-                  inputMode="numeric"
-                  maxLength={3}
-                />
-              </View>
+              <Image source={PayPal} style={styles.logo} />
+              <Text
+                style={{ color: DARK_GRAY_2, fontSize: 21, marginVertical: 20 }}
+              >
+                Pay with PayPal
+              </Text>
+            </View>
+            <View style={{ width: "100%" }}>
+              <Text style={styles.label}>Email</Text>
+              <TextInput
+                style={styles.input}
+                onChangeText={setEmail}
+                value={email}
+                placeholder="example@email.com"
+                inputMode="email"
+              />
             </View>
           </View>
         )}
@@ -296,5 +217,11 @@ const styles = StyleSheet.create({
     color: "white",
     alignItems: "center",
     flexDirection: "row",
+  },
+  logo: {
+    width: 120,
+    height: 120,
+    marginHorizontal: "auto",
+    display: "flex",
   },
 });
