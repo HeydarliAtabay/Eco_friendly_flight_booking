@@ -48,18 +48,12 @@ export default function MainPage({ navigation }: MainPageProps) {
           </TouchableOpacity>
           <Text style={{ fontSize: 18, textAlign: 'center', marginTop: 5, marginBottom: 5 }} >Flights</Text>
         </View>
-        {mostRecentFlight ?
+        {mostRecentFlight &&
           <TouchableOpacity
             onPress={() => { navigation.navigate('My flights') }}
           >
             <MostRecentFlightCard flight={mostRecentFlight} />
           </TouchableOpacity>
-
-          :
-          <View>
-            <Text>No recent flights</Text>
-          </View>
-
         }
         <TouchableOpacity onPress={() => navigation.navigate("Search Flight")} >
           <View style={{
