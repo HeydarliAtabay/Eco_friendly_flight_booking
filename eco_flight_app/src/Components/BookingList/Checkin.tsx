@@ -4,8 +4,6 @@ import {
   Text,
   StyleSheet,
   Image,
-  ScrollView,
-  Modal,
   Platform,
   SafeAreaView,
   FlatList,
@@ -73,12 +71,18 @@ export default function Checkin() {
         .catch((e) => alert(e));
     }
   }
-  return (
+  return showSeatSelection ? (
+    <SeatSelection checkinPage={true} />
+  ) : (
     <View style={styles.container}>
       <Card style={styles.cardContainer}>
         {loading ? (
           <View
-            style={{ justifyContent: "center", alignItems: "center", flex: 1 }}
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              flex: 1,
+            }}
           >
             <ActivityIndicator animating={true} color={GREEN} size="large" />
           </View>
@@ -173,7 +177,10 @@ export default function Checkin() {
                             }}
                           >
                             <View
-                              style={{ display: "flex", flexDirection: "row" }}
+                              style={{
+                                display: "flex",
+                                flexDirection: "row",
+                              }}
                             >
                               <Text
                                 style={{
@@ -430,7 +437,6 @@ export default function Checkin() {
           </SafeAreaView>
         )}
       </Card>
-      <SeatSelection isModalVisible={showSeatSelection} checkinPage={true} />
     </View>
   );
 }

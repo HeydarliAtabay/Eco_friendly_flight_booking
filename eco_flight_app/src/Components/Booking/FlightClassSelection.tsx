@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import {
   Image,
-  Modal,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -17,12 +15,9 @@ import {
   LIGHT_GRAY,
 } from "../../helpers/styles";
 import Icon from "react-native-vector-icons/Ionicons";
-import { Move_Modal } from "../../services/interfaces.ts/interfaces";
+import { MainPageProps } from "../../services/interfaces.ts/interfaces";
 import { State, store } from "../../store/store";
-import {
-  changeActiveModalIndex,
-  selectFlightClass,
-} from "../ResultList/ResultList.slice";
+import { selectFlightClass } from "../ResultList/ResultList.slice";
 import SearchInfo from "../ResultList/SearchInfo";
 import { BAGGAGE, HANDBAGGAGE, MONEY_REFUND, SEAT } from "../../helpers/images";
 import { FlightClass } from "../../helpers";
@@ -32,11 +27,7 @@ import {
 } from "../../services/interactions";
 import { useSelector } from "react-redux";
 
-export default function FlightClassSelection(props: {
-  isModalVisible: boolean;
-}) {
-  const { isModalVisible } = props;
-
+export default function FlightClassSelection({ navigation }: MainPageProps) {
   const { selectedFlightDetailedIngo, selectedFlight } = useSelector(
     (state: State) => state.search_results
   );
@@ -53,23 +44,7 @@ export default function FlightClassSelection(props: {
   };
 
   return (
-    <Modal
-      animationType="none"
-      visible={isModalVisible}
-      onRequestClose={() =>
-        store.dispatch(changeActiveModalIndex(Move_Modal.back))
-      }
-    >
-      <View style={styles.header}>
-        <Icon
-          name="chevron-back"
-          size={30}
-          onPress={() =>
-            store.dispatch(changeActiveModalIndex(Move_Modal.back))
-          }
-        />
-        <Text style={styles.title}>Select your seat</Text>
-      </View>
+    <View style={styles.container}>
       <SearchInfo />
       <ScrollView>
         <TouchableHighlight
@@ -233,14 +208,14 @@ export default function FlightClassSelection(props: {
               store.dispatch(
                 selectFlightClass(FlightClass_To_SelectedClass(isSelectedClass))
               );
-              store.dispatch(changeActiveModalIndex(Move_Modal.forward));
+              navigation.navigate("Seat Selection");
             }}
           >
             <Text style={styles.footer_button}>Next</Text>
           </TouchableHighlight>
         </View>
       </View>
-    </Modal>
+    </View>
   );
 }
 
@@ -248,30 +223,7 @@ export default function FlightClassSelection(props: {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    paddingTop: 30,
-    alignItems: "center",
-  },
-  header: {
-    height: 60,
-    // backgroundColor: GRAY,
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 15,
-    // paddingTop: 25,
-    marginTop: Platform.OS === "ios" ? "10%" : 0,
-    // shadowOffset: { width: 0, height: 10 },
-    // shadowColor: DARK_GRAY,
-    // shadowRadius: 6,
-    // shadowOpacity: 0.7,
-    // elevation: 3,
-    // top: -10,
-    borderBottomColor: GRAY,
-    borderBottomWidth: 1,
-  },
-  title: {
-    fontSize: 20,
-    marginLeft: 30,
+    backgroundColor: "#fff",
   },
   card_touch: {
     marginHorizontal: 30,

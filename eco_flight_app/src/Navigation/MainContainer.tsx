@@ -10,11 +10,12 @@ import BookingPage from "./Pages/BookingPage";
 // import UserProfilePage from "./Pages/UserAccount/UserProfilePage";
 import UserProfilePage from "./Pages/UserAccount/UserProfilePage";
 import { MainPageStackNavigator } from "./Pages/MainPageStackNav";
+import { GREEN } from "../helpers/styles";
 
 // Screen names
 const MainName = "Main";
 const ListName = "My flights";
-const UserProfileName = 'Profile'
+const UserProfileName = "Profile";
 
 const Tab = createBottomTabNavigator();
 
@@ -33,8 +34,7 @@ export default function MainContainer() {
                 iconName = focused ? "home" : "home-outline";
               } else if (rn === ListName) {
                 iconName = focused ? "list" : "list-outline";
-              }
-              else if (rn === UserProfileName) {
+              } else if (rn === UserProfileName) {
                 iconName = focused ? "person" : "person-outline";
               }
 
@@ -47,21 +47,27 @@ export default function MainContainer() {
               );
             },
           })}
-        // tabBarOptions={{
-        //     activeTintColor: '#385399',
-        //     inactiveTintColor: 'grey',
-        //     labelStyle: { paddingBottom: 5, fontSize: 10 },
-        // }}
+          // tabBarOptions={{
+          //     activeTintColor: '#385399',
+          //     inactiveTintColor: 'grey',
+          //     labelStyle: { paddingBottom: 5, fontSize: 10 },
+          // }}
         >
           <Tab.Screen
             name={MainName}
             component={MainPageStackNavigator}
-            options={{
-              headerShown: false,
-            }}
+            options={{ headerShown: false, tabBarActiveTintColor: GREEN }}
           />
-          <Tab.Screen name={ListName} component={ListOfBookingsPage} />
-          <Tab.Screen name={UserProfileName} component={UserProfilePage} />
+          <Tab.Screen
+            name={ListName}
+            component={ListOfBookingsPage}
+            options={{ tabBarActiveTintColor: GREEN }}
+          />
+          <Tab.Screen
+            name={UserProfileName}
+            component={UserProfilePage}
+            options={{ tabBarActiveTintColor: GREEN }}
+          />
         </Tab.Navigator>
       </NavigationContainer>
     </>

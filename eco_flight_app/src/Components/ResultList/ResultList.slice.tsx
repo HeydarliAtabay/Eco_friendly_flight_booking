@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
-  Move_Modal,
   Payment_Status,
   SearchFlightResultSingle,
   Selected_class,
@@ -12,7 +11,6 @@ export interface SearchFlightState {
   returnFlights: SearchFlightResultSingle[];
   selectedFlight: SelectedFlight | undefined;
   selectedFlightDetailedIngo: SearchFlightResultSingle;
-  activeModalIndex: number;
 }
 
 const emptyFlight: SearchFlightResultSingle = {
@@ -43,7 +41,6 @@ const initialState: SearchFlightState = {
   returnFlights: [],
   selectedFlight: undefined,
   selectedFlightDetailedIngo: emptyFlight,
-  activeModalIndex: 0,
 };
 
 const slice = createSlice({
@@ -94,16 +91,6 @@ const slice = createSlice({
         state.selectedFlight.paid_price = amount;
       }
     },
-    changeActiveModalIndex: (
-      state,
-      { payload: operation }: PayloadAction<Move_Modal>
-    ) => {
-      if (operation === Move_Modal.forward) {
-        state.activeModalIndex = state.activeModalIndex + 1;
-      } else if (operation === Move_Modal.back) {
-        state.activeModalIndex = state.activeModalIndex - 1;
-      }
-    },
   },
 });
 
@@ -114,7 +101,6 @@ export const {
   selectFlight,
   selectSeat,
   payForFlight,
-  changeActiveModalIndex,
   selectFlightDetailedInfo,
   selectFlightClass,
 } = slice.actions;

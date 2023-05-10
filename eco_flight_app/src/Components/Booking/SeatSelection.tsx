@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Modal,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -11,16 +9,10 @@ import {
 } from "react-native";
 import { DARK_GRAY, GRAY, GREEN, LIGHT_GRAY } from "../../helpers/styles";
 import Icon from "react-native-vector-icons/Ionicons";
-import {
-  Move_Modal,
-  Selected_class,
-} from "../../services/interfaces.ts/interfaces";
+import { Selected_class } from "../../services/interfaces.ts/interfaces";
 import { store } from "../../store/store";
 import { useStore } from "../../store/storeHooks";
-import {
-  changeActiveModalIndex,
-  selectSeat,
-} from "../ResultList/ResultList.slice";
+import { selectSeat } from "../ResultList/ResultList.slice";
 import SearchInfo from "../ResultList/SearchInfo";
 import API from "../../services/API";
 import SeatSelectionOptions from "./SeatSelectionOptions";
@@ -28,6 +20,7 @@ import {
   changeSeatModalVisibility,
   changeSelectedSeat,
 } from "../BookingList/Booking.slice";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack/lib/typescript/src/types";
 
 const Seat = (props: {
   isBlocked: boolean;
@@ -55,10 +48,9 @@ const Seat = (props: {
 };
 
 export default function SeatSelection(props: {
-  isModalVisible: boolean;
   checkinPage?: boolean;
+  navigation?: NativeStackNavigationProp<any, any>;
 }) {
-  const { isModalVisible } = props;
   const { selectedFlight } = useStore(({ search_results }) => search_results);
   const { selectedBookedFLight } = useStore(({ booking }) => booking);
   const [bookedSeats, setBookedSeats] = useState<string[]>([]);
@@ -123,35 +115,16 @@ export default function SeatSelection(props: {
   }, []);
 
   return (
-    <Modal
-      animationType="fade"
-      visible={isModalVisible}
-      onRequestClose={() => {
-        if (!props.checkinPage)
-          store.dispatch(changeActiveModalIndex(Move_Modal.back));
-        else store.dispatch(changeSeatModalVisibility(false));
-      }}
-    >
+    <View style={styles.container}>
       {openOptions && (
         <SeatSelectionOptions
           isModalVisible={openOptions}
           setIsModalVisible={setOpenOptions}
           bookedSeats={bookedSeats}
           checkinPage={props.checkinPage}
+          navigation={props.navigation}
         />
       )}
-      <View style={styles.header}>
-        <Icon
-          name="chevron-back"
-          size={30}
-          onPress={() => {
-            if (!props.checkinPage)
-              store.dispatch(changeActiveModalIndex(Move_Modal.back));
-            else store.dispatch(changeSeatModalVisibility(false));
-          }}
-        />
-        <Text style={styles.title}>Select your seat</Text>
-      </View>
       {!props.checkinPage && <SearchInfo />}
       {loading ? (
         <View style={styles.loader}>
@@ -364,7 +337,7 @@ export default function SeatSelection(props: {
                     store.dispatch(changeSeatModalVisibility(false));
                   } else if (!props.checkinPage) {
                     store.dispatch(selectSeat(seat));
-                    store.dispatch(changeActiveModalIndex(Move_Modal.forward));
+                    props.navigation?.navigate("Payment");
                   }
                 }}
               >
@@ -374,7 +347,7 @@ export default function SeatSelection(props: {
           </View>
         </>
       )}
-    </Modal>
+    </View>
   );
 }
 
@@ -394,30 +367,7 @@ const divider = { height: 30, marginBottom: 3 };
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    paddingTop: 30,
-    alignItems: "center",
-  },
-  header: {
-    height: 60,
-    // backgroundColor: GRAY,
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 15,
-    // paddingTop: 25,
-    marginTop: Platform.OS === "ios" ? "10%" : 0,
-    // shadowOffset: { width: 0, height: 10 },
-    // shadowColor: DARK_GRAY,
-    // shadowRadius: 6,
-    // shadowOpacity: 0.7,
-    // elevation: 3,
-    // top: -10,
-    borderBottomColor: GRAY,
-    borderBottomWidth: 1,
-  },
-  title: {
-    fontSize: 20,
-    marginLeft: 30,
+    backgroundColor: "#fff",
   },
   airplainEdge: {
     height: 90,

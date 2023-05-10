@@ -1,13 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Airport, Flight_Mode } from "../../helpers";
-import { Moment } from "moment";
 import moment from "moment";
 import {
   BookedFlightInfo,
-  Move_Modal,
-  Payment_Status,
-  SearchFlightResultSingle,
-  SelectedFlight,
   Selected_class,
 } from "../../services/interfaces.ts/interfaces";
 

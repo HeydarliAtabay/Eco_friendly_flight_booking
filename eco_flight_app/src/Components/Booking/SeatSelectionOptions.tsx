@@ -1,37 +1,29 @@
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
   Modal,
-  Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableHighlight,
   View,
 } from "react-native";
 import { DARK_GRAY, GRAY, GREEN, LIGHT_GRAY } from "../../helpers/styles";
-import Icon from "react-native-vector-icons/Ionicons";
-import {
-  Move_Modal,
-  Selected_class,
-} from "../../services/interfaces.ts/interfaces";
+import { Selected_class } from "../../services/interfaces.ts/interfaces";
 import { State, store } from "../../store/store";
-import {
-  changeActiveModalIndex,
-  selectSeat,
-} from "../ResultList/ResultList.slice";
+import { selectSeat } from "../ResultList/ResultList.slice";
 import { useSelector } from "react-redux";
 import { useStore } from "../../store/storeHooks";
 import {
   changeSeatModalVisibility,
   changeSelectedSeat,
 } from "../BookingList/Booking.slice";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack/lib/typescript/src/types";
 
 export default function SeatSelectionOptions(props: {
   isModalVisible: boolean;
   setIsModalVisible: (v: boolean) => void;
   bookedSeats: string[];
   checkinPage?: boolean;
+  navigation?: NativeStackNavigationProp<any, any>;
 }) {
   const { isModalVisible, setIsModalVisible, bookedSeats } = props;
   const selectedFlight = useSelector(
@@ -85,74 +77,61 @@ export default function SeatSelectionOptions(props: {
       transparent={true}
       onRequestClose={() => {
         setIsModalVisible(false);
-        store.dispatch(changeActiveModalIndex(Move_Modal.back));
       }}
     >
-      <View style={styles.header}>
-        <Icon
-          name="chevron-back"
-          size={30}
-          onPress={() => {
-            if (!props.checkinPage) {
-              setIsModalVisible(false);
-              store.dispatch(changeActiveModalIndex(Move_Modal.back));
-            } else store.dispatch(changeSeatModalVisibility(false));
-          }}
-        />
-        <Text style={styles.title}>Select your seat</Text>
-      </View>
-      <View style={styles.container} />
-      <View style={styles.footer}>
-        <View style={styles.footer_text_container}>
-          <Text style={{ fontSize: 17, color: DARK_GRAY }}>
-            Suggested seat:
-          </Text>
-          <Text style={{ fontSize: 20, marginLeft: 7 }}>{randomSeat}</Text>
-        </View>
-        <TouchableHighlight
-          activeOpacity={0.7}
-          underlayColor={LIGHT_GRAY}
-          style={styles.touchable}
-          onPress={() => {
-            if (props.checkinPage) {
-              if (randomSeat !== null) {
-                store.dispatch(changeSelectedSeat(randomSeat));
-                store.dispatch(changeSeatModalVisibility(false));
+      <View style={styles.container}>
+        <View style={styles.footer}>
+          <View style={styles.footer_text_container}>
+            <Text style={{ fontSize: 17, color: DARK_GRAY }}>
+              Suggested seat:
+            </Text>
+            <Text style={{ fontSize: 20, marginLeft: 7 }}>{randomSeat}</Text>
+          </View>
+          <TouchableHighlight
+            activeOpacity={0.7}
+            underlayColor={LIGHT_GRAY}
+            style={styles.touchable}
+            onPress={() => {
+              if (props.checkinPage) {
+                if (randomSeat !== null) {
+                  store.dispatch(changeSelectedSeat(randomSeat));
+                  store.dispatch(changeSeatModalVisibility(false));
+                }
+              } else {
+                store.dispatch(selectSeat(randomSeat));
+                props.navigation?.navigate("Payment");
               }
-            } else {
-              store.dispatch(selectSeat(randomSeat));
-              store.dispatch(changeActiveModalIndex(Move_Modal.forward));
-            }
-          }}
-        >
-          <Text style={[styles.footer_button, styles.footer_button_accept]}>
-            Accept Recommendation
-          </Text>
-        </TouchableHighlight>
-        <TouchableHighlight
-          activeOpacity={0.7}
-          underlayColor={LIGHT_GRAY}
-          style={styles.touchable}
-          onPress={() => setIsModalVisible(false)}
-        >
-          <Text style={[styles.footer_button, styles.footer_button_choose]}>
-            Choose other seats
-          </Text>
-        </TouchableHighlight>
-        <View style={styles.divider} />
-        <TouchableHighlight
-          activeOpacity={0.7}
-          underlayColor={LIGHT_GRAY}
-          style={styles.touchable}
-          onPress={() => {
-            store.dispatch(selectSeat(null));
-            store.dispatch(changeActiveModalIndex(Move_Modal.forward));
-          }}
-        >
-          <Text style={[styles.footer_button, styles.footer_button_skip]}>
-            Continue without a seat
-          </Text>
-        </TouchableHighlight>
+            }}
+          >
+            <Text style={[styles.footer_button, styles.footer_button_accept]}>
+              Accept Recommendation
+            </Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            activeOpacity={0.7}
+            underlayColor={LIGHT_GRAY}
+            style={styles.touchable}
+            onPress={() => setIsModalVisible(false)}
+          >
+            <Text style={[styles.footer_button, styles.footer_button_choose]}>
+              Choose other seats
+            </Text>
+          </TouchableHighlight>
+          <View style={styles.divider} />
+          <TouchableHighlight
+            activeOpacity={0.7}
+            underlayColor={LIGHT_GRAY}
+            style={styles.touchable}
+            onPress={() => {
+              store.dispatch(selectSeat(null));
+              props.navigation?.navigate("Payment");
+            }}
+          >
+            <Text style={[styles.footer_button, styles.footer_button_skip]}>
+              Continue without a seat
+            </Text>
+          </TouchableHighlight>
+        </View>
       </View>
     </Modal>
   );
@@ -162,30 +141,8 @@ export default function SeatSelectionOptions(props: {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    paddingTop: 30,
-    alignItems: "center",
-  },
-  header: {
-    height: 60,
-    // backgroundColor: GRAY,
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 15,
-    // paddingTop: 25,
-    marginTop: Platform.OS === "ios" ? "10%" : 0,
-    // shadowOffset: { width: 0, height: 10 },
-    // shadowColor: DARK_GRAY,
-    // shadowRadius: 6,
-    // shadowOpacity: 0.7,
-    // elevation: 3,
-    // top: -10,
-    borderBottomColor: GRAY,
-    borderBottomWidth: 1,
-  },
-  title: {
-    fontSize: 20,
-    marginLeft: 30,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(28, 176, 28, 0.15)",
   },
   footer: {
     padding: 15,

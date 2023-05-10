@@ -96,10 +96,6 @@ export enum Selected_class {
   business = "BUSINESS",
   first = "FIRST",
 }
-export enum Move_Modal {
-  back = Number(-1),
-  forward = 1,
-}
 
 export type BaggageObject = {
   type: string;

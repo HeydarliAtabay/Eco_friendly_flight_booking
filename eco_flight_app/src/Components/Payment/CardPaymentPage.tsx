@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import {
   DARK_GRAY,
-  DARK_GRAY_2,
   GRAY,
   GREEN,
   LIGHT_GRAY,
@@ -37,15 +36,6 @@ export default function CardPaymentPage(props: {
   const [paymentProcess, setPaymentProcess] = useState<
     "Loading" | "Paid" | "Waiting"
   >("Waiting");
-
-  //   const getCardNumber = () => {
-  //     var chunks = [];
-  //     const charsLength = cardNumber ? cardNumber.length : 0;
-  //     for (var i = 0; i < charsLength; i += 4) {
-  //       chunks.push(cardNumber?.substring(i, i + 4));
-  //     }
-  //     return chunks.join(" ");
-  //   };
 
   const handleCardExpireDate = (mm: string, type: "M" | "Y") => {
     if (type === "M") {
@@ -233,18 +223,10 @@ const styles = StyleSheet.create({
   },
   header: {
     height: 60,
-    // backgroundColor: GRAY,
     flexDirection: "row",
     alignItems: "center",
     padding: 15,
-    // paddingTop: 25,
     marginTop: Platform.OS === "ios" ? "10%" : 0,
-    // shadowOffset: { width: 0, height: 10 },
-    // shadowColor: DARK_GRAY,
-    // shadowRadius: 6,
-    // shadowOpacity: 0.7,
-    // elevation: 3,
-    // top: -10,
     borderBottomColor: GRAY,
     borderBottomWidth: 1,
   },

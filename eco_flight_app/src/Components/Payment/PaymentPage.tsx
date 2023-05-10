@@ -2,24 +2,16 @@ import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import {
   Image,
-  Modal,
-  Platform,
   StyleSheet,
   Text,
   TouchableHighlight,
   View,
 } from "react-native";
 import API from "../../services/API";
-import {
-  Move_Modal,
-  Selected_class,
-} from "../../services/interfaces.ts/interfaces";
+import { Selected_class } from "../../services/interfaces.ts/interfaces";
 import { store } from "../../store/store";
 import { useStore } from "../../store/storeHooks";
-import {
-  changeActiveModalIndex,
-  payForFlight,
-} from "../ResultList/ResultList.slice";
+import { payForFlight } from "../ResultList/ResultList.slice";
 import {
   DARK_GRAY,
   DARK_GRAY_2,
@@ -35,7 +27,6 @@ import PayPalPaymentPage from "./PayPalPaymentPage";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack/lib/typescript/src/types";
 
 export default function PaymentPageForBooking(props: {
-  isModalVisible: boolean;
   navigation: NativeStackNavigationProp<any, any>;
 }) {
   const { selectedFlight, selectedFlightDetailedIngo } = useStore(
@@ -50,7 +41,7 @@ export default function PaymentPageForBooking(props: {
     if (selectedFlight) {
       await API.bookFlight(selectedFlight)
         .then(() => {
-          // navigation.navigate('Main Page')
+          // props.navigation.navigate("Main Page");
         })
         .catch((error) => alert(error));
     }
@@ -81,143 +72,115 @@ export default function PaymentPageForBooking(props: {
   }, []);
 
   return (
-    <Modal
-      animationType="fade"
-      visible={props.isModalVisible}
-      onRequestClose={() =>
-        store.dispatch(changeActiveModalIndex(Move_Modal.back))
-      }
-    >
+    <View style={styles.container}>
       <StatusBar style="auto" />
-      <View style={styles.header}>
-        <Icon
-          name="chevron-back"
-          size={30}
-          onPress={() =>
-            store.dispatch(changeActiveModalIndex(Move_Modal.back))
-          }
-        />
-        <Text style={styles.title}>Select payment method</Text>
-      </View>
-      <View style={styles.container}>
-        {/* <Button onPress={handleFlightBooking}>Pay for the flight</Button> */}
+      <View style={styles.payment_details}>
+        <View style={styles.directions_container}>
+          <View style={styles.directions_inner_container}>
+            <Text style={styles.directions_title} numberOfLines={1}>
+              {selectedFlightDetailedIngo.departure_airport_name}
+            </Text>
+            <Icon name="airplane" size={15} style={{ marginHorizontal: 20 }} />
+            <Text style={styles.directions_title} numberOfLines={1}>
+              {selectedFlightDetailedIngo.arrival_airport_name}
+            </Text>
+          </View>
 
-        <View style={styles.payment_details}>
-          <View style={styles.directions_container}>
-            <View style={styles.directions_inner_container}>
-              <Text style={styles.directions_title} numberOfLines={1}>
-                {selectedFlightDetailedIngo.departure_airport_name}
-              </Text>
-              <Icon
-                name="airplane"
-                size={15}
-                style={{ marginHorizontal: 20 }}
-              />
-              <Text style={styles.directions_title} numberOfLines={1}>
-                {selectedFlightDetailedIngo.arrival_airport_name}
-              </Text>
-            </View>
-
-            <Text style={styles.directions_date}>
-              {moment(selectedFlightDetailedIngo.departure_date).format(
-                "DD MMM YYYY"
-              )}
-            </Text>
-          </View>
-          <View style={styles.payment_details_row}>
-            <Icon
-              name="people"
-              size={27}
-              color={DARK_GRAY}
-              style={{ marginRight: 8, width: 30 }}
-            />
-            <Text style={{ color: DARK_GRAY_2, fontSize: 17 }}>
-              Passengers:
-            </Text>
-            <Text style={{ color: DARK_GRAY_2, fontSize: 18, marginLeft: 7 }}>
-              {passengers.adults + passengers.childen}
-            </Text>
-          </View>
-          <View style={[styles.payment_details_row, styles.payment_amount]}>
-            <Text style={{ color: DARK_GRAY_2, fontSize: 17 }}>
-              Total amount:
-            </Text>
-            <Text style={{ color: GREEN, fontSize: 18, marginLeft: 7 }}>
-              {selectedFlight?.paid_price}
-            </Text>
-            <Icon name="logo-euro" size={15} color={GREEN} />
-          </View>
+          <Text style={styles.directions_date}>
+            {moment(selectedFlightDetailedIngo.departure_date).format(
+              "DD MMM YYYY"
+            )}
+          </Text>
         </View>
+        <View style={styles.payment_details_row}>
+          <Icon
+            name="people"
+            size={27}
+            color={DARK_GRAY}
+            style={{ marginRight: 8, width: 30 }}
+          />
+          <Text style={{ color: DARK_GRAY_2, fontSize: 17 }}>Passengers:</Text>
+          <Text style={{ color: DARK_GRAY_2, fontSize: 18, marginLeft: 7 }}>
+            {passengers.adults + passengers.childen}
+          </Text>
+        </View>
+        <View style={[styles.payment_details_row, styles.payment_amount]}>
+          <Text style={{ color: DARK_GRAY_2, fontSize: 17 }}>
+            Total amount:
+          </Text>
+          <Text style={{ color: GREEN, fontSize: 18, marginLeft: 7 }}>
+            {selectedFlight?.paid_price}
+          </Text>
+          <Icon name="logo-euro" size={15} color={GREEN} />
+        </View>
+      </View>
 
-        <View style={{ flex: 1, justifyContent: "center" }}>
-          <TouchableHighlight
-            activeOpacity={0.7}
-            underlayColor={GREEN}
-            style={styles.touchable}
-            onPress={() => setVisibleModal("Card")}
-          >
-            <View style={styles.payment_method}>
-              <Icon name="card" size={25} />
-              <Text style={styles.payment_method_title}>
-                Credit or Debit card
-              </Text>
-            </View>
-          </TouchableHighlight>
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <TouchableHighlight
+          activeOpacity={0.7}
+          underlayColor={GREEN}
+          style={styles.touchable}
+          onPress={() => setVisibleModal("Card")}
+        >
+          <View style={styles.payment_method}>
+            <Icon name="card" size={25} />
+            <Text style={styles.payment_method_title}>
+              Credit or Debit card
+            </Text>
+          </View>
+        </TouchableHighlight>
+        <View
+          style={{
+            flexDirection: "row",
+            marginHorizontal: 50,
+            marginVertical: 15,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <View
             style={{
-              flexDirection: "row",
-              marginHorizontal: 50,
-              marginVertical: 15,
-              justifyContent: "center",
-              alignItems: "center",
+              borderTopColor: GRAY,
+              borderTopWidth: 1,
+              flex: 1,
             }}
+          />
+          <Text
+            style={{ color: DARK_GRAY, fontSize: 17, marginHorizontal: 20 }}
           >
-            <View
-              style={{
-                borderTopColor: GRAY,
-                borderTopWidth: 1,
-                flex: 1,
-              }}
-            />
-            <Text
-              style={{ color: DARK_GRAY, fontSize: 17, marginHorizontal: 20 }}
-            >
-              OR
-            </Text>
-            <View
-              style={{ borderTopColor: GRAY, borderTopWidth: 1, flex: 1 }}
-            />
-          </View>
-          <TouchableHighlight
-            activeOpacity={0.7}
-            underlayColor={GREEN}
-            style={styles.touchable}
-            onPress={() => setVisibleModal("PayPal")}
-          >
-            <View style={styles.payment_method}>
-              <Image source={PayPal} style={styles.icon} />
-              <Text style={styles.payment_method_title}>PayPal</Text>
-            </View>
-          </TouchableHighlight>
-          {visibleModal === "Card" && (
-            <CardPaymentPage
-              isModalVisible={visibleModal === "Card"}
-              setHide={setVisibleModal}
-              onSuccess={bookAFlight}
-              navigation={props.navigation}
-            />
-          )}
-          {visibleModal === "PayPal" && (
-            <PayPalPaymentPage
-              isModalVisible={visibleModal === "PayPal"}
-              setHide={setVisibleModal}
-              onSuccess={bookAFlight}
-              navigation={props.navigation}
-            />
-          )}
+            OR
+          </Text>
+          <View style={{ borderTopColor: GRAY, borderTopWidth: 1, flex: 1 }} />
         </View>
+        <TouchableHighlight
+          activeOpacity={0.7}
+          underlayColor={GREEN}
+          style={styles.touchable}
+          onPress={() => setVisibleModal("PayPal")}
+        >
+          <View style={styles.payment_method}>
+            <Image source={PayPal} style={styles.icon} />
+            <Text style={styles.payment_method_title}>PayPal</Text>
+          </View>
+        </TouchableHighlight>
+        {visibleModal === "Card" && (
+          <CardPaymentPage
+            isModalVisible={visibleModal === "Card"}
+            setHide={setVisibleModal}
+            onSuccess={bookAFlight}
+            navigation={props.navigation}
+          />
+        )}
+        {visibleModal === "PayPal" && (
+          <PayPalPaymentPage
+            isModalVisible={visibleModal === "PayPal"}
+            setHide={setVisibleModal}
+            onSuccess={bookAFlight}
+            navigation={props.navigation}
+          />
+        )}
       </View>
-    </Modal>
+    </View>
   );
 }
 
@@ -227,27 +190,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingTop: 30,
     justifyContent: "space-between",
-  },
-  header: {
-    height: 60,
-    // backgroundColor: GRAY,
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 15,
-    // paddingTop: 25,
-    marginTop: Platform.OS === "ios" ? "10%" : 0,
-    // shadowOffset: { width: 0, height: 10 },
-    // shadowColor: DARK_GRAY,
-    // shadowRadius: 6,
-    // shadowOpacity: 0.7,
-    // elevation: 3,
-    // top: -10,
-    borderBottomColor: GRAY,
-    borderBottomWidth: 1,
-  },
-  title: {
-    fontSize: 20,
-    marginLeft: 30,
   },
   payment_details: {
     marginHorizontal: 30,

@@ -1,32 +1,14 @@
-import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useState } from "react";
-import {
-  FlatList,
-  Modal,
-  Platform,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import Icon from "react-native-vector-icons/Ionicons";
-import { DARK_GRAY, GRAY } from "../../helpers/styles";
-import {
-  MainPageProps,
-  Move_Modal,
-} from "../../services/interfaces.ts/interfaces";
-import { store } from "../../store/store";
+import React, { useEffect } from "react";
+import { FlatList, SafeAreaView, StyleSheet, View } from "react-native";
+import { GRAY } from "../../helpers/styles";
+import { MainPageProps } from "../../services/interfaces.ts/interfaces";
 import { useStore } from "../../store/storeHooks";
-import SeatSelection from "../Booking/SeatSelection";
-import PaymentPageForBooking from "../Payment/PaymentPage";
 import EmptyResultPage from "./EmptyResultPage";
-import { changeActiveModalIndex } from "./ResultList.slice";
 import SearchInfo from "./SearchInfo";
 import SingleResultCard from "./SingleResultCard";
-import FlightClassSelection from "../Booking/FlightClassSelection";
 
 export default function ResultsPage({ navigation }: MainPageProps) {
-  const { departureFlights, returnFlights, activeModalIndex } = useStore(
+  const { departureFlights, returnFlights } = useStore(
     ({ search_results }) => search_results
   );
   const { returnDate } = useStore(({ search_flight }) => search_flight);
@@ -51,25 +33,13 @@ export default function ResultsPage({ navigation }: MainPageProps) {
           <FlatList
             data={departureFlights}
             initialNumToRender={5}
-            renderItem={({ item }) => <SingleResultCard flight={item} />}
+            renderItem={({ item }) => (
+              <SingleResultCard flight={item} navigation={navigation} />
+            )}
             keyExtractor={(item) => item.id as unknown as string}
             // ItemSeparatorComponent={() => <View style={styles.divider} />}
           />
         </SafeAreaView>
-      )}
-
-      {activeModalIndex === 1 && (
-        <FlightClassSelection isModalVisible={activeModalIndex === 1} />
-      )}
-      {activeModalIndex === 2 && (
-        <SeatSelection isModalVisible={activeModalIndex === 2} />
-      )}
-
-      {activeModalIndex === 3 && (
-        <PaymentPageForBooking
-          isModalVisible={activeModalIndex === 3}
-          navigation={navigation}
-        />
       )}
     </View>
   );
@@ -87,26 +57,5 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 10,
     flexDirection: "row",
-  },
-  header: {
-    height: 60,
-    // backgroundColor: GRAY,
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 15,
-    // paddingTop: 25,
-    marginTop: Platform.OS === "ios" ? "10%" : 0,
-    // shadowOffset: { width: 0, height: 10 },
-    // shadowColor: DARK_GRAY,
-    // shadowRadius: 6,
-    // shadowOpacity: 0.7,
-    // elevation: 3,
-    // top: -10,
-    borderBottomColor: GRAY,
-    borderBottomWidth: 1,
-  },
-  title: {
-    fontSize: 20,
-    marginLeft: 30,
   },
 });

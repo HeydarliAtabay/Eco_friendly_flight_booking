@@ -20,10 +20,8 @@ import {
   FlighSearchFullResult,
   MainPageProps,
   SearchBody,
-  SearchFlightResultSingle,
 } from "../../services/interfaces.ts/interfaces";
 import { useStore } from "../../store/storeHooks";
-import moment from "moment";
 import {
   initializeFlightResults,
   loadDepartureFlights,
