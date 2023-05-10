@@ -235,6 +235,18 @@ app.put("/api/updateBookedFlight/:flightid", async (req, res) => {
   }
 });
 
+app.get("/api/getMostRecentFlightOfUser/:userId", (req, res) => {
+  const userID = Number(req.params.userId);
+  flightsDao
+    .getMostRecentFlightOfUser(userID)
+    .then((flight) => {
+      res.json(flight);
+    })
+    .catch((error) => {
+      res.status(500).json(error.message);
+    });
+});
+
 app.post("/api/createFakeFlights/:number", (req, res) => {
   const numberOfFlights = Number(req.params.number);
   const body = req.body;

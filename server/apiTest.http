@@ -59,7 +59,12 @@ GET http://localhost:3001/api/bookedFlights/7
 
 GET http://localhost:3001/api/getSeatsOfFlight/2
 
-### random flight create
+
+
+### get most recent flight
+GET http://localhost:3001/api/getMostRecentFlightOfUser/7
+
+### random flight create 
 
 POST http://localhost:3001/api/createflight
 Content-Type: application/json

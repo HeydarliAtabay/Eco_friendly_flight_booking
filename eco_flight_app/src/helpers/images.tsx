@@ -8,6 +8,13 @@ export const BAGGAGE = require("../../assets/suitcase.png");
 export const MONEY_REFUND = require("../../assets/money_refund.png");
 export const PayPal = require("../../assets/paypal.png");
 export const CHEVRON_BACK = require("../../assets/chevron-back.png");
+export const AIRPLANEFORSEARCH = require("../../assets/airplane_search.png");
+export const FLIGTHICON = require("../../assets/flight.png");
+export const ECOPLANETREE = require("../../assets/ecoAir_image.jpg");
+export const FLIGHTBLACK = require("../../assets/flightIconBlack.png");
+export const TRAVELER = require("../../assets/travelers.png");
+export const PAYMENTMETHODSICON = require("../../assets/debit-card.png");
+export const SUPPORT = require("../../assets/customer-service.png");
 
 export function getLogoFromAirlineName(airlineName: string) {
   if (airlineName.toLowerCase() === "ryanair") return RYANAIR;

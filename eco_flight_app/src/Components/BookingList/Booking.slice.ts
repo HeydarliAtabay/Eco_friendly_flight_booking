@@ -46,7 +46,17 @@ const slice = createSlice({
       state,
       { payload: list }: PayloadAction<BookedFlightInfo[]>
     ) => {
-      state.bookedFlights = list;
+      state.bookedFlights = list
+        .sort((a, b) =>
+          moment(a.flight_info.departure_date).diff(
+            moment(b.flight_info.departure_date)
+          )
+        )
+        .filter((fl) =>
+          moment(fl.flight_info.departure_date).isAfter(
+            moment().subtract(1, "day")
+          )
+        );
     },
 
     selectBookedFlight: (
