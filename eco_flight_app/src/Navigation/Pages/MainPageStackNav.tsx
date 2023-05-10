@@ -16,7 +16,7 @@ export const MainPageStackNavigator = ({ navigation }: MainPageProps) => {
       <Stack.Screen
         name="Main Page"
         component={MainPage}
-        options={{ title: "Main Page" }}
+        options={{ title: "Eco Flight" }}
       />
       <Stack.Screen
         name="Search Flight"
