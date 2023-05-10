@@ -17,8 +17,8 @@ export default function RouteSwitch() {
       <Text
         style={[styles.switchButton, !isReturnSelected && styles.bgGreen]}
         onPress={() => {
-          store.dispatch(loadFlightMode(Flight_Mode.ONE_WAY))
-          store.dispatch(loadReturnDate(null))
+          store.dispatch(loadFlightMode(Flight_Mode.ONE_WAY));
+          store.dispatch(loadReturnDate(null));
         }}
       >
         ONE WAY
@@ -49,5 +49,6 @@ const styles = StyleSheet.create({
   },
   bgGreen: {
     backgroundColor: GREEN,
+    color: "white",
   },
 });

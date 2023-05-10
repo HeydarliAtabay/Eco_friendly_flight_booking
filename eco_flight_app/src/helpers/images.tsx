@@ -7,6 +7,7 @@ export const HANDBAGGAGE = require("../../assets/bag.png");
 export const BAGGAGE = require("../../assets/suitcase.png");
 export const MONEY_REFUND = require("../../assets/money_refund.png");
 export const PayPal = require("../../assets/paypal.png");
+export const CHEVRON_BACK = require("../../assets/chevron-back.png");
 
 export function getLogoFromAirlineName(airlineName: string) {
   if (airlineName.toLowerCase() === "ryanair") return RYANAIR;

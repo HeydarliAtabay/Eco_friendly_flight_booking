@@ -19,11 +19,13 @@ import {
   LIGHT_GRAY_2,
 } from "../../helpers/styles";
 import Icon from "react-native-vector-icons/Ionicons";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack/lib/typescript/src/types";
 
 export default function CardPaymentPage(props: {
   isModalVisible: boolean;
   setHide: (val: "Card" | "PayPal" | "None") => void;
   onSuccess: () => Promise<void>;
+  navigation: NativeStackNavigationProp<any, any>;
 }) {
   const [cardHoler, setCardHolder] = useState<string>("");
   const [cardNumber, setCardNumber] = useState<string>();
@@ -81,17 +83,21 @@ export default function CardPaymentPage(props: {
     <Modal
       animationType="slide"
       visible={props.isModalVisible}
-      onRequestClose={() => props.setHide("None")}
+      onRequestClose={() => {
+        if (paymentProcess !== "Paid") props.setHide("None");
+      }}
     >
       <StatusBar style="auto" />
-      <View style={styles.header}>
-        <Icon
-          name="chevron-down"
-          size={30}
-          onPress={() => props.setHide("None")}
-        />
-        <Text style={styles.title}>Insert card details</Text>
-      </View>
+      {paymentProcess !== "Paid" && (
+        <View style={styles.header}>
+          <Icon
+            name="chevron-down"
+            size={30}
+            onPress={() => props.setHide("None")}
+          />
+          <Text style={styles.title}>Insert card details</Text>
+        </View>
+      )}
       <View style={styles.container}>
         {paymentProcess === "Paid" ? (
           <View style={styles.payment_method_details}>
@@ -209,9 +215,7 @@ export default function CardPaymentPage(props: {
             activeOpacity={0.7}
             underlayColor={GREEN}
             style={styles.touchable}
-            onPress={() => {
-              // TODO: add method to forward main page
-            }}
+            onPress={() => props.navigation.navigate("Main Page")}
           >
             <Text style={styles.payment_method_title}>Back to Main page</Text>
           </TouchableHighlight>
@@ -226,15 +230,23 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     paddingTop: 30,
-    justifyContent: "space-between",
   },
   header: {
     height: 60,
-    backgroundColor: GRAY,
+    // backgroundColor: GRAY,
     flexDirection: "row",
     alignItems: "center",
     padding: 15,
+    // paddingTop: 25,
     marginTop: Platform.OS === "ios" ? "10%" : 0,
+    // shadowOffset: { width: 0, height: 10 },
+    // shadowColor: DARK_GRAY,
+    // shadowRadius: 6,
+    // shadowOpacity: 0.7,
+    // elevation: 3,
+    // top: -10,
+    borderBottomColor: GRAY,
+    borderBottomWidth: 1,
   },
   title: {
     fontSize: 20,
@@ -268,8 +280,9 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   touchable: {
-    marginHorizontal: 10,
+    marginHorizontal: 20,
     marginBottom: 10,
+    marginTop: 70,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
     borderBottomLeftRadius: 8,

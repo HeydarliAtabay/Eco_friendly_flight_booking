@@ -10,8 +10,11 @@ import {
   View,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-import { GRAY } from "../../helpers/styles";
-import { Move_Modal } from "../../services/interfaces.ts/interfaces";
+import { DARK_GRAY, GRAY } from "../../helpers/styles";
+import {
+  MainPageProps,
+  Move_Modal,
+} from "../../services/interfaces.ts/interfaces";
 import { store } from "../../store/store";
 import { useStore } from "../../store/storeHooks";
 import SeatSelection from "../Booking/SeatSelection";
@@ -22,7 +25,7 @@ import SearchInfo from "./SearchInfo";
 import SingleResultCard from "./SingleResultCard";
 import FlightClassSelection from "../Booking/FlightClassSelection";
 
-export default function ResultsPage() {
+export default function ResultsPage({ navigation }: MainPageProps) {
   const { departureFlights, returnFlights, activeModalIndex } = useStore(
     ({ search_results }) => search_results
   );
@@ -63,7 +66,10 @@ export default function ResultsPage() {
       )}
 
       {activeModalIndex === 3 && (
-        <PaymentPageForBooking isModalVisible={activeModalIndex === 3} />
+        <PaymentPageForBooking
+          isModalVisible={activeModalIndex === 3}
+          navigation={navigation}
+        />
       )}
     </View>
   );
@@ -84,11 +90,20 @@ const styles = StyleSheet.create({
   },
   header: {
     height: 60,
-    backgroundColor: GRAY,
+    // backgroundColor: GRAY,
     flexDirection: "row",
     alignItems: "center",
     padding: 15,
+    // paddingTop: 25,
     marginTop: Platform.OS === "ios" ? "10%" : 0,
+    // shadowOffset: { width: 0, height: 10 },
+    // shadowColor: DARK_GRAY,
+    // shadowRadius: 6,
+    // shadowOpacity: 0.7,
+    // elevation: 3,
+    // top: -10,
+    borderBottomColor: GRAY,
+    borderBottomWidth: 1,
   },
   title: {
     fontSize: 20,

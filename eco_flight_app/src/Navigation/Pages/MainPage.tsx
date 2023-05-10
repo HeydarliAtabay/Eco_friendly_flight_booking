@@ -1,12 +1,8 @@
-import { NativeStackNavigationProp } from "@react-navigation/native-stack/lib/typescript/src/types";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
 import { useStore } from "../../store/storeHooks";
-
-interface MainPageProps {
-  navigation: NativeStackNavigationProp<any, any>;
-}
+import { MainPageProps } from "../../services/interfaces.ts/interfaces";
 
 export default function MainPage({ navigation }: MainPageProps) {
   const { user } = useStore(({ app }) => app);

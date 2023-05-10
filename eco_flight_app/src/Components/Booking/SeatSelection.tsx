@@ -124,7 +124,7 @@ export default function SeatSelection(props: {
 
   return (
     <Modal
-      animationType="slide"
+      animationType="fade"
       visible={isModalVisible}
       onRequestClose={() => {
         if (!props.checkinPage)
@@ -142,7 +142,7 @@ export default function SeatSelection(props: {
       )}
       <View style={styles.header}>
         <Icon
-          name="chevron-down"
+          name="chevron-back"
           size={30}
           onPress={() => {
             if (!props.checkinPage)
@@ -400,11 +400,20 @@ const styles = StyleSheet.create({
   },
   header: {
     height: 60,
-    backgroundColor: GRAY,
+    // backgroundColor: GRAY,
     flexDirection: "row",
     alignItems: "center",
     padding: 15,
+    // paddingTop: 25,
     marginTop: Platform.OS === "ios" ? "10%" : 0,
+    // shadowOffset: { width: 0, height: 10 },
+    // shadowColor: DARK_GRAY,
+    // shadowRadius: 6,
+    // shadowOpacity: 0.7,
+    // elevation: 3,
+    // top: -10,
+    borderBottomColor: GRAY,
+    borderBottomWidth: 1,
   },
   title: {
     fontSize: 20,
@@ -526,6 +535,7 @@ const styles = StyleSheet.create({
     backgroundColor: GREEN,
     paddingVertical: 11,
     borderRadius: 8,
+    color: "white",
   },
   loader: {
     flex: 1,

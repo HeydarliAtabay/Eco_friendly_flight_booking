@@ -54,7 +54,7 @@ export default function FlightClassSelection(props: {
 
   return (
     <Modal
-      animationType="fade"
+      animationType="none"
       visible={isModalVisible}
       onRequestClose={() =>
         store.dispatch(changeActiveModalIndex(Move_Modal.back))
@@ -62,7 +62,7 @@ export default function FlightClassSelection(props: {
     >
       <View style={styles.header}>
         <Icon
-          name="chevron-down"
+          name="chevron-back"
           size={30}
           onPress={() =>
             store.dispatch(changeActiveModalIndex(Move_Modal.back))
@@ -254,11 +254,20 @@ const styles = StyleSheet.create({
   },
   header: {
     height: 60,
-    backgroundColor: GRAY,
+    // backgroundColor: GRAY,
     flexDirection: "row",
     alignItems: "center",
     padding: 15,
+    // paddingTop: 25,
     marginTop: Platform.OS === "ios" ? "10%" : 0,
+    // shadowOffset: { width: 0, height: 10 },
+    // shadowColor: DARK_GRAY,
+    // shadowRadius: 6,
+    // shadowOpacity: 0.7,
+    // elevation: 3,
+    // top: -10,
+    borderBottomColor: GRAY,
+    borderBottomWidth: 1,
   },
   title: {
     fontSize: 20,
@@ -343,7 +352,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     padding: 15,
-    backgroundColor: LIGHT_GRAY,
+    // backgroundColor: LIGHT_GRAY,
     flexDirection: "row",
     justifyContent: "space-around",
     borderTopColor: GREEN,

@@ -32,9 +32,11 @@ import { PayPal } from "../../helpers/images";
 import moment from "moment";
 import CardPaymentPage from "./CardPaymentPage";
 import PayPalPaymentPage from "./PayPalPaymentPage";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack/lib/typescript/src/types";
 
 export default function PaymentPageForBooking(props: {
   isModalVisible: boolean;
+  navigation: NativeStackNavigationProp<any, any>;
 }) {
   const { selectedFlight, selectedFlightDetailedIngo } = useStore(
     ({ search_results }) => search_results
@@ -202,6 +204,7 @@ export default function PaymentPageForBooking(props: {
               isModalVisible={visibleModal === "Card"}
               setHide={setVisibleModal}
               onSuccess={bookAFlight}
+              navigation={props.navigation}
             />
           )}
           {visibleModal === "PayPal" && (
@@ -209,6 +212,7 @@ export default function PaymentPageForBooking(props: {
               isModalVisible={visibleModal === "PayPal"}
               setHide={setVisibleModal}
               onSuccess={bookAFlight}
+              navigation={props.navigation}
             />
           )}
         </View>
@@ -226,11 +230,20 @@ const styles = StyleSheet.create({
   },
   header: {
     height: 60,
-    backgroundColor: GRAY,
+    // backgroundColor: GRAY,
     flexDirection: "row",
     alignItems: "center",
     padding: 15,
+    // paddingTop: 25,
     marginTop: Platform.OS === "ios" ? "10%" : 0,
+    // shadowOffset: { width: 0, height: 10 },
+    // shadowColor: DARK_GRAY,
+    // shadowRadius: 6,
+    // shadowOpacity: 0.7,
+    // elevation: 3,
+    // top: -10,
+    borderBottomColor: GRAY,
+    borderBottomWidth: 1,
   },
   title: {
     fontSize: 20,
