@@ -13,6 +13,7 @@ import API from '../../../services/API';
 import { store } from '../../../store/store';
 import { useStore } from '../../../store/storeHooks';
 import { initializeLogin } from '../Login/Login.slice';
+import FAQ from './FAQ';
 import PaymentDetailsPage from './PaymentDetails';
 
 interface UserUpdateInterface {
@@ -27,6 +28,7 @@ export default function UserProfilePage() {
     const [loading, setLoading] = useState(false)
     const [activeModify, setActiveModify] = useState(false)
     const [paymentDetailsShow, setPaymentDetailsShow] = useState(false)
+    const [showSupport, setShowSupport] = useState(false)
     const [userInfo, setUserinfo] = useState<UserUpdateInterface>(
         {
             name: user ? user.name : '',
@@ -180,7 +182,7 @@ export default function UserProfilePage() {
                             alignItems: 'center', justifyContent: 'center', width: '50%', backgroundColor: GRAY,
                             height: 140, borderRadius: 12, borderColor: 'black', borderWidth: 1
                         }}
-                            onPress={() => setPaymentDetailsShow(true)}>
+                            onPress={() => setShowSupport(true)}>
 
                             <Image style={{ width: 60, height: 60 }} source={SUPPORT} />
                         </TouchableOpacity>
@@ -204,6 +206,23 @@ export default function UserProfilePage() {
                         <Text style={styles.title}>Payment details</Text>
                     </View>
                     <PaymentDetailsPage />
+                </Modal>
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={showSupport}
+                    onRequestClose={() => {
+                        setShowSupport(!showSupport);
+                    }}>
+                    <View style={styles.header}>
+                        <Icon
+                            name="chevron-down"
+                            size={30}
+                            onPress={() => setShowSupport(false)}
+                        />
+                        <Text style={styles.title}>Support</Text>
+                    </View>
+                    <FAQ closeFunc={setShowSupport} />
                 </Modal>
             </Card>
         </View>
