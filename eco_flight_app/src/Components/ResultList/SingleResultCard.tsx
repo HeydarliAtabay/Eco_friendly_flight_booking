@@ -45,7 +45,7 @@ export default function SingleResultCard(props: CardInterface) {
                 flight_id: props.flight.id,
                 seat: null,
                 payment_status: Payment_Status.unpaid,
-                checkin_status: Checkin_Status.not,
+                checkin_status: Checkin_Status.pending,
                 selected_class: Selected_class.econom,
                 paid_price: 0,
                 baggage: [

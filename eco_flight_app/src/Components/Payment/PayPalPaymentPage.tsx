@@ -21,13 +21,12 @@ import {
 } from "../../helpers/styles";
 import Icon from "react-native-vector-icons/Ionicons";
 import { PayPal } from "../../helpers/images";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack/lib/typescript/src/types";
 
 export default function PayPalPaymentPage(props: {
   isModalVisible: boolean;
   setHide: (val: "Card" | "PayPal" | "None") => void;
   onSuccess: () => Promise<void>;
-  navigation: NativeStackNavigationProp<any, any>;
+  setIsPaid: (val: boolean) => void;
 }) {
   const [email, setEmail] = useState<string>("");
 
@@ -67,7 +66,14 @@ export default function PayPalPaymentPage(props: {
           <Text style={styles.title}>Insert payment details</Text>
         </View>
       )}
-      <View style={styles.container}>
+      <View
+        style={[
+          styles.container,
+          paymentProcess === "Paid" && {
+            paddingTop: Platform.OS === "ios" ? 70 : 30,
+          },
+        ]}
+      >
         {paymentProcess === "Paid" ? (
           <View style={styles.payment_method_details}>
             <Icon name="checkmark-circle-outline" color={GREEN} size={80} />
@@ -121,13 +127,15 @@ export default function PayPalPaymentPage(props: {
           >
             <>
               {paymentProcess === "Waiting" && (
-                <Text style={styles.payment_method_title}>Pay</Text>
+                <View style={styles.pay_button_container}>
+                  <Text style={styles.payment_method_title}>Pay</Text>
+                </View>
               )}
               {paymentProcess === "Loading" && (
-                <Text style={styles.payment_method_title}>
+                <View style={styles.pay_button_container}>
                   <ActivityIndicator size="small" color={LIGHT_GRAY} />
-                  Processing
-                </Text>
+                  <Text style={styles.payment_method_title}>Processing</Text>
+                </View>
               )}
             </>
           </TouchableHighlight>
@@ -136,9 +144,14 @@ export default function PayPalPaymentPage(props: {
             activeOpacity={0.7}
             underlayColor={GREEN}
             style={styles.touchable}
-            onPress={() => props.navigation.navigate("Main Page")}
+            onPress={() => {
+              props.setIsPaid(true);
+              props.setHide("None");
+            }}
           >
-            <Text style={styles.payment_method_title}>Back to Main page</Text>
+            <View style={styles.pay_button_container}>
+              <Text style={styles.payment_method_title}>Back to Main page</Text>
+            </View>
           </TouchableHighlight>
         )}
       </View>
@@ -213,15 +226,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 35,
     paddingVertical: 20,
   },
-  payment_method_title: {
-    fontSize: 18,
-    textAlign: "center",
+  pay_button_container: {
     paddingVertical: 13,
     borderRadius: 8,
     backgroundColor: GREEN,
-    color: "white",
     alignItems: "center",
+    justifyContent: "center",
     flexDirection: "row",
+  },
+  payment_method_title: {
+    fontSize: 18,
+    color: "white",
+    marginHorizontal: 20,
   },
   logo: {
     width: 120,

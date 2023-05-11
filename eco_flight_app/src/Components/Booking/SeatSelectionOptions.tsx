@@ -100,6 +100,7 @@ export default function SeatSelectionOptions(props: {
               } else {
                 store.dispatch(selectSeat(randomSeat));
                 props.navigation?.navigate("Payment");
+                setIsModalVisible(false);
               }
             }}
           >
@@ -117,20 +118,26 @@ export default function SeatSelectionOptions(props: {
               Choose other seats
             </Text>
           </TouchableHighlight>
-          <View style={styles.divider} />
-          <TouchableHighlight
-            activeOpacity={0.7}
-            underlayColor={LIGHT_GRAY}
-            style={styles.touchable}
-            onPress={() => {
-              store.dispatch(selectSeat(null));
-              props.navigation?.navigate("Payment");
-            }}
-          >
-            <Text style={[styles.footer_button, styles.footer_button_skip]}>
-              Continue without a seat
-            </Text>
-          </TouchableHighlight>
+
+          {!props.checkinPage && (
+            <>
+              <View style={styles.divider} />
+              <TouchableHighlight
+                activeOpacity={0.7}
+                underlayColor={LIGHT_GRAY}
+                style={styles.touchable}
+                onPress={() => {
+                  store.dispatch(selectSeat(null));
+                  props.navigation?.navigate("Payment");
+                  setIsModalVisible(false);
+                }}
+              >
+                <Text style={[styles.footer_button, styles.footer_button_skip]}>
+                  Continue without a seat
+                </Text>
+              </TouchableHighlight>
+            </>
+          )}
         </View>
       </View>
     </Modal>

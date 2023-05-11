@@ -36,6 +36,7 @@ export default function PaymentPageForBooking(props: {
   const [visibleModal, setVisibleModal] = useState<"Card" | "PayPal" | "None">(
     "None"
   );
+  const [isPaid, setIsPaid] = useState<boolean>(false);
 
   async function bookAFlight() {
     if (selectedFlight) {
@@ -46,6 +47,12 @@ export default function PaymentPageForBooking(props: {
         .catch((error) => alert(error));
     }
   }
+
+  useEffect(() => {
+    if (isPaid) {
+      props.navigation.navigate("Main Page");
+    }
+  }, [isPaid]);
 
   useEffect(() => {
     let paidPrice: number = 0;
@@ -168,7 +175,7 @@ export default function PaymentPageForBooking(props: {
             isModalVisible={visibleModal === "Card"}
             setHide={setVisibleModal}
             onSuccess={bookAFlight}
-            navigation={props.navigation}
+            setIsPaid={setIsPaid}
           />
         )}
         {visibleModal === "PayPal" && (
@@ -176,7 +183,7 @@ export default function PaymentPageForBooking(props: {
             isModalVisible={visibleModal === "PayPal"}
             setHide={setVisibleModal}
             onSuccess={bookAFlight}
-            navigation={props.navigation}
+            setIsPaid={setIsPaid}
           />
         )}
       </View>
