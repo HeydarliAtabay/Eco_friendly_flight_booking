@@ -455,7 +455,6 @@ exports.getMostRecentFlightOfUser = (user) => {
           resolve({ error: "Flights not found" });
         } else {
           const flight = rows[0];
-          console.log(flight);
           flight.baggage = JSON.parse(flight.baggage);
           const departureAirport = {
             id: flight.departure_airport,

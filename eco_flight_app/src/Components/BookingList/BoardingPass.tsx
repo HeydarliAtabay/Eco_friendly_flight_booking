@@ -11,7 +11,6 @@ import BoardingTimeInfo from './BoardingTimeInfo';
 
 export default function BoardingPass() {
     const { selectedBookedFLight } = useStore(({ booking }) => booking)
-    console.log(selectedBookedFLight)
     return (
         <View style={styles.container}>
             <Card style={styles.cardContainer}>

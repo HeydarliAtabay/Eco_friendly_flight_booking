@@ -17,12 +17,15 @@ export default function MostRecentFlightCard(props: CardInterface) {
   const { passengers } = useStore(({ search_flight }) => search_flight);
   const { user } = useStore(({ app }) => app);
   const findDuration = () => {
-    let startTime = moment(props.flight.flight_info.departure_time, "HH:mm");
-    let endTime = moment(props.flight.flight_info.arrival_time, "HH:mm");
-    let duration = moment.duration(endTime.diff(startTime));
-    let hours = parseInt(duration.asHours().toString());
-    let minutes = parseInt(duration.asMinutes().toString()) % 60;
-    return hours + "h " + minutes + "min";
+    if (props.flight && props.flight.flight_info) {
+      let startTime = moment(props.flight.flight_info.departure_time, "HH:mm");
+      let endTime = moment(props.flight.flight_info.arrival_time, "HH:mm");
+      let duration = moment.duration(endTime.diff(startTime));
+      let hours = parseInt(duration.asHours().toString());
+      let minutes = parseInt(duration.asMinutes().toString()) % 60;
+      return hours + "h " + minutes + "min";
+    }
+
   };
   const filghtDuration = findDuration();
 
@@ -83,7 +86,7 @@ export default function MostRecentFlightCard(props: CardInterface) {
             style={{ display: "flex", flexDirection: "row", paddingLeft: 10 }}
           >
             <Text style={styles.timeText}>
-              {props.flight.flight_info.departure_time}
+              {props.flight && props.flight.flight_info && props.flight.flight_info.departure_time}
             </Text>
             <Text
               style={{
@@ -124,15 +127,15 @@ export default function MostRecentFlightCard(props: CardInterface) {
                   props.flight.checkin_status === "DONE"
                     ? GREEN
                     : props.flight.checkin_status === "NOT"
-                    ? "red"
-                    : "purple",
+                      ? "red"
+                      : "purple",
               }}
             >
               {props.flight.checkin_status === "DONE"
                 ? "Checked-id"
                 : props.flight.checkin_status === "NOT"
-                ? "Check-in not available"
-                : "Check-in available"}
+                  ? "Check-in not available"
+                  : "Check-in available"}
             </Text>
           </View>
           {/* <Button mode='contained-tonal' style={{ borderRadius: 10, backgroundColor: 'lightblue' }}

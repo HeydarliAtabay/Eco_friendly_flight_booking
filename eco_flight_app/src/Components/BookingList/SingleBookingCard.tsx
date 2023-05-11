@@ -58,15 +58,15 @@ export default function SingleBookingCard(props: CardInterface) {
                   props.flight.checkin_status === "DONE"
                     ? GREEN
                     : props.flight.checkin_status === "NOT"
-                    ? "red"
-                    : "purple",
+                      ? "red"
+                      : "purple",
               }}
             >
               {props.flight.checkin_status === "DONE"
                 ? "Checked-id"
                 : props.flight.checkin_status === "NOT"
-                ? "Check-in not available"
-                : "Check-in available"}
+                  ? "Check-in not available"
+                  : "Check-in available"}
             </Text>
           </View>
         </View>
@@ -76,7 +76,7 @@ export default function SingleBookingCard(props: CardInterface) {
             style={{ display: "flex", flexDirection: "row", paddingLeft: 10 }}
           >
             <Text style={styles.timeText}>
-              {props.flight.flight_info.departure_time}
+              {props.flight && props.flight.flight_info && props.flight.flight_info.departure_time}
             </Text>
             <Text
               style={{

@@ -94,7 +94,7 @@ export default function MainPage({ navigation }: MainPageProps) {
               navigation.navigate("My flights");
             }}
           >
-            <MostRecentFlightCard flight={mostRecentFlight} />
+            <MostRecentFlightCard flight={mostRecentFlight && mostRecentFlight} />
           </TouchableOpacity>
         )}
         <TouchableOpacity onPress={() => navigation.navigate("Search Flight")}>

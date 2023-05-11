@@ -40,8 +40,7 @@ export default function Checkin() {
   const [value, setValue] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  console.log("selectedbookeflight.seat::", selectedBookedFLight?.seat);
-  console.log("checkinState::seat", checkinState.seat);
+
 
   useEffect(() => {
     if (checkinState.seat === "" && selectedBookedFLight?.seat) {
@@ -145,8 +144,8 @@ export default function Checkin() {
                       }}
                     >
                       {checkinState &&
-                      (checkinState.seat === null ||
-                        checkinState?.seat === "") ? (
+                        (checkinState.seat === null ||
+                          checkinState?.seat === "") ? (
                         <View
                           style={{ display: "flex", flexDirection: "column" }}
                         >
@@ -214,7 +213,7 @@ export default function Checkin() {
                     </View>
                     <View>
                       {selectedBookedFLight &&
-                      selectedBookedFLight.selected_class === null ? (
+                        selectedBookedFLight.selected_class === null ? (
                         <View
                           style={{ display: "flex", flexDirection: "column" }}
                         >
@@ -399,10 +398,10 @@ export default function Checkin() {
                             value === "Passport"
                               ? "Passport number"
                               : value === "ID"
-                              ? "ID number"
-                              : value === "Residence"
-                              ? "Residence card number"
-                              : ""
+                                ? "ID number"
+                                : value === "Residence"
+                                  ? "Residence card number"
+                                  : ""
                           }
                           returnKeyType="next"
                           autoCapitalize="none"

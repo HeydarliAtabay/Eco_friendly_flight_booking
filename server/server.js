@@ -56,7 +56,6 @@ app.get("/", (req, res) => {
 
 passport.use(
   new LocalStrategy(function (username, password, done) {
-    console.log("username " + username + " password " + password);
     usersDao
       .getUser(username, password)
       .then((user) => {
@@ -139,7 +138,6 @@ app.get("/api/airlines", (req, res) => {
 /******* Flights APIs ********/
 app.post("/api/searchflights/", (req, res) => {
   const body = req.body;
-  console.log(body);
   flightsDao
     .getFlightsByDateAndAirpot(body)
     .then((flights) => {
@@ -188,11 +186,9 @@ app.get("/api/bookedFlights/:user", (req, res) => {
 
 app.get("/api/getSeatsOfFlight/:flight", (req, res) => {
   const flightID = Number(req.params.flight);
-  console.log("get seats", flightID);
   flightsDao
     .getBookedSeatsOfFlight(flightID)
     .then((seats) => {
-      console.log("SS", seats);
       res.json(seats);
     })
     .catch((error) => {
@@ -220,7 +216,6 @@ const generateAndInsertFlights = (number) => {
 app.put("/api/updateBookedFlight/:flightid", async (req, res) => {
   const id = Number(req.params.flightid);
   const body = req.body;
-  console.log(body);
   try {
     await flightsDao.updateFlightInfoDuringCheckin(body, id);
     res.json(

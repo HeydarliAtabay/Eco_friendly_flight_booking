@@ -44,7 +44,6 @@ exports.getUserById = (id) => {
 // getting user
 
 exports.getUser = (email, password) => {
-  console.log(email + " " + password);
   return new Promise((resolve, reject) => {
     const sql = "SELECT * FROM users WHERE email = ?";
     db.query(sql, [email], (err, row) => {
@@ -62,7 +61,6 @@ exports.getUser = (email, password) => {
 
         // check the hashes with an async call, given that the operation may be CPU-intensive (and we don't want to block the server)
         bcrypt.compare(password, row[0].hashed_password).then((result) => {
-          console.log(result);
           if (result) resolve(user);
           else resolve(false);
         });
@@ -101,7 +99,6 @@ exports.signUp = (user) => {
       .then((hash) => {
         // Update the value of hashedPassword inside the promise chain
         hashedPassword = hash;
-        console.log("Hashed password:", hashedPassword);
 
         db.query(
           sql,
