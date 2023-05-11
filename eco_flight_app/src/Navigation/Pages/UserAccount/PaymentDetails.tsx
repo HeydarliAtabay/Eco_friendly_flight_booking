@@ -4,9 +4,11 @@ import { Image, Modal, ScrollView, StyleSheet, TouchableOpacity, View } from 're
 import { Button, Card, Text } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CreditCardAdd from './CreditCardAdd';
+import PayPalAdd from './PaypallAdd';
 
 export default function PaymentDetailsPage() {
     const [showCreditCardPage, setShowCreditCardPage] = useState(false)
+    const [showPaypalAddPage, setShowPayPallAddPage] = useState(false)
     return (
         <View style={styles.container}>
             <ScrollView style={{ width: '100%', marginTop: 10 }}
@@ -28,7 +30,7 @@ export default function PaymentDetailsPage() {
                         </Card.Content>
                     </TouchableOpacity>
                 </Card>
-                <Card style={styles.card}
+                {/* <Card style={styles.card}
                 >
                     <TouchableOpacity
                         style={{ width: '100%' }}
@@ -39,11 +41,14 @@ export default function PaymentDetailsPage() {
                                 source={require("../../../../assets/contactless.jpg")} />
                         </Card.Content>
                     </TouchableOpacity>
-                </Card>
+                </Card> */}
                 <Card style={styles.card}
                 >
                     <TouchableOpacity
                         style={{ width: '100%' }}
+                        onPress={() => {
+                            setShowPayPallAddPage(true)
+                        }}
                     >
                         <Card.Content style={{ width: '100%' }}>
                             <Card.Cover
@@ -68,7 +73,24 @@ export default function PaymentDetailsPage() {
                     />
                     <Text style={styles.title}>Credit card info</Text>
                 </View>
-                <CreditCardAdd />
+                <CreditCardAdd closeFunc={setShowCreditCardPage} />
+            </Modal>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={showPaypalAddPage}
+                onRequestClose={() => {
+                    setShowPayPallAddPage(!showPaypalAddPage);
+                }}>
+                <View style={styles.header}>
+                    <Icon
+                        name="chevron-down"
+                        size={30}
+                        onPress={() => setShowPayPallAddPage(false)}
+                    />
+                    <Text style={styles.title}>Paypal account info</Text>
+                </View>
+                <PayPalAdd closeFunc={setShowPayPallAddPage} />
             </Modal>
         </View>
     );

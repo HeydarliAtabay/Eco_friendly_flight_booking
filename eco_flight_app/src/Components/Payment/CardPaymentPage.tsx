@@ -112,6 +112,8 @@ export default function CardPaymentPage(props: {
                 value={cardHoler}
                 placeholder="Name & Surname"
                 inputMode="text"
+                placeholderTextColor={DARK_GRAY}
+
               />
             </View>
             <View style={{ width: "100%", marginTop: 10 }}>
@@ -123,6 +125,8 @@ export default function CardPaymentPage(props: {
                 placeholder="XXXX XXXX XXXX XXXX"
                 inputMode="numeric"
                 maxLength={16}
+                placeholderTextColor={DARK_GRAY}
+
               />
             </View>
             <View
@@ -141,6 +145,8 @@ export default function CardPaymentPage(props: {
                     placeholder="MM"
                     inputMode="numeric"
                     maxLength={2}
+                    placeholderTextColor={DARK_GRAY}
+
                   />
                   <View
                     style={{
@@ -161,6 +167,8 @@ export default function CardPaymentPage(props: {
                     placeholder="YYYY"
                     inputMode="numeric"
                     maxLength={4}
+                    placeholderTextColor={DARK_GRAY}
+
                   />
                 </View>
               </View>
@@ -173,6 +181,7 @@ export default function CardPaymentPage(props: {
                   placeholder="123"
                   inputMode="numeric"
                   maxLength={3}
+                  placeholderTextColor={DARK_GRAY}
                 />
               </View>
             </View>
