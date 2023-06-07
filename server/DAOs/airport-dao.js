@@ -7,7 +7,7 @@ const db = require("../db");
 exports.listAllAirports = () => {
   return new Promise(function (resolve, reject) {
     var query_str = "SELECT * FROM airports ";
-    db.query(query_str, function (err, rows) {
+    db.run(query_str, function (err, rows) {
       if (err) {
         return reject(err);
       }

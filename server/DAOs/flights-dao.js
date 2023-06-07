@@ -22,7 +22,7 @@ exports.getFlightsByDateAndAirpot = (body) => {
 
     const getAirportInfo = (airportCode) => {
       return new Promise((resolve, reject) => {
-        db.query(sqlForGettingAirportInfo, [airportCode], (err, row) => {
+        db.run(sqlForGettingAirportInfo, [airportCode], (err, row) => {
           if (err) reject(err);
           else resolve(row[0]);
         });
@@ -30,7 +30,7 @@ exports.getFlightsByDateAndAirpot = (body) => {
     };
     const getAirlineInfo = (airlineId) => {
       return new Promise((resolve, reject) => {
-        db.query(sqlForGetAirlineInfo, [airlineId], (err, row) => {
+        db.run(sqlForGetAirlineInfo, [airlineId], (err, row) => {
           if (err) reject(err);
           else resolve(row[0]);
         });
@@ -44,7 +44,7 @@ exports.getFlightsByDateAndAirpot = (body) => {
       .then(([departureAirport, arrivalAirport]) => {
         if (body.arrival_date !== undefined) {
           const departurePromise = new Promise((resolve, reject) => {
-            db.query(
+            db.run(
               sqlForTwoWayTickets,
               [body.departure_date, departureAirport.id, arrivalAirport.id],
               (err, rows) => {
@@ -58,7 +58,7 @@ exports.getFlightsByDateAndAirpot = (body) => {
             );
           });
           const arrivalPromise = new Promise((resolve, reject) => {
-            db.query(
+            db.run(
               sqlForTwoWayTickets,
               [body.arrival_date, arrivalAirport.id, departureAirport.id],
               (err, rows) => {
@@ -119,7 +119,7 @@ exports.getFlightsByDateAndAirpot = (body) => {
             });
         } else {
           const oneWayPromise = new Promise((resolve, reject) => {
-            db.query(
+            db.run(
               sqlForOneWayTickets,
               [body.departure_date, departureAirport.id, arrivalAirport.id],
               (err, rows) => {
@@ -176,7 +176,7 @@ exports.createFlight = (flight) => {
       "INSERT INTO flights(departure_airport, arrival_airport, departure_date, departure_time," +
       "arrival_date,arrival_time,econom_price, business_price, first_class_price, airline,flight_number )" +
       "VALUES(?,?,?,?,?,?,?,?,?,?,?)";
-    db.query(
+    db.run(
       sql,
       [
         flight.departure_airport,
@@ -215,20 +215,20 @@ exports.bookFlight = (flight) => {
     const baggageObject =
       flight.selected_class === "ECONOM"
         ? [
-            { type: "Checkin", kg: 23, amount: 1 },
-            { type: "Hand", kg: 10, amount: 1 },
-          ]
+          { type: "Checkin", kg: 23, amount: 1 },
+          { type: "Hand", kg: 10, amount: 1 },
+        ]
         : flight.selected_class === "BUSINESS"
-        ? [
+          ? [
             { type: "Checkin", kg: 32, amount: 1 },
             { type: "Hand", kg: 10, amount: 1 },
           ]
-        : [
+          : [
             { type: "Checkin", kg: 32, amount: 2 },
             { type: "Hand", kg: 10, amount: 1 },
           ];
     const baggageJson = JSON.stringify(baggageObject);
-    db.query(
+    db.run(
       sql,
       [
         flight.user_id,
@@ -266,7 +266,7 @@ exports.getBookedFlightsOfUser = (user) => {
 
     const getFlightInfo = (flightId) => {
       return new Promise((resolve, reject) => {
-        db.query(sqlForGettingFlightInfo, [flightId], (err, row) => {
+        db.run(sqlForGettingFlightInfo, [flightId], (err, row) => {
           if (err) reject(err);
           else resolve(row[0]);
         });
@@ -275,7 +275,7 @@ exports.getBookedFlightsOfUser = (user) => {
 
     const getAirportInfo = (airportCode) => {
       return new Promise((resolve, reject) => {
-        db.query(sqlForGettingAirportInfo, [airportCode], (err, row) => {
+        db.run(sqlForGettingAirportInfo, [airportCode], (err, row) => {
           if (err) reject(err);
           else resolve(row[0]);
         });
@@ -283,7 +283,7 @@ exports.getBookedFlightsOfUser = (user) => {
     };
 
     const bookedFlightsPromise = new Promise((resolve, reject) => {
-      db.query(sqlForGettingBookedFlightsOfUser, [user], async (err, rows) => {
+      db.run(sqlForGettingBookedFlightsOfUser, [user], async (err, rows) => {
         if (err) reject(err);
         else if (rows.length === 0) resolve({ error: "Flights not found" });
         else {
@@ -325,7 +325,7 @@ exports.getBookedSeatsOfFlight = (flight) => {
   return new Promise((resolve, reject) => {
     const sqlForGettingBookedSeatsOfFlight =
       "SELECT seat FROM booked_flights WHERE flight_id=?";
-    db.query(sqlForGettingBookedSeatsOfFlight, [flight], (err, results) => {
+    db.run(sqlForGettingBookedSeatsOfFlight, [flight], (err, results) => {
       if (err) {
         reject(err);
       } else {
@@ -366,20 +366,20 @@ exports.updateFlightInfoDuringCheckin = function (body, flight_id) {
     const baggageObject =
       body.selected_class === "ECONOM"
         ? [
-            { type: "Checkin", kg: 23, amount: 1 },
-            { type: "Hand", kg: 10, amount: 1 },
-          ]
+          { type: "Checkin", kg: 23, amount: 1 },
+          { type: "Hand", kg: 10, amount: 1 },
+        ]
         : body.selected_class === "BUSINESS"
-        ? [
+          ? [
             { type: "Checkin", kg: 32, amount: 1 },
             { type: "Hand", kg: 10, amount: 1 },
           ]
-        : [
+          : [
             { type: "Checkin", kg: 32, amount: 2 },
             { type: "Hand", kg: 10, amount: 1 },
           ];
     const baggageJson = JSON.stringify(baggageObject);
-    db.query(
+    db.run(
       sql,
       [body.selected_class, body.seat, baggageJson, flight_id],
       (err) => {
@@ -409,7 +409,7 @@ exports.updateFlightInfoDuringCheckin = function (body, flight_id) {
 //       "ORDER BY STR_TO_DATE(f.departure_date, '%Y-%m-%d') ASC " +
 //       "LIMIT 1";
 
-//     db.query(
+//     db.run(
 //       sqlForGettingRecentFlightOfUser,
 //       [user, formattedDate],
 //       (err, rows) => {
@@ -445,7 +445,7 @@ exports.getMostRecentFlightOfUser = (user) => {
       "ORDER BY STR_TO_DATE(f.departure_date, '%Y-%m-%d') ASC " +
       "LIMIT 1";
 
-    db.query(
+    db.run(
       sqlForGettingRecentFlightOfUser,
       [user, formattedDate],
       (err, rows) => {
@@ -550,14 +550,14 @@ const generateRandomDate = (startDate, endDate) => {
 };
 
 exports.generateFlight = () => {
-  const departureAirport = casual.integer(1, 234);
-  let arrivalAirport = casual.integer(1, 234);
+  const departureAirport = casual.integer(1, 4);
+  let arrivalAirport = casual.integer(1, 4);
 
   while (arrivalAirport === departureAirport) {
-    arrivalAirport = casual.integer(1, 234);
+    arrivalAirport = casual.integer(1, 4);
   }
 
-  const departureDate = generateRandomDate("2023-05-05", "2023-01-08");
+  const departureDate = generateRandomDate("2023-06-09", "2023-06-20");
   const arrivalDate = departureDate;
 
   const { departureTime, arrivalTime } = generateRandomTime();

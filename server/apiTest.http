@@ -1,11 +1,19 @@
 ### Getting all effects
 GET http://localhost:3001/api/users
 
+
+# ### Update airports
+# GET http://localhost:3001/updatedb
+
+
+
+
+
 ### Login
 POST http://localhost:3001/api/login
 Content-Type: application/json
 
-{ "username":"testuser@gmail.com", "password":"ecotest111"}
+{ "username":"t@gmail.com", "password":"testuser!"}
 
 
 
@@ -27,7 +35,7 @@ Content-Type: application/json
 POST http://localhost:3001/api/signUp
 Content-Type: application/json
 
-{ "name":"Emin", "surname":"Suleymanov","phone_number":"+994505050505", "email":"emin@gmail.com", "hashed_password":"emin111"}
+{ "name":"Test", "surname":"User","phone_number":"+994505051111", "email":"t@gmail.com", "hashed_password":"testuser!"}
 
 
 ### Getting all effects
@@ -92,7 +100,9 @@ Content-Type: application/json
 
 
 
+### Getting all effects
 
+GET http://localhost:3001/api/airports
 
 
 
@@ -101,7 +111,7 @@ Content-Type: application/json
 
 ### generate flights
 
-POST http://localhost:3001/api/createFakeFlights/250
+POST http://localhost:3001/api/createFakeFlights/20
 Content-Type: application/json
 
 

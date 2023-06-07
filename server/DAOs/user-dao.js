@@ -9,7 +9,7 @@ const bcrypt = require("bcrypt");
 exports.listAllUsers = () => {
   return new Promise(function (resolve, reject) {
     var query_str = "SELECT * FROM users ";
-    db.query(query_str, function (err, rows) {
+    db.all(query_str, function (err, rows) {
       if (err) {
         return reject(err);
       }
@@ -23,7 +23,7 @@ exports.listAllUsers = () => {
 exports.getUserById = (id) => {
   return new Promise((resolve, reject) => {
     const sql = "SELECT * FROM users WHERE id = ?";
-    db.query(sql, [id], (err, row) => {
+    db.run(sql, [id], (err, row) => {
       if (err) reject(err);
       else if (row === undefined) resolve({ error: "User not found." });
       else {
@@ -41,12 +41,14 @@ exports.getUserById = (id) => {
   });
 };
 
+
+
 // getting user
 
 exports.getUser = (email, password) => {
   return new Promise((resolve, reject) => {
     const sql = "SELECT * FROM users WHERE email = ?";
-    db.query(sql, [email], (err, row) => {
+    db.run(sql, [email], (err, row) => {
       if (err) reject(err);
       else if (row === undefined) {
         resolve(false);
@@ -74,7 +76,7 @@ exports.updatePersonalInfo = function (body, id) {
     // const sql = 'UPDATE tasks SET completed = CASE status WHEN completed=0 THEN 1 WHEN completed=1 THEN 0 END WHERE id = ?';
     const sql =
       "UPDATE users SET name=?, surname=?, phone_number=?  WHERE id=?";
-    db.query(sql, [body.name, body.surname, body.phone_number, id], (err) => {
+    db.run(sql, [body.name, body.surname, body.phone_number, id], (err) => {
       if (err) {
         console.log(err);
         reject(err);
@@ -100,7 +102,7 @@ exports.signUp = (user) => {
         // Update the value of hashedPassword inside the promise chain
         hashedPassword = hash;
 
-        db.query(
+        db.run(
           sql,
           [
             user.name,
@@ -126,17 +128,17 @@ exports.signUp = (user) => {
   });
 };
 
-// exports.insertAirports = function (code, name, city, country) {
-//   return new Promise((resolve, reject) => {
-//     const sql =
-//       "INSERT INTO airports (code, name, city, country) VALUES (?, ?, ?, ?);";
-//     db.query(sql, [code, name, city, country], (err) => {
-//       if (err) {
-//         console.log(err);
-//         reject(err);
-//         return;
-//       }
-//       resolve(this.lastID);
-//     });
-//   });
-// };
+exports.insertAirports = function (code, name, city, country) {
+  return new Promise((resolve, reject) => {
+    const sql =
+      "INSERT INTO airports (code, name, city, country) VALUES (?, ?, ?, ?);";
+    db.run(sql, [code, name, city, country], (err) => {
+      if (err) {
+        console.log(err);
+        reject(err);
+        return;
+      }
+      resolve(this.lastID);
+    });
+  });
+};

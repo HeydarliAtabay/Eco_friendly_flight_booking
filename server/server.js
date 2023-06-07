@@ -12,7 +12,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy; // username and password for login
 const session = require("express-session");
 const airportsDao = require("./DAOs/airport-dao");
-// const { RAW_LIST } = require("./rawData");
+const RAW_LIST = require("./rawData");
 
 app.use(morgan("dev"));
 app.use(express.json());
@@ -25,26 +25,22 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // API to insert or update new into DB
-// app.get("/updatedb", (req, res) => {
-//   RAW_LIST.forEach(async (airport) => {
-//     try {
-//       await usersDao.insertAirports(
-//         airport.code,
-//         airport.name,
-//         airport.city.name,
-//         airport.country.name
-//       );
-//     } catch (error) {
-//       res
-//         .status(500)
-//         .json(`Error while updating info of user with id:  ` + error);
-//     }
-//   });
+app.get("/updatedb", async (req, res) => {
+  try {
+    for (const airport of RAW_LIST) {
+      await usersDao.insertAirports(
+        airport.code,
+        airport.name,
+        airport.city.name,
+        airport.country.name
+      );
+    }
+    res.status(200).json("Database update completed.");
+  } catch (error) {
+    res.status(500).json("Error while updating info: " + error);
+  }
+});
 
-//   res.send(
-//     `Hi from the server, which is running on  http://localhost:${PORT}/`
-//   );
-// });
 
 app.get("/", (req, res) => {
   res.send(
@@ -117,7 +113,7 @@ app.use(passport.session());
 app.get("/api/airlines", (req, res) => {
   request.get(
     {
-      url: "https://api.api-ninjas.com/v1/airlines?name=" + "Qatar Airways",
+      url: "https://api.api-ninjas.com/v1/airlines",
       headers: {
         "X-Api-Key": "CLBZuWQZfjmrAXKJMAiWlA==gHG8CVs8NYpm2TXV",
       },
@@ -268,6 +264,8 @@ app.get("/api/users", (req, res) => {
 // login
 app.post("/api/login", function (req, res, next) {
   passport.authenticate("local", (err, user, info) => {
+    console.log(user)
+    console.log(info)
     if (err) return next(err);
     if (!user) {
       return res.status(401).json(info);
