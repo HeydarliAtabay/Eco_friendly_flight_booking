@@ -25,22 +25,22 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // API to insert or update new into DB
-app.get("/updatedb", async (req, res) => {
-  try {
-    for (const airport of RAW_LIST) {
+app.get("/updatedb", (req, res) => {
+  RAW_LIST.forEach(async (airport) => {
+    try {
       await usersDao.insertAirports(
         airport.code,
         airport.name,
         airport.city.name,
         airport.country.name
       );
+    } catch (error) {
+      res
+        .status(500)
+        .json(`Error while updating info of user with id:  ` + error);
     }
-    res.status(200).json("Database update completed.");
-  } catch (error) {
-    res.status(500).json("Error while updating info: " + error);
-  }
+  });
 });
-
 
 app.get("/", (req, res) => {
   res.send(
@@ -173,6 +173,7 @@ app.get("/api/bookedFlights/:user", (req, res) => {
   flightsDao
     .getBookedFlightsOfUser(user)
     .then((flights) => {
+      console.log(flights)
       res.json(flights);
     })
     .catch((error) => {
@@ -264,8 +265,6 @@ app.get("/api/users", (req, res) => {
 // login
 app.post("/api/login", function (req, res, next) {
   passport.authenticate("local", (err, user, info) => {
-    console.log(user)
-    console.log(info)
     if (err) return next(err);
     if (!user) {
       return res.status(401).json(info);

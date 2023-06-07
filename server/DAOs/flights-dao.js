@@ -22,7 +22,7 @@ exports.getFlightsByDateAndAirpot = (body) => {
 
     const getAirportInfo = (airportCode) => {
       return new Promise((resolve, reject) => {
-        db.run(sqlForGettingAirportInfo, [airportCode], (err, row) => {
+        db.all(sqlForGettingAirportInfo, [airportCode], (err, row) => {
           if (err) reject(err);
           else resolve(row[0]);
         });
@@ -30,7 +30,7 @@ exports.getFlightsByDateAndAirpot = (body) => {
     };
     const getAirlineInfo = (airlineId) => {
       return new Promise((resolve, reject) => {
-        db.run(sqlForGetAirlineInfo, [airlineId], (err, row) => {
+        db.all(sqlForGetAirlineInfo, [airlineId], (err, row) => {
           if (err) reject(err);
           else resolve(row[0]);
         });
@@ -44,7 +44,7 @@ exports.getFlightsByDateAndAirpot = (body) => {
       .then(([departureAirport, arrivalAirport]) => {
         if (body.arrival_date !== undefined) {
           const departurePromise = new Promise((resolve, reject) => {
-            db.run(
+            db.all(
               sqlForTwoWayTickets,
               [body.departure_date, departureAirport.id, arrivalAirport.id],
               (err, rows) => {
@@ -58,7 +58,7 @@ exports.getFlightsByDateAndAirpot = (body) => {
             );
           });
           const arrivalPromise = new Promise((resolve, reject) => {
-            db.run(
+            db.all(
               sqlForTwoWayTickets,
               [body.arrival_date, arrivalAirport.id, departureAirport.id],
               (err, rows) => {
@@ -119,7 +119,7 @@ exports.getFlightsByDateAndAirpot = (body) => {
             });
         } else {
           const oneWayPromise = new Promise((resolve, reject) => {
-            db.run(
+            db.all(
               sqlForOneWayTickets,
               [body.departure_date, departureAirport.id, arrivalAirport.id],
               (err, rows) => {
@@ -266,7 +266,7 @@ exports.getBookedFlightsOfUser = (user) => {
 
     const getFlightInfo = (flightId) => {
       return new Promise((resolve, reject) => {
-        db.run(sqlForGettingFlightInfo, [flightId], (err, row) => {
+        db.all(sqlForGettingFlightInfo, [flightId], (err, row) => {
           if (err) reject(err);
           else resolve(row[0]);
         });
@@ -275,7 +275,7 @@ exports.getBookedFlightsOfUser = (user) => {
 
     const getAirportInfo = (airportCode) => {
       return new Promise((resolve, reject) => {
-        db.run(sqlForGettingAirportInfo, [airportCode], (err, row) => {
+        db.all(sqlForGettingAirportInfo, [airportCode], (err, row) => {
           if (err) reject(err);
           else resolve(row[0]);
         });
@@ -283,7 +283,7 @@ exports.getBookedFlightsOfUser = (user) => {
     };
 
     const bookedFlightsPromise = new Promise((resolve, reject) => {
-      db.run(sqlForGettingBookedFlightsOfUser, [user], async (err, rows) => {
+      db.all(sqlForGettingBookedFlightsOfUser, [user], async (err, rows) => {
         if (err) reject(err);
         else if (rows.length === 0) resolve({ error: "Flights not found" });
         else {
@@ -325,7 +325,7 @@ exports.getBookedSeatsOfFlight = (flight) => {
   return new Promise((resolve, reject) => {
     const sqlForGettingBookedSeatsOfFlight =
       "SELECT seat FROM booked_flights WHERE flight_id=?";
-    db.run(sqlForGettingBookedSeatsOfFlight, [flight], (err, results) => {
+    db.all(sqlForGettingBookedSeatsOfFlight, [flight], (err, results) => {
       if (err) {
         reject(err);
       } else {
@@ -441,11 +441,11 @@ exports.getMostRecentFlightOfUser = (user) => {
       "JOIN flights f ON bf.flight_id = f.id " +
       "JOIN airports dep ON f.departure_airport = dep.id " +
       "JOIN airports arr ON f.arrival_airport = arr.id " +
-      "WHERE bf.user_id = ? AND STR_TO_DATE(f.departure_date, '%Y-%m-%d') >= ? " +
-      "ORDER BY STR_TO_DATE(f.departure_date, '%Y-%m-%d') ASC " +
+      "WHERE bf.user_id = ? AND strftime('%s', f.departure_date) >= strftime('%s', ?) " +
+      "ORDER BY strftime('%s', f.departure_date) ASC " +
       "LIMIT 1";
 
-    db.run(
+    db.all(
       sqlForGettingRecentFlightOfUser,
       [user, formattedDate],
       (err, rows) => {

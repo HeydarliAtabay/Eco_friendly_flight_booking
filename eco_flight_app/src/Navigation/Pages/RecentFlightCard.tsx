@@ -64,11 +64,14 @@ export default function MostRecentFlightCard(props: CardInterface) {
       </View>
       <Card.Content style={{ display: "flex", flexDirection: "column" }}>
         <View style={{ alignItems: "flex-end" }}>
+          {props.flight!==undefined && 
           <Text style={{ fontSize: 18, fontWeight: "500" }}>
-            {moment(props.flight.flight_info.departure_date).format(
-              "DD MMM YYYY"
-            )}
-          </Text>
+          {moment(props.flight!==undefined && props.flight.flight_info.departure_date).format(
+            "DD MMM YYYY"
+          )}
+        </Text>
+          }
+          
         </View>
         <View style={{ display: "flex", flexDirection: "row" }}>
           <View style={{ alignItems: "flex-start" }}>
