@@ -26,7 +26,7 @@
 const sqlite = require('sqlite3');
 
 // open the database
-const db = new sqlite.Database('eco_flight', (err) => {
+const db = new sqlite.Database('eco_flight.db', (err) => {
     if (err) throw err;
     else console.log('Succesfully connected to DB')
 });
