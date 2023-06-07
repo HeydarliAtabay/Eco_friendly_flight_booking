@@ -25,7 +25,6 @@ export default function MostRecentFlightCard(props: CardInterface) {
       let minutes = parseInt(duration.asMinutes().toString()) % 60;
       return hours + "h " + minutes + "min";
     }
-
   };
   const filghtDuration = findDuration();
 
@@ -35,122 +34,124 @@ export default function MostRecentFlightCard(props: CardInterface) {
     }
   };
   return (
-    <Card style={styles.container}>
-      <View
-        style={{
-          alignItems: "flex-start",
-          padding: 3,
-          width: "40%",
-          backgroundColor: GREEN,
-          borderTopLeftRadius: 10,
-          borderBottomRightRadius: 10,
-          borderBottomWidth: 1,
-          borderBottomColor: "black",
-          borderRightWidth: 1,
-          borderRightColor: "black",
-          borderTopWidth: 0,
-        }}
-      >
-        <Text
-          style={{
-            fontSize: 15,
-            textAlign: "center",
-            marginLeft: 10,
-            color: "white",
-          }}
-        >
-          {"Upcoming flight"}
-        </Text>
-      </View>
-      <Card.Content style={{ display: "flex", flexDirection: "column" }}>
-        <View style={{ alignItems: "flex-end" }}>
-          {props.flight!==undefined && 
-          <Text style={{ fontSize: 18, fontWeight: "500" }}>
-          {moment(props.flight!==undefined && props.flight.flight_info.departure_date).format(
-            "DD MMM YYYY"
-          )}
-        </Text>
-          }
-          
-        </View>
-        <View style={{ display: "flex", flexDirection: "row" }}>
-          <View style={{ alignItems: "flex-start" }}>
-            <Image
-              style={{ width: 60, height: 40, resizeMode: "contain" }}
-              source={{
-                uri: getLogoFromAirlineId(props.flight.flight_info.airline),
-              }}
-            />
-          </View>
-        </View>
-
-        <View style={styles.datetimeBox}>
-          <View
-            style={{ display: "flex", flexDirection: "row", paddingLeft: 10 }}
-          >
-            <Text style={styles.timeText}>
-              {props.flight && props.flight.flight_info && props.flight.flight_info.departure_time}
-            </Text>
-            <Text
-              style={{
-                color: DARK_GRAY,
-                fontSize: 16,
-                marginTop: "auto",
-                marginBottom: "auto",
-              }}
-            >{` - ${filghtDuration} - `}</Text>
-            <Text style={styles.timeText}>
-              {props.flight.flight_info.arrival_time}
-            </Text>
-          </View>
-          <View
-            style={{ display: "flex", flexDirection: "row", paddingLeft: 10 }}
-          >
-            <Text
-              style={styles.airportNameTxt}
-            >{`${props.flight.departureAirport.name} (${props.flight.departureAirport.code})`}</Text>
-            <Text
-              style={styles.airportNameTxt}
-            >{`${props.flight.arrivalAirport.name} (${props.flight.arrivalAirport.code})`}</Text>
-          </View>
-        </View>
+    props.flight &&
+    props.flight.flight_info && (
+      <Card style={styles.container}>
         <View
           style={{
-            alignItems: "center",
-            flexDirection: "row",
-            marginTop: 5,
-            justifyContent: "flex-start",
+            alignItems: "flex-start",
+            padding: 3,
+            width: "40%",
+            backgroundColor: GREEN,
+            borderTopLeftRadius: 10,
+            borderBottomRightRadius: 10,
+            borderBottomWidth: 1,
+            borderBottomColor: "black",
+            borderRightWidth: 1,
+            borderRightColor: "black",
+            borderTopWidth: 0,
           }}
         >
-          <View style={{ marginLeft: "auto" }}>
-            {/* <Image style={{ width: 25, height: 25, resizeMode: 'contain' }} source={ECO} /> */}
-            <Text
-              style={{
-                color:
-                  props.flight.checkin_status === "DONE"
-                    ? GREEN
-                    : props.flight.checkin_status === "NOT"
-                      ? "red"
-                      : "purple",
-              }}
-            >
-              {props.flight.checkin_status === "DONE"
-                ? "Checked-id"
-                : props.flight.checkin_status === "NOT"
-                  ? "Check-in not available"
-                  : "Check-in available"}
+          <Text
+            style={{
+              fontSize: 15,
+              textAlign: "center",
+              marginLeft: 10,
+              color: "white",
+            }}
+          >
+            {"Upcoming flight"}
+          </Text>
+        </View>
+        <Card.Content style={{ display: "flex", flexDirection: "column" }}>
+          <View style={{ alignItems: "flex-end" }}>
+            <Text style={{ fontSize: 18, fontWeight: "500" }}>
+              {moment(props.flight.flight_info.departure_date).format(
+                "DD MMM YYYY"
+              )}
             </Text>
           </View>
-          {/* <Button mode='contained-tonal' style={{ borderRadius: 10, backgroundColor: 'lightblue' }}
+          <View style={{ display: "flex", flexDirection: "row" }}>
+            <View style={{ alignItems: "flex-start" }}>
+              <Image
+                style={{ width: 60, height: 40, resizeMode: "contain" }}
+                source={{
+                  uri: getLogoFromAirlineId(props.flight.flight_info.airline),
+                }}
+              />
+            </View>
+          </View>
+
+          <View style={styles.datetimeBox}>
+            <View
+              style={{ display: "flex", flexDirection: "row", paddingLeft: 10 }}
+            >
+              <Text style={styles.timeText}>
+                {props.flight &&
+                  props.flight.flight_info &&
+                  props.flight.flight_info.departure_time}
+              </Text>
+              <Text
+                style={{
+                  color: DARK_GRAY,
+                  fontSize: 16,
+                  marginTop: "auto",
+                  marginBottom: "auto",
+                }}
+              >{` - ${filghtDuration} - `}</Text>
+              <Text style={styles.timeText}>
+                {props.flight.flight_info.arrival_time}
+              </Text>
+            </View>
+            <View
+              style={{ display: "flex", flexDirection: "row", paddingLeft: 10 }}
+            >
+              <Text
+                style={styles.airportNameTxt}
+              >{`${props.flight.departureAirport.name} (${props.flight.departureAirport.code})`}</Text>
+              <Text
+                style={styles.airportNameTxt}
+              >{`${props.flight.arrivalAirport.name} (${props.flight.arrivalAirport.code})`}</Text>
+            </View>
+          </View>
+          <View
+            style={{
+              alignItems: "center",
+              flexDirection: "row",
+              marginTop: 5,
+              justifyContent: "flex-start",
+            }}
+          >
+            <View style={{ marginLeft: "auto" }}>
+              {/* <Image style={{ width: 25, height: 25, resizeMode: 'contain' }} source={ECO} /> */}
+              <Text
+                style={{
+                  color:
+                    props.flight.checkin_status === "DONE"
+                      ? GREEN
+                      : props.flight.checkin_status === "NOT"
+                      ? "red"
+                      : "purple",
+                }}
+              >
+                {props.flight.checkin_status === "DONE"
+                  ? "Checked-id"
+                  : props.flight.checkin_status === "NOT"
+                  ? "Check-in not available"
+                  : "Check-in available"}
+              </Text>
+            </View>
+            {/* <Button mode='contained-tonal' style={{ borderRadius: 10, backgroundColor: 'lightblue' }}
                         labelStyle={{}}
                         disabled={props.flight.checkin_status === 'NOT' ? true : false}
                         onPress={handleFlightSelection}
                     >
                         {props.flight.checkin_status === 'DONE' ? 'Boarding Pass' : 'Check in'}
                     </Button> */}
-        </View>
-      </Card.Content>
-    </Card>
+          </View>
+        </Card.Content>
+      </Card>
+    )
   );
 }
 

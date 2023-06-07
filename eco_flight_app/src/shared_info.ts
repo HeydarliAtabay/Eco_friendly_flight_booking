@@ -1,1 +1,1 @@
-export const REACT_APP_LOCAL_IPv4_ADRESS = "172.20.10.2";
+export const REACT_APP_LOCAL_IPv4_ADRESS = "192.168.253.5";
